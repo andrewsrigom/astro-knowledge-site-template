@@ -2,7 +2,7 @@
 
 Astro template for structured knowledge sites with external content support, localized routes, reusable section renderers, and a bundled starter content root.
 
-[![Verify](https://github.com/frontandrews/astro-knowledge-site-template/actions/workflows/verify.yml/badge.svg)](https://github.com/frontandrews/astro-knowledge-site-template/actions/workflows/verify.yml)
+[![Verify](https://github.com/andrewsrigom/astro-knowledge-site-template/actions/workflows/verify.yml/badge.svg)](https://github.com/andrewsrigom/astro-knowledge-site-template/actions/workflows/verify.yml)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)
 
 This repository is for people who want to publish more than a blog.
@@ -278,8 +278,8 @@ flowchart LR
 
 ## Community
 
-- Public roadmap: [issue #1](https://github.com/frontandrews/astro-knowledge-site-template/issues/1)
-- Showcase / built with this template: [issue #2](https://github.com/frontandrews/astro-knowledge-site-template/issues/2)
+- Public roadmap: [issue #1](https://github.com/andrewsrigom/astro-knowledge-site-template/issues/1)
+- Showcase / built with this template: [issue #2](https://github.com/andrewsrigom/astro-knowledge-site-template/issues/2)
 
 ## Validation
 

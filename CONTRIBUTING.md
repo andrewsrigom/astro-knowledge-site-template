@@ -62,5 +62,5 @@ That section should describe setup, migration, validation, or deployment changes
 
 ## Community threads
 
-- Public roadmap: <https://github.com/frontandrews/astro-knowledge-site-template/issues/1>
-- Showcase / built with this template: <https://github.com/frontandrews/astro-knowledge-site-template/issues/2>
+- Public roadmap: <https://github.com/andrewsrigom/astro-knowledge-site-template/issues/1>
+- Showcase / built with this template: <https://github.com/andrewsrigom/astro-knowledge-site-template/issues/2>
