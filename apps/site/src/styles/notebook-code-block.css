@@ -75,6 +75,16 @@ figure.notebook-code-block > .notebook-code-block__pre > .notebook-code-block__c
   font-size: inherit;
 }
 
+figure.notebook-code-block > .astro-code,
+figure.notebook-code-block > .astro-code span {
+  color: var(--shiki-light);
+}
+
+html[data-theme='dark'] figure.notebook-code-block > .astro-code,
+html[data-theme='dark'] figure.notebook-code-block > .astro-code span {
+  color: var(--shiki-dark);
+}
+
 .notebook-code-block__line {
   display: block;
   white-space: pre;

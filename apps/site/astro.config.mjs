@@ -75,6 +75,13 @@ export default defineConfig({
   integrations: [sitemap({ filter: shouldIncludeInSitemap }), svelte()],
   markdown: {
     remarkPlugins: [remarkMermaidDiagrams],
+    shikiConfig: {
+      defaultColor: false,
+      themes: {
+        dark: 'github-dark',
+        light: 'github-light',
+      },
+    },
   },
   output: 'static',
   site: resolveSiteUrl(buildEnv),

@@ -9,6 +9,11 @@ const componentSource = (name: string) => readFileSync(
 
 const notebookSource = (name: string) => componentSource(`ui/notebook/${name}`)
 
+const siteSource = (name: string) => readFileSync(
+  new URL(`../../${name}`, import.meta.url),
+  'utf8',
+)
+
 describe('guide composition with Caderno UI', () => {
   it('uses the canonical method, local index, cards, links and dividers', () => {
     const page = componentSource('PreparationSubjectPage.astro')
@@ -57,5 +62,16 @@ describe('guide composition with Caderno UI', () => {
       expect(source).toContain(contract)
       expect(source).not.toContain('<style>')
     })
+  })
+
+  it('uses matching syntax colors for the light and dark notebook themes', () => {
+    const astroConfig = siteSource('astro.config.mjs')
+    const codeStyles = siteSource('src/styles/notebook-code-block.css')
+
+    expect(astroConfig).toContain("light: 'github-light'")
+    expect(astroConfig).toContain("dark: 'github-dark'")
+    expect(astroConfig).toContain('defaultColor: false')
+    expect(codeStyles).toContain('color: var(--shiki-light)')
+    expect(codeStyles).toContain('color: var(--shiki-dark)')
   })
 })
