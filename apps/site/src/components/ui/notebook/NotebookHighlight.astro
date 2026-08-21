@@ -1,0 +1,60 @@
+---
+type Props = {
+  class?: string
+  tone?: 'blue' | 'green' | 'orange' | 'pink' | 'violet' | 'yellow'
+  variant?: 'double' | 'marker' | 'underline'
+}
+
+const {
+  class: className,
+  tone = 'yellow',
+  variant = 'marker',
+} = Astro.props
+---
+
+<mark class:list={['notebook-highlight', className]} data-tone={tone} data-variant={variant}><slot /></mark>
+
+<style>
+  .notebook-highlight {
+    --highlight: var(--notebook-highlight-yellow);
+    box-decoration-break: clone;
+    padding-inline: 0.08em;
+    color: inherit;
+    background-color: transparent;
+    -webkit-box-decoration-break: clone;
+  }
+
+  .notebook-highlight[data-tone='pink'] {
+    --highlight: var(--notebook-highlight-pink);
+  }
+
+  .notebook-highlight[data-tone='green'] {
+    --highlight: var(--notebook-highlight-green);
+  }
+
+  .notebook-highlight[data-tone='blue'] {
+    --highlight: var(--notebook-highlight-blue);
+  }
+
+  .notebook-highlight[data-tone='orange'] {
+    --highlight: var(--notebook-highlight-orange);
+  }
+
+  .notebook-highlight[data-tone='violet'] {
+    --highlight: var(--notebook-highlight-violet);
+  }
+
+  .notebook-highlight[data-variant='marker'] {
+    background-image: linear-gradient(177deg, transparent 15%, var(--highlight) 16%, var(--highlight) 88%, transparent 89%);
+  }
+
+  .notebook-highlight[data-variant='underline'] {
+    background-image: linear-gradient(180deg, transparent 67%, var(--highlight) 68%, var(--highlight) 93%, transparent 94%);
+  }
+
+  .notebook-highlight[data-variant='double'] {
+    background-image:
+      linear-gradient(178deg, transparent 46%, var(--highlight) 47%, var(--highlight) 64%, transparent 65%),
+      linear-gradient(181deg, transparent 73%, var(--highlight) 74%, var(--highlight) 91%, transparent 92%);
+  }
+</style>

@@ -1,6 +1,5 @@
 ---
 import type { CollectionEntry } from 'astro:content'
-import PuzzleIcon from '@lucide/astro/icons/puzzle'
 
 import DirectoryList from '@/components/ui/DirectoryList.astro'
 import DirectoryPagination from '@/components/ui/DirectoryPagination.astro'
@@ -100,7 +99,7 @@ const isPaginatedArchivePage = paginatedItems.currentPage > 1
 
 <DirectoryIndexShell
   description={description}
-  icon={PuzzleIcon}
+  doodle="code"
   iconLabel={title}
   localeHrefs={localeHrefs}
   noindex={isPaginatedArchivePage}

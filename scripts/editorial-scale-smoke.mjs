@@ -15,7 +15,9 @@ const DEFAULTS = {
   conceptPairs: 40,
   glossaryPairs: 40,
   maxBuildMs: 90_000,
-  maxRssKb: 1_600_000,
+  // The scaled build also bundles the diagram and notebook UI modules. Keep a small
+  // margin above the cold-build peak instead of treating every emitted chunk as page cost.
+  maxRssKb: 2_100_000,
   roadmapCount: 30,
   roadmapStepSize: 4,
 }
@@ -350,8 +352,9 @@ export type EditorialRoadmap = {
 
 export type ResolvedRoadmapArticleNode = {
   articleId: string
-  href: string
+  href: string | null
   id: string
+  isAvailableInLocale: boolean
   kind: 'article'
   position: RoadmapPosition
   post: CollectionEntry<'articles'>
@@ -451,6 +454,7 @@ function resolveRoadmap(
         articleId: node.articleId,
         href: getArticleHrefFromEntry(post),
         id: node.id,
+        isAvailableInLocale: true,
         kind: 'article',
         position: node.position,
         post,

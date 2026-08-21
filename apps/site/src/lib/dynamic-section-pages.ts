@@ -5,6 +5,12 @@ import { getChallengeSlugFromEntry } from '@/lib/challenge-links'
 import { getConceptSlugFromEntry } from '@/lib/concepts-links'
 import { assertUniqueStaticPaths } from '@/lib/content-integrity'
 import { getDefaultLocale } from '@/lib/locale-config'
+import {
+  getLegacyPreparationRouteSegments,
+  getPreparationIndexHref,
+  getPreparationSubjectHref,
+  sortPreparationEntries,
+} from '@/lib/preparation-links'
 import { getEntryLeafRouteSegment, getNormalizedRouteSegment } from '@/lib/route-segments'
 import {
   resolveEditorialRoadmaps,
@@ -23,6 +29,8 @@ import {
   getActiveConceptsByLocale,
   getActiveGlossaryByLocale,
   getArticleCollection,
+  getVisibleChallengesByLocale,
+  getVisiblePreparationByLocale,
 } from '@/lib/site-content'
 import { getAvailableTopicsInGroup, getTopicGroupArticles } from '@/lib/topic-taxonomy'
 
@@ -30,6 +38,7 @@ type ArticleEntry = CollectionEntry<'articles'>
 type ChallengeEntry = CollectionEntry<'challenges'>
 type ConceptEntry = CollectionEntry<'concepts'>
 type GlossaryEntry = CollectionEntry<'glossary'>
+type PreparationEntry = CollectionEntry<'preparation'>
 
 type DynamicIndexPageType = Exclude<SectionPageType, 'articles'>
 
@@ -39,6 +48,8 @@ type DynamicSectionIndexProps = {
   locale: SectionLocale
   pageType: DynamicIndexPageType
   posts?: ArticleEntry[]
+  preparation?: PreparationEntry[]
+  redirectHref?: string
   roadmaps?: ResolvedEditorialRoadmap[]
   sectionId: string
   terms?: GlossaryEntry[]
@@ -51,9 +62,12 @@ type DynamicSectionDetailProps = {
   locale: SectionLocale
   pageType: DynamicIndexPageType
   posts?: ArticleEntry[]
+  preparation?: PreparationEntry[]
+  redirectHref?: string
   roadmap?: ResolvedEditorialRoadmap
   sectionId: string
   slug: string
+  subjectId?: string
   term?: GlossaryEntry
   topics?: ReturnType<typeof getAvailableTopicsInGroup>
 }
@@ -77,6 +91,7 @@ const DYNAMIC_SECTION_PAGE_TYPES = new Set<DynamicIndexPageType>([
   'concepts',
   'glossary',
   'challenges',
+  'preparation',
 ])
 
 function isDynamicSection(section: SiteSection): section is SiteSection & { pageType: DynamicIndexPageType } {
@@ -99,8 +114,9 @@ export async function getDynamicSectionIndexPaths(locale: SectionLocale) {
   const activeConcepts = await getActiveConceptsByLocale(locale)
   const activeGlossary = await getActiveGlossaryByLocale(locale)
   const activeChallenges = await getActiveChallengesByLocale(locale)
+  const visiblePreparation = await getVisiblePreparationByLocale(locale)
 
-  return assertUniqueStaticPaths(sections.map<StaticPath<DynamicSectionIndexProps>>((section) => {
+  const canonicalPaths = sections.map<StaticPath<DynamicSectionIndexProps>>((section) => {
     const props: DynamicSectionIndexProps = {
       locale,
       pageType: section.pageType,
@@ -115,6 +131,8 @@ export async function getDynamicSectionIndexPaths(locale: SectionLocale) {
       props.terms = activeGlossary
     } else if (section.pageType === 'challenges') {
       props.challenges = activeChallenges
+    } else if (section.pageType === 'preparation') {
+      props.preparation = visiblePreparation
     }
 
     return {
@@ -124,7 +142,26 @@ export async function getDynamicSectionIndexPaths(locale: SectionLocale) {
       },
       props,
     }
-  }), 'dynamic section index')
+  })
+  const paths = canonicalPaths.flatMap((path) => {
+    if (path.props.pageType !== 'preparation') return [path]
+
+    return [
+      path,
+      ...getLegacyPreparationRouteSegments(locale).map((section) => ({
+        params: {
+          ...path.params,
+          section,
+        },
+        props: {
+          ...path.props,
+          redirectHref: getPreparationIndexHref(locale),
+        },
+      })),
+    ]
+  })
+
+  return assertUniqueStaticPaths(paths, 'dynamic section index')
 }
 
 export async function getDynamicSectionDetailPaths(locale: SectionLocale) {
@@ -134,9 +171,10 @@ export async function getDynamicSectionDetailPaths(locale: SectionLocale) {
   const activeArticles = await getActiveArticlesByLocale(locale)
   const activeConcepts = await getActiveConceptsByLocale(locale)
   const activeGlossary = await getActiveGlossaryByLocale(locale)
-  const activeChallenges = await getActiveChallengesByLocale(locale)
+  const visibleChallenges = await getVisibleChallengesByLocale(locale)
+  const visiblePreparation = await getVisiblePreparationByLocale(locale)
 
-  return assertUniqueStaticPaths(sections.flatMap<StaticPath<DynamicSectionDetailProps>>((section) => {
+  const canonicalPaths = sections.flatMap<StaticPath<DynamicSectionDetailProps>>((section) => {
     if (section.pageType === 'tracks') {
       return resolveEditorialRoadmaps(locale as EditorialLocale, articles).map((roadmap) => {
         const slug = getNormalizedRouteSegment(roadmap.slug)
@@ -231,7 +269,7 @@ export async function getDynamicSectionDetailPaths(locale: SectionLocale) {
     }
 
     if (section.pageType === 'challenges') {
-      return activeChallenges.map((challenge) => {
+      return visibleChallenges.map((challenge) => {
         const slug = getChallengeSlugFromEntry(challenge)
 
         return {
@@ -251,8 +289,53 @@ export async function getDynamicSectionDetailPaths(locale: SectionLocale) {
       })
     }
 
+    if (section.pageType === 'preparation') {
+      const subjectIds = [...new Set(visiblePreparation.map((entry) => entry.data.subjectId))]
+
+      return subjectIds.map((subjectId) => {
+        const slug = getNormalizedRouteSegment(subjectId)
+
+        return {
+          params: {
+            ...(isDefaultLocale ? {} : { locale }),
+            section: section.routes[locale],
+            slug,
+          },
+          props: {
+            locale,
+            pageType: section.pageType,
+            preparation: sortPreparationEntries(
+              visiblePreparation.filter((entry) => entry.data.subjectId === subjectId),
+            ),
+            sectionId: section.id,
+            slug,
+            subjectId,
+          },
+        }
+      })
+    }
+
     return []
-  }), 'dynamic section detail')
+  })
+  const paths = canonicalPaths.flatMap((path) => {
+    if (path.props.pageType !== 'preparation' || !path.props.subjectId) return [path]
+
+    return [
+      path,
+      ...getLegacyPreparationRouteSegments(locale).map((section) => ({
+        params: {
+          ...path.params,
+          section,
+        },
+        props: {
+          ...path.props,
+          redirectHref: getPreparationSubjectHref(path.props.subjectId!, locale),
+        },
+      })),
+    ]
+  })
+
+  return assertUniqueStaticPaths(paths, 'dynamic section detail')
 }
 
 export async function getDynamicTopicDetailPaths(locale: SectionLocale) {

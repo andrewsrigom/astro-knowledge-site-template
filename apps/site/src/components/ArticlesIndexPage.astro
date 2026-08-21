@@ -1,5 +1,4 @@
 ---
-import NewspaperIcon from '@lucide/astro/icons/newspaper'
 
 import DirectoryList from '@/components/ui/DirectoryList.astro'
 import DirectoryPagination from '@/components/ui/DirectoryPagination.astro'
@@ -53,7 +52,7 @@ const isPaginatedArchivePage = !isPreview && paginatedItems.currentPage > 1
   <PageHeader
     className={locale === 'pt-br' ? 'px-4 md:px-[1.1rem]' : ''}
     description={copy.articlesIndex.copy}
-    icon={NewspaperIcon}
+    doodle="note"
     iconLabel={copy.layout.articles}
     title={title}
   />

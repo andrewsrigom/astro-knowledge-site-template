@@ -1,0 +1,199 @@
+---
+type Block = {
+  description?: string
+  letter: string
+  meaning: string
+  tone?: 'blue' | 'coral' | 'lemon' | 'mint' | 'pink' | 'violet'
+}
+
+type Props = {
+  blocks: Block[]
+  class?: string
+  showSeparator?: boolean
+}
+
+const {
+  blocks,
+  class: className,
+  showSeparator = true,
+} = Astro.props
+
+const tilts = [-1.5, 1.2, -0.9, 1.6, -1.1, 0.8, -1.8, 1.3]
+---
+
+<div class:list={['notebook-letter-blocks', className]}>
+  <div class="notebook-letter-blocks__row">
+    {blocks.map((block, index) => (
+      <>
+        <article
+          class="notebook-letter-blocks__tile"
+          data-tone={block.tone ?? 'blue'}
+          style={`--tile-tilt: ${tilts[index % tilts.length]}deg;`}
+        >
+          <span class="notebook-letter-blocks__letter">{block.letter}</span>
+        </article>
+        {showSeparator && index < blocks.length - 1 ? (
+          <span aria-hidden="true" class="notebook-letter-blocks__dot">•</span>
+        ) : null}
+      </>
+    ))}
+  </div>
+  <ul class="notebook-letter-blocks__legend">
+    {blocks.map((block) => (
+      <li class="notebook-letter-blocks__legend-item">
+        <span class="notebook-letter-blocks__legend-letter" data-tone={block.tone ?? 'blue'}>
+          {block.letter}
+        </span>
+        <div class="notebook-letter-blocks__legend-body">
+          <p class="notebook-letter-blocks__legend-meaning">{block.meaning}</p>
+          {block.description ? <p class="notebook-letter-blocks__legend-description">{block.description}</p> : null}
+        </div>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .notebook-letter-blocks {
+    display: grid;
+    gap: 1.4rem;
+    padding: 1.5rem 1.35rem 1.4rem;
+    background: color-mix(in srgb, var(--site-surface) 92%, transparent);
+    border: 1px solid var(--site-line);
+    border-radius: 0.85rem;
+  }
+
+  .notebook-letter-blocks__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem 0.75rem;
+  }
+
+  .notebook-letter-blocks__tile {
+    --tile-bg: var(--notebook-post-it-blue-bg);
+    --tile-ink: var(--notebook-post-it-blue-ink);
+    display: inline-grid;
+    place-items: center;
+    width: 3.4rem;
+    height: 3.4rem;
+    color: var(--tile-ink);
+    background: var(--tile-bg);
+    border-radius: 0.55rem 0.75rem 0.6rem 0.7rem;
+    box-shadow:
+      0 0.35rem 0.65rem rgb(var(--notebook-shadow-rgb) / 0.14),
+      inset 0 -0.22rem 0.42rem color-mix(in srgb, var(--tile-ink) 22%, transparent),
+      inset 0 0.14rem 0 color-mix(in srgb, white 30%, transparent);
+    transform: rotate(var(--tile-tilt, 0deg));
+  }
+
+  .notebook-letter-blocks__tile[data-tone='coral'] {
+    --tile-bg: var(--notebook-post-it-coral-bg);
+    --tile-ink: var(--notebook-post-it-coral-ink);
+  }
+  .notebook-letter-blocks__tile[data-tone='mint'] {
+    --tile-bg: var(--notebook-post-it-mint-bg);
+    --tile-ink: var(--notebook-post-it-mint-ink);
+  }
+  .notebook-letter-blocks__tile[data-tone='lemon'] {
+    --tile-bg: var(--notebook-post-it-lemon-bg);
+    --tile-ink: var(--notebook-post-it-lemon-ink);
+  }
+  .notebook-letter-blocks__tile[data-tone='pink'] {
+    --tile-bg: var(--notebook-post-it-pink-bg);
+    --tile-ink: var(--notebook-post-it-pink-ink);
+  }
+  .notebook-letter-blocks__tile[data-tone='violet'] {
+    --tile-bg: var(--notebook-sticker-violet-bg);
+    --tile-ink: var(--notebook-sticker-violet-ink);
+  }
+
+  .notebook-letter-blocks__letter {
+    font-family: var(--notebook-font-hand);
+    font-size: 2.1rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .notebook-letter-blocks__dot {
+    color: var(--site-ink-muted);
+    font-size: 1.4rem;
+    line-height: 1;
+    user-select: none;
+  }
+
+  .notebook-letter-blocks__legend {
+    display: grid;
+    gap: 0.65rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .notebook-letter-blocks__legend-item {
+    display: grid;
+    grid-template-columns: 1.75rem 1fr;
+    align-items: baseline;
+    gap: 0.65rem;
+  }
+
+  .notebook-letter-blocks__legend-letter {
+    --tile-bg: var(--notebook-post-it-blue-bg);
+    --tile-ink: var(--notebook-post-it-blue-ink);
+    display: inline-grid;
+    place-items: center;
+    width: 1.7rem;
+    height: 1.7rem;
+    color: var(--tile-ink);
+    background: color-mix(in srgb, var(--tile-bg) 55%, transparent);
+    border-radius: 0.35rem;
+    font-family: var(--notebook-font-hand);
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .notebook-letter-blocks__legend-letter[data-tone='coral'] {
+    --tile-bg: var(--notebook-post-it-coral-bg);
+    --tile-ink: var(--notebook-post-it-coral-ink);
+  }
+  .notebook-letter-blocks__legend-letter[data-tone='mint'] {
+    --tile-bg: var(--notebook-post-it-mint-bg);
+    --tile-ink: var(--notebook-post-it-mint-ink);
+  }
+  .notebook-letter-blocks__legend-letter[data-tone='lemon'] {
+    --tile-bg: var(--notebook-post-it-lemon-bg);
+    --tile-ink: var(--notebook-post-it-lemon-ink);
+  }
+  .notebook-letter-blocks__legend-letter[data-tone='pink'] {
+    --tile-bg: var(--notebook-post-it-pink-bg);
+    --tile-ink: var(--notebook-post-it-pink-ink);
+  }
+  .notebook-letter-blocks__legend-letter[data-tone='violet'] {
+    --tile-bg: var(--notebook-sticker-violet-bg);
+    --tile-ink: var(--notebook-sticker-violet-ink);
+  }
+
+  .notebook-letter-blocks__legend-body {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .notebook-letter-blocks__legend-meaning {
+    margin: 0;
+    color: var(--site-ink);
+    font-family: var(--notebook-font-hand);
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .notebook-letter-blocks__legend-description {
+    margin: 0;
+    color: var(--site-ink-soft);
+    font-size: 0.85rem;
+    line-height: 1.45;
+  }
+</style>

@@ -1,0 +1,211 @@
+<script>
+  type RoughAnnotation = {
+    remove: () => void
+    show: () => void
+  }
+  type RoughAnnotationType =
+    | 'box'
+    | 'bracket'
+    | 'circle'
+    | 'crossed-off'
+    | 'highlight'
+    | 'strike-through'
+    | 'underline'
+  type RoughBracket = 'bottom' | 'left' | 'right' | 'top'
+
+  const supportedTypes = new Set<RoughAnnotationType>([
+    'box',
+    'bracket',
+    'circle',
+    'crossed-off',
+    'highlight',
+    'strike-through',
+    'underline',
+  ])
+  let annotations: RoughAnnotation[] = []
+  let renderVersion = 0
+  let resizeTimer: number | undefined
+  let settledRenderTimer: number | undefined
+
+  function clearAnnotations() {
+    for (const annotation of annotations) annotation.remove()
+    annotations = []
+
+    for (const element of document.querySelectorAll<HTMLElement>('[data-sketch-ready]')) {
+      delete element.dataset.sketchReady
+    }
+
+    for (const element of document.querySelectorAll<HTMLElement>('[data-sketch-arrow-ready]')) {
+      delete element.dataset.sketchArrowReady
+    }
+
+    for (const element of document.querySelectorAll<HTMLElement>('[data-sketch-accessories-ready]')) {
+      delete element.dataset.sketchAccessoriesReady
+    }
+
+    for (const canvas of document.querySelectorAll('[data-sketch-arrow-canvas]')) {
+      canvas.remove()
+    }
+
+    for (const canvas of document.querySelectorAll('[data-sketch-decoration-canvas]')) {
+      canvas.remove()
+    }
+  }
+
+  function getSketchColor(element: HTMLElement, type?: RoughAnnotationType) {
+    const styles = getComputedStyle(document.documentElement)
+    const variant = element.dataset.sketchColor
+      || (type === 'highlight' ? 'marker' : 'accent')
+    const tokens: Record<string, string> = {
+      accent: '--site-accent',
+      marker: '--book-marker',
+      note: '--book-note-line',
+      pencil: '--book-pencil',
+    }
+    const token = tokens[variant] || tokens.accent
+
+    return styles.getPropertyValue(token).trim() || 'rgb(40, 84, 215)'
+  }
+
+  function getBracket(element: HTMLElement): RoughBracket | undefined {
+    const bracket = element.dataset.sketchBrackets as RoughBracket | undefined
+    return bracket && ['bottom', 'left', 'right', 'top'].includes(bracket)
+      ? bracket
+      : undefined
+  }
+
+  async function renderArrows(elements: HTMLElement[]) {
+    if (elements.length === 0) return
+
+    const { default: rough } = await import('roughjs/bin/rough')
+    for (const [index, element] of elements.entries()) {
+      const direction = element.dataset.sketchArrow === 'right' ? 'right' : 'left'
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+      svg.dataset.sketchArrowCanvas = 'true'
+      svg.setAttribute('aria-hidden', 'true')
+      svg.setAttribute('viewBox', '0 0 58 28')
+      svg.setAttribute('width', '58')
+      svg.setAttribute('height', '28')
+
+      const drawing = rough.svg(svg)
+      const color = getSketchColor(element)
+      const options = {
+        bowing: 1.6,
+        roughness: 1.35,
+        seed: 41 + index,
+        stroke: color,
+        strokeWidth: 1.55,
+      }
+      const start = direction === 'left' ? 53 : 5
+      const end = direction === 'left' ? 6 : 52
+      const head = direction === 'left' ? 15 : 43
+
+      svg.appendChild(drawing.line(start, 14, end, 14, options))
+      svg.appendChild(drawing.line(end, 14, head, 7, options))
+      svg.appendChild(drawing.line(end, 14, head, 21, options))
+      element.prepend(svg)
+      element.dataset.sketchArrowReady = 'true'
+    }
+  }
+
+  async function renderNotebookAccessories(page: HTMLElement | null) {
+    if (!page) return
+
+    const { default: rough } = await import('roughjs/bin/rough')
+    const styles = getComputedStyle(document.documentElement)
+    const accent = styles.getPropertyValue('--book-pencil').trim() || 'rgb(40, 84, 215)'
+
+    const headings = [...page.querySelectorAll<HTMLElement>('.preparation-manual-prose > h2')]
+    for (const [index, heading] of headings.entries()) {
+      const width = Math.round(Math.min(208, Math.max(112, heading.getBoundingClientRect().width * 0.42)))
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+      svg.dataset.sketchDecorationCanvas = 'true'
+      svg.classList.add('book-sketch-heading-rule')
+      svg.setAttribute('aria-hidden', 'true')
+      svg.setAttribute('viewBox', `0 0 ${width} 12`)
+      svg.setAttribute('preserveAspectRatio', 'none')
+
+      const drawing = rough.svg(svg)
+      svg.appendChild(drawing.line(3, 5, width - 3, 6, {
+        bowing: 1.15,
+        roughness: 1.25,
+        seed: 121 + index,
+        stroke: accent,
+        strokeWidth: 1.45,
+      }))
+      heading.insertAdjacentElement('afterend', svg)
+    }
+
+    page.dataset.sketchAccessoriesReady = 'true'
+  }
+
+  async function renderAnnotations() {
+    const version = ++renderVersion
+    const elements = [...document.querySelectorAll<HTMLElement>('[data-sketch-annotation]')]
+    const arrowElements = [...document.querySelectorAll<HTMLElement>('[data-sketch-arrow]')]
+    const sketchPage = document.querySelector<HTMLElement>('[data-book-sketch-page]')
+
+    clearAnnotations()
+    if (elements.length === 0 && arrowElements.length === 0 && !sketchPage) return
+
+    await document.fonts?.ready
+    const annotationModule = elements.length > 0 ? await import('rough-notation') : null
+    if (version !== renderVersion) return
+
+    for (const element of elements) {
+      const requestedType = element.dataset.sketchAnnotation as RoughAnnotationType | undefined
+      if (!requestedType || !supportedTypes.has(requestedType)) continue
+
+      const isBox = requestedType === 'box'
+      const annotation = annotationModule!.annotate(element, {
+        animate: false,
+        brackets: getBracket(element),
+        color: getSketchColor(element, requestedType),
+        iterations: requestedType === 'highlight' || requestedType === 'circle' ? 1 : 2,
+        multiline: requestedType === 'underline' || requestedType === 'highlight',
+        padding: isBox ? 7 : requestedType === 'circle' ? [9, 10] : 1,
+        strokeWidth: isBox
+          ? 1.35
+          : requestedType === 'highlight'
+            ? 1
+            : requestedType === 'circle'
+              ? 1.65
+              : 1.8,
+        type: requestedType,
+      })
+
+      annotation.show()
+
+      if (requestedType === 'circle') {
+        const annotationCanvas = element.nextElementSibling
+        for (const path of annotationCanvas?.querySelectorAll('path') ?? []) {
+          path.setAttribute('stroke-linecap', 'round')
+          path.setAttribute('stroke-linejoin', 'round')
+        }
+      }
+
+      annotations.push(annotation)
+      element.dataset.sketchReady = 'true'
+    }
+
+    await renderArrows(arrowElements)
+    await renderNotebookAccessories(sketchPage)
+  }
+
+  function scheduleRender(delay = 120) {
+    window.clearTimeout(resizeTimer)
+    resizeTimer = window.setTimeout(() => void renderAnnotations(), delay)
+  }
+
+  function renderAfterPageSettles() {
+    scheduleRender(80)
+    window.clearTimeout(settledRenderTimer)
+    settledRenderTimer = window.setTimeout(() => void renderAnnotations(), 650)
+  }
+
+  document.addEventListener('astro:page-load', renderAfterPageSettles)
+  window.addEventListener('site-theme-change', () => scheduleRender())
+  window.addEventListener('resize', () => scheduleRender(), { passive: true })
+  window.addEventListener('load', renderAfterPageSettles, { once: true })
+  renderAfterPageSettles()
+</script>

@@ -1,6 +1,5 @@
 ---
 import type { ResolvedEditorialRoadmap } from '@/lib/roadmaps'
-import RouteIcon from '@lucide/astro/icons/route'
 
 import ArticleSharePanel from '@/components/ArticleSharePanel.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
@@ -162,7 +161,7 @@ roadmap.nodes.forEach((node) => {
   structuredData={trackStructuredData}
   title={roadmap.title}
 >
-  <PageHeader description={roadmap.summary} icon={RouteIcon} iconLabel={copy.layout.tracks} title={roadmap.title}>
+  <PageHeader description={roadmap.summary} doodle="target" iconLabel={copy.layout.tracks} title={roadmap.title}>
     <div class={ui.metaList}>
       {trackMetaItems.map((item) => (
         <span class={ui.badge}>{item}</span>

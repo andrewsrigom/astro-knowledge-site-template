@@ -1,0 +1,166 @@
+---
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+import type { NotebookDoodleName } from '@/lib/notebook-doodles'
+
+type Variant = 'danger' | 'info' | 'success' | 'warning'
+
+type Props = {
+  class?: string
+  dismissLabel?: string
+  dismissible?: boolean
+  title: string
+  variant?: Variant
+}
+
+const {
+  class: className,
+  dismissLabel = 'Dispensar aviso',
+  dismissible = false,
+  title,
+  variant = 'info',
+}: Props = Astro.props
+
+const icons: Record<Variant, NotebookDoodleName> = {
+  danger: 'bug',
+  info: 'spark',
+  success: 'check',
+  warning: 'exclamation',
+}
+---
+
+<aside
+  class:list={['notebook-alert', className]}
+  data-dismissible={dismissible ? 'true' : 'false'}
+  data-variant={variant}
+  role={variant === 'danger' || variant === 'warning' ? 'alert' : 'status'}
+>
+  <span aria-hidden="true" class="notebook-alert__tape"></span>
+  <div aria-hidden="true" class="notebook-alert__icon">
+    <DoodleIcon name={icons[variant]} size={24} />
+  </div>
+  <div class="notebook-alert__body">
+    <h3 class="notebook-alert__title">{title}</h3>
+    <div class="notebook-alert__content"><slot /></div>
+  </div>
+  {dismissible ? (
+    <button aria-label={dismissLabel} class="notebook-alert__close" type="button">
+      <DoodleIcon name="cross" size={18} />
+    </button>
+  ) : null}
+</aside>
+
+<script>
+  function setupNotebookAlerts() {
+    const alerts = document.querySelectorAll<HTMLElement>('.notebook-alert[data-dismissible="true"]')
+
+    for (const alert of alerts) {
+      if (alert.dataset.alertReady === 'true') continue
+      const close = alert.querySelector<HTMLButtonElement>('.notebook-alert__close')
+      close?.addEventListener('click', () => {
+        alert.hidden = true
+      })
+      alert.dataset.alertReady = 'true'
+    }
+  }
+
+  setupNotebookAlerts()
+  document.addEventListener('astro:page-load', setupNotebookAlerts)
+</script>
+
+<style>
+  .notebook-alert {
+    --alert-bg: var(--notebook-post-it-blue-bg);
+    --alert-ink: var(--notebook-post-it-blue-ink);
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 0.8rem;
+    align-items: start;
+    padding: 1.15rem 1.2rem 1.05rem;
+    color: var(--alert-ink);
+    background: color-mix(in srgb, var(--alert-bg) 78%, var(--site-surface));
+    border: 1.5px solid color-mix(in srgb, var(--alert-ink) 38%, transparent);
+    border-radius: 0.8rem 1rem 0.75rem 0.95rem;
+    box-shadow: 0 0.55rem 1.2rem rgb(var(--notebook-shadow-rgb) / 0.12);
+  }
+
+  .notebook-alert[data-variant='success'] {
+    --alert-bg: var(--notebook-post-it-mint-bg);
+    --alert-ink: var(--notebook-post-it-mint-ink);
+  }
+
+  .notebook-alert[data-variant='warning'] {
+    --alert-bg: var(--notebook-post-it-lemon-bg);
+    --alert-ink: var(--notebook-post-it-lemon-ink);
+  }
+
+  .notebook-alert[data-variant='danger'] {
+    --alert-bg: var(--notebook-post-it-coral-bg);
+    --alert-ink: var(--notebook-post-it-coral-ink);
+  }
+
+  .notebook-alert__tape {
+    position: absolute;
+    top: -0.45rem;
+    left: 1.4rem;
+    width: 3.8rem;
+    height: 0.85rem;
+    background: color-mix(in srgb, var(--notebook-tape-paper-bg) 72%, transparent);
+    transform: rotate(-0.3deg);
+  }
+
+  .notebook-alert__icon {
+    display: inline-grid;
+    place-items: center;
+    margin-top: 0.05rem;
+    transform: rotate(-2deg);
+  }
+
+  .notebook-alert__body {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .notebook-alert__title {
+    margin: 0;
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-lg);
+    font-weight: var(--notebook-hand-weight-strong);
+    line-height: 1;
+  }
+
+  .notebook-alert__content {
+    color: color-mix(in srgb, var(--alert-ink) 88%, var(--site-ink));
+    font-family: var(--notebook-font-book);
+    line-height: 1.55;
+  }
+
+  .notebook-alert__content :global(> :first-child) {
+    margin-top: 0;
+  }
+
+  .notebook-alert__content :global(> :last-child) {
+    margin-bottom: 0;
+  }
+
+  .notebook-alert__close {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    color: var(--alert-ink);
+    background: transparent;
+    border: 0;
+    border-radius: 50%;
+  }
+
+  .notebook-alert__close:hover {
+    background: color-mix(in srgb, var(--alert-ink) 10%, transparent);
+  }
+
+  .notebook-alert__close:focus-visible {
+    outline: 2px dashed var(--alert-ink);
+    outline-offset: 3px;
+  }
+</style>

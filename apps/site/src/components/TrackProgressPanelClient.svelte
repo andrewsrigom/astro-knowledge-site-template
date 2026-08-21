@@ -35,6 +35,8 @@
     const cta = queryByHook<HTMLAnchorElement>(root, trackProgressDomHooks.cta)
     const ctaLabel = queryByHook<HTMLElement>(root, trackProgressDomHooks.ctaLabel)
     const overallIcon = queryByHook<HTMLElement>(root, trackProgressDomHooks.overallIcon)
+    const overallContinueIcon = overallIcon?.querySelector<HTMLElement>('.track-progress-overall-continue')
+    const overallCompleteIcon = overallIcon?.querySelector<HTMLElement>('.track-progress-overall-complete')
     const overallText = queryByHook<HTMLElement>(root, trackProgressDomHooks.overallText)
     const overallRow = overallText instanceof HTMLElement ? overallText.closest('p') : null
     const overallSection = overallRow instanceof HTMLElement ? overallRow.parentElement : null
@@ -100,10 +102,12 @@
       }
 
       if (overallIcon instanceof HTMLElement) {
-        overallIcon.textContent = isComplete ? '✓' : '→'
         overallIcon.classList.toggle('text-site-success', isComplete)
         overallIcon.classList.toggle('text-site-ink-muted', !isComplete)
       }
+
+      overallContinueIcon?.classList.toggle('hidden', isComplete)
+      overallCompleteIcon?.classList.toggle('hidden', !isComplete)
 
       if (overallSection instanceof HTMLElement) {
         overallSection.hidden = !isComplete

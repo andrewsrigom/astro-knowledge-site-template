@@ -1,0 +1,284 @@
+---
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+
+type Props = {
+  class?: string
+  closeLabel?: string
+  placement?: 'bottom-right' | 'top-right'
+}
+
+const {
+  class: className,
+  closeLabel = 'Fechar notificação',
+  placement = 'top-right',
+}: Props = Astro.props
+---
+
+<div
+  aria-label="Notificações"
+  aria-live="polite"
+  class:list={['notebook-toast-host', className]}
+  data-placement={placement}
+  data-toast-host
+  role="region"
+>
+  <slot />
+</div>
+
+<template data-toast-template="info">
+  <article class="notebook-toast" data-duration="0" data-variant="info" role="status">
+    <span aria-hidden="true" class="notebook-toast__tape"></span>
+    <span aria-hidden="true" class="notebook-toast__icon"><DoodleIcon name="spark" size={20} /></span>
+    <div class="notebook-toast__body">
+      <strong class="notebook-toast__title"></strong>
+      <div class="notebook-toast__content"></div>
+    </div>
+    <button aria-label={closeLabel} class="notebook-toast__close" type="button"><DoodleIcon name="cross" size={16} /></button>
+  </article>
+</template>
+
+<template data-toast-template="success">
+  <article class="notebook-toast" data-duration="0" data-variant="success" role="status">
+    <span aria-hidden="true" class="notebook-toast__tape"></span>
+    <span aria-hidden="true" class="notebook-toast__icon"><DoodleIcon name="check" size={20} /></span>
+    <div class="notebook-toast__body">
+      <strong class="notebook-toast__title"></strong>
+      <div class="notebook-toast__content"></div>
+    </div>
+    <button aria-label={closeLabel} class="notebook-toast__close" type="button"><DoodleIcon name="cross" size={16} /></button>
+  </article>
+</template>
+
+<template data-toast-template="warning">
+  <article class="notebook-toast" data-duration="0" data-variant="warning" role="status">
+    <span aria-hidden="true" class="notebook-toast__tape"></span>
+    <span aria-hidden="true" class="notebook-toast__icon"><DoodleIcon name="exclamation" size={20} /></span>
+    <div class="notebook-toast__body">
+      <strong class="notebook-toast__title"></strong>
+      <div class="notebook-toast__content"></div>
+    </div>
+    <button aria-label={closeLabel} class="notebook-toast__close" type="button"><DoodleIcon name="cross" size={16} /></button>
+  </article>
+</template>
+
+<template data-toast-template="error">
+  <article class="notebook-toast" data-duration="0" data-variant="error" role="alert">
+    <span aria-hidden="true" class="notebook-toast__tape"></span>
+    <span aria-hidden="true" class="notebook-toast__icon"><DoodleIcon name="bug" size={20} /></span>
+    <div class="notebook-toast__body">
+      <strong class="notebook-toast__title"></strong>
+      <div class="notebook-toast__content"></div>
+    </div>
+    <button aria-label={closeLabel} class="notebook-toast__close" type="button"><DoodleIcon name="cross" size={16} /></button>
+  </article>
+</template>
+
+<script>
+  type ToastVariant = 'error' | 'info' | 'success' | 'warning'
+  type ToastDetail = {
+    duration?: number
+    message: string
+    title?: string
+    variant?: ToastVariant
+  }
+
+  function setupNotebookToastHosts() {
+    const hosts = document.querySelectorAll<HTMLElement>('[data-toast-host]')
+
+    const enhance = (toast: HTMLElement) => {
+      if (toast.dataset.toastReady === 'true') return
+      const close = toast.querySelector<HTMLButtonElement>('.notebook-toast__close')
+      const dismiss = () => {
+        toast.dataset.leaving = 'true'
+        window.setTimeout(() => toast.remove(), 150)
+      }
+      close?.addEventListener('click', dismiss)
+
+      const duration = Number(toast.dataset.duration ?? 0)
+      if (Number.isFinite(duration) && duration > 0) window.setTimeout(dismiss, duration)
+      toast.dataset.toastReady = 'true'
+    }
+
+    for (const host of hosts) {
+      host.querySelectorAll<HTMLElement>('.notebook-toast').forEach(enhance)
+      host.dataset.toastHostReady = 'true'
+    }
+
+    if (document.documentElement.dataset.toastEventsReady === 'true') return
+    document.addEventListener('notebook:toast', (event) => {
+      const detail = (event as CustomEvent<ToastDetail>).detail
+      const host = document.querySelector<HTMLElement>('[data-toast-host]')
+      const variant = detail?.variant ?? 'info'
+      const template = document.querySelector<HTMLTemplateElement>(`template[data-toast-template="${variant}"]`)
+      const toast = template?.content.firstElementChild?.cloneNode(true)
+      if (!host || !(toast instanceof HTMLElement) || !detail?.message) return
+
+      const title = toast.querySelector<HTMLElement>('.notebook-toast__title')
+      const content = toast.querySelector<HTMLElement>('.notebook-toast__content')
+      if (title) {
+        title.textContent = detail.title ?? ''
+        title.hidden = !detail.title
+      }
+      if (content) content.textContent = detail.message
+      toast.dataset.duration = String(Math.max(0, detail.duration ?? 5000))
+      host.append(toast)
+      enhance(toast)
+    })
+    document.documentElement.dataset.toastEventsReady = 'true'
+  }
+
+  setupNotebookToastHosts()
+  document.addEventListener('astro:page-load', setupNotebookToastHosts)
+</script>
+
+<style is:global>
+  .notebook-toast-host {
+    position: fixed;
+    z-index: 90;
+    right: 1rem;
+    display: grid;
+    gap: 0.75rem;
+    width: min-content;
+    pointer-events: none;
+  }
+
+  .notebook-toast-host[data-placement='top-right'] {
+    top: calc(5rem + env(safe-area-inset-top));
+  }
+
+  .notebook-toast-host[data-placement='bottom-right'] {
+    bottom: 1rem;
+  }
+
+  .notebook-toast-host > .notebook-toast {
+    --toast-bg: var(--notebook-post-it-blue-bg);
+    --toast-ink: var(--notebook-post-it-blue-ink);
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 0.75rem;
+    align-items: start;
+    width: min(21rem, calc(100vw - 2rem));
+    padding: 1.15rem 1rem 1rem;
+    color: var(--toast-ink);
+    background: var(--toast-bg);
+    border: 1px solid color-mix(in srgb, var(--toast-ink) 18%, transparent);
+    border-radius: 0.45rem 0.65rem 0.45rem 0.6rem;
+    box-shadow: 0 0.8rem 1.8rem rgb(var(--notebook-shadow-rgb) / 0.18);
+    pointer-events: auto;
+    animation: notebook-toast-enter 220ms var(--site-transition-smooth) both;
+  }
+
+  .notebook-toast-host > .notebook-toast[data-variant='success'] {
+    --toast-bg: var(--notebook-post-it-mint-bg);
+    --toast-ink: var(--notebook-post-it-mint-ink);
+  }
+
+  .notebook-toast-host > .notebook-toast[data-variant='warning'] {
+    --toast-bg: var(--notebook-post-it-lemon-bg);
+    --toast-ink: var(--notebook-post-it-lemon-ink);
+  }
+
+  .notebook-toast-host > .notebook-toast[data-variant='error'] {
+    --toast-bg: var(--notebook-post-it-coral-bg);
+    --toast-ink: var(--notebook-post-it-coral-ink);
+  }
+
+  .notebook-toast-host .notebook-toast__tape {
+    position: absolute;
+    top: -0.45rem;
+    left: 50%;
+    width: 3.6rem;
+    height: 0.85rem;
+    background: color-mix(in srgb, var(--notebook-tape-paper-bg) 74%, transparent);
+    transform: translateX(-50%) rotate(-0.25deg);
+  }
+
+  .notebook-toast-host .notebook-toast__icon {
+    display: inline-grid;
+    margin-top: 0.05rem;
+    transform: rotate(-2deg);
+  }
+
+  .notebook-toast-host .notebook-toast__body {
+    display: grid;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  .notebook-toast-host .notebook-toast__title {
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-md);
+    font-weight: var(--notebook-hand-weight-strong);
+    line-height: 1;
+  }
+
+  .notebook-toast-host .notebook-toast__content {
+    font-family: var(--notebook-font-book);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+
+  .notebook-toast-host .notebook-toast__close {
+    display: inline-grid;
+    place-items: center;
+    width: 1.8rem;
+    height: 1.8rem;
+    padding: 0;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .notebook-toast-host .notebook-toast__close:hover {
+    background: color-mix(in srgb, var(--toast-ink) 10%, transparent);
+  }
+
+  .notebook-toast-host .notebook-toast__close:focus-visible {
+    outline: 2px dashed var(--toast-ink);
+    outline-offset: 3px;
+  }
+
+  .notebook-toast-host > .notebook-toast[data-leaving='true'] {
+    animation: notebook-toast-exit 150ms ease both;
+  }
+
+  @keyframes notebook-toast-enter {
+    from {
+      opacity: 0;
+      transform: translateY(-0.75rem) rotate(-0.4deg);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) rotate(0deg);
+    }
+  }
+
+  @keyframes notebook-toast-exit {
+    to {
+      opacity: 0;
+      transform: translateX(0.8rem) rotate(0.3deg);
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .notebook-toast-host {
+      right: 0.75rem;
+      left: 0.75rem;
+      width: auto;
+    }
+
+    .notebook-toast-host > .notebook-toast {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .notebook-toast-host > .notebook-toast,
+    .notebook-toast-host > .notebook-toast[data-leaving='true'] {
+      animation: none;
+    }
+  }
+</style>

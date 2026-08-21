@@ -1,10 +1,8 @@
 ---
 import { randomUUID } from 'node:crypto'
-import ClipboardCopyIcon from '@lucide/astro/icons/clipboard-copy'
-import MessageCircleIcon from '@lucide/astro/icons/message-circle'
-import Share2Icon from '@lucide/astro/icons/share-2'
 
 import ArticleSharePanelClient from '@/components/ArticleSharePanelClient.svelte'
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
 import { getSiteCopy, type SiteLocale } from '@/lib/site-copy'
 import { cn } from '@/lib/cn'
 import { articleShareDomHooks, getDataHookAttributes, sharedDomHooks } from '@/lib/dom-hooks'
@@ -28,7 +26,7 @@ const linkedinHref = `https://www.linkedin.com/sharing/share-offsite/?url=${enco
 const iconButtonClass = ui.iconButton
 const controllerId = randomUUID()
 const baseSectionClass = useDetailShell
-  ? 'article-detail-shell mx-auto mt-8 w-full border-t border-article-rule pt-8'
+  ? 'article-detail-shell mx-auto mt-8 w-full border-t border-dashed border-article-rule pt-8'
   : ui.articleUtilitySection
 ---
 
@@ -58,7 +56,7 @@ const baseSectionClass = useDetailShell
         title={copy.article.share}
         type="button"
       >
-        <Share2Icon aria-hidden="true" class="size-4" />
+        <DoodleIcon name="arrow-right" size={17} />
         <span class="sr-only">{copy.article.share}</span>
       </button>
       <a
@@ -91,7 +89,7 @@ const baseSectionClass = useDetailShell
         target="_blank"
         title={copy.article.shareOnWhatsApp}
       >
-        <MessageCircleIcon aria-hidden="true" class="size-4" />
+        <DoodleIcon name="note" size={17} />
         <span class="sr-only">{copy.article.shareOnWhatsApp}</span>
       </a>
       <button
@@ -102,7 +100,7 @@ const baseSectionClass = useDetailShell
         title={copy.article.copyLink}
         type="button"
       >
-        <ClipboardCopyIcon aria-hidden="true" class="size-4" />
+        <DoodleIcon name="bookmark" size={17} />
         <span class="sr-only">{copy.article.copyLink}</span>
       </button>
     </div>
@@ -122,7 +120,7 @@ const baseSectionClass = useDetailShell
       {copy.article.copyLinkManual}
     </p>
     <input
-      class="w-full rounded-xs border border-site-line bg-site-bg px-3 py-2 text-center font-mono text-xs text-site-ink outline-none transition-colors duration-150 focus:border-site-link-hover lg:text-[0.88rem]"
+      class="w-full rounded-md border border-dashed border-site-line-strong bg-site-bg px-3 py-2 text-center [font-family:var(--notebook-font-mono)] text-xs text-site-ink outline-none transition-colors duration-150 focus:border-site-link-hover focus:outline-2 focus:outline-offset-3 focus:outline-dashed focus:outline-site-link-hover lg:text-[0.88rem]"
       readonly
       type="text"
       value={url}

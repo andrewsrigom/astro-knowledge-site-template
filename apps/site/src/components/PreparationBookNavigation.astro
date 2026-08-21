@@ -1,0 +1,148 @@
+---
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+import type { ResolvedPreparationBook } from '@/lib/preparation-book'
+import { getPreparationVolumeHref } from '@/lib/preparation-links'
+
+type Props = {
+  book: ResolvedPreparationBook
+  currentGuideId?: string | null
+  currentVolumeId?: string | null
+  homeHref: string
+  homeLabel: string
+  isHome?: boolean
+  label: string
+}
+
+const {
+  book,
+  currentGuideId = null,
+  currentVolumeId = null,
+  homeHref,
+  homeLabel,
+  isHome = false,
+  label,
+} = Astro.props
+
+const chapterNumberByGuideId = new Map(
+  book.chapters.map((chapter, index) => [chapter.guideId, index + 1]),
+)
+function toRomanNumeral(value: number) {
+  const numerals = [
+    [10, 'X'],
+    [9, 'IX'],
+    [5, 'V'],
+    [4, 'IV'],
+    [1, 'I'],
+  ] as const
+  let remaining = value
+  let result = ''
+
+  numerals.forEach(([amount, symbol]) => {
+    while (remaining >= amount) {
+      result += symbol
+      remaining -= amount
+    }
+  })
+
+  return result
+}
+---
+
+<nav aria-label={label} class="grid gap-3" data-pagefind-ignore>
+  <a
+    aria-current={isHome ? 'page' : undefined}
+    class:list={[
+      'book-navigation-link grid grid-cols-[1.5rem_minmax(0,1fr)] items-center gap-2 rounded-md px-2.5 py-2.5 [font-family:var(--notebook-font-book)] text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover',
+      isHome
+        ? 'bg-site-hover text-site-link-hover'
+        : 'text-site-ink-soft hover:bg-site-hover hover:text-site-link-hover',
+    ]}
+    href={homeHref}
+  >
+    <DoodleIcon name="book" size={17} />
+    <span>{homeLabel}</span>
+  </a>
+
+  <ol class="m-0 grid list-none gap-1 p-0">
+    {book.volumes.map((volume) => {
+      const isCurrentVolume = currentVolumeId === volume.id
+      const partsWithChapters = volume.parts.filter((part) => part.chapters.length > 0)
+
+      return (
+        <li>
+          <section aria-labelledby={`book-volume-${volume.id}`}>
+            <a
+              aria-current={isCurrentVolume && !currentGuideId ? 'page' : undefined}
+              id={`book-volume-${volume.id}`}
+              class:list={[
+                'book-navigation-link grid grid-cols-[1.6rem_minmax(0,1fr)] items-start gap-2 rounded-md px-2.5 py-2.5 [font-family:var(--notebook-font-book)] text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover',
+                isCurrentVolume
+                  ? 'bg-site-hover font-semibold text-site-link-hover'
+                  : 'font-medium text-site-ink hover:bg-site-hover hover:text-site-link-hover',
+              ]}
+              href={getPreparationVolumeHref(volume.id, book.catalog.locale)}
+            >
+              <span class="pt-0.5 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold tracking-[0.08em] text-site-ink-muted">
+                {toRomanNumeral(volume.order)}
+              </span>
+              <span class="leading-5">{volume.title}</span>
+            </a>
+
+            <div class="mb-2 ml-[1.3rem] mt-1 border-l border-dashed border-site-line-strong pl-3">
+              {partsWithChapters.map((part) => (
+                <section class="py-2" aria-label={part.title}>
+                  {partsWithChapters.length > 1 ? (
+                    <p class="mb-1.5 mt-0 px-2 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-widest text-site-ink-muted">
+                      {part.title}
+                    </p>
+                  ) : null}
+                  <ol class="m-0 grid list-none gap-0.5 p-0">
+                    {part.chapters.map((chapter) => {
+                      const isCurrentChapter = currentGuideId === chapter.guideId
+
+                      return (
+                        <li>
+                          <a
+                            aria-current={isCurrentChapter ? 'page' : undefined}
+                            class:list={[
+                              'book-navigation-link grid grid-cols-[1.7rem_minmax(0,1fr)] gap-2 rounded-md px-2 py-2 [font-family:var(--notebook-font-book)] text-[0.8rem] leading-5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover',
+                              isCurrentChapter
+                                ? 'bg-site-hover font-semibold text-site-link-hover'
+                                : 'text-site-ink-soft hover:bg-site-hover hover:text-site-link-hover',
+                            ]}
+                            href={chapter.href}
+                          >
+                            <span class="[font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) text-site-ink-muted">
+                              {chapterNumberByGuideId.get(chapter.guideId)}
+                            </span>
+                            <span>{chapter.guide.data.title}</span>
+                          </a>
+                        </li>
+                      )
+                    })}
+                  </ol>
+                </section>
+              ))}
+            </div>
+          </section>
+        </li>
+      )
+    })}
+  </ol>
+</nav>
+
+<style>
+  .book-navigation-link[aria-current='page'] {
+    position: relative;
+  }
+
+  .book-navigation-link[aria-current='page']::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0.15rem 0;
+    width: 0.18rem;
+    background: var(--site-link-hover);
+    border-radius: 999px;
+    transform: rotate(-1deg);
+  }
+</style>

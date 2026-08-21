@@ -1,5 +1,7 @@
 ---
 import { cn } from '@/lib/cn'
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+import { getNotebookDoodleForPageType } from '@/lib/notebook-doodles'
 
 type ExploreLink = {
   href: string
@@ -36,53 +38,17 @@ function getItemClass(isActive: boolean) {
 <details class="relative" data-dismiss-on-outside="true">
   <summary class={cn(triggerClass, 'list-none [&::-webkit-details-marker]:hidden')}>
     <span>{triggerLabel}</span>
-    <svg class="size-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path d="m6 9 6 6 6-6" />
-    </svg>
+    <DoodleIcon class="rotate-90" name="arrow-right" size={15} />
   </summary>
 
   <div class={menuClass}>
     {links.map((link) => (
       <a class={getItemClass(link.isActive)} href={link.href} onclick={closeMenuOnClick}>
-        {link.pageType === 'articles' ? (
-          <svg aria-hidden="true" class="size-4 shrink-0 text-site-link-hover" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
-          </svg>
-        ) : link.pageType === 'challenges' ? (
-          <svg aria-hidden="true" class="size-4 shrink-0 text-site-link-hover" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M19.44 12.99a1.5 1.5 0 0 0 0-1.98l1.1-1.1a1 1 0 0 0-1.42-1.42l-1.1 1.1a1.5 1.5 0 0 0-1.98 0l-1.1-1.1a1 1 0 1 0-1.42 1.42l1.1 1.1a1.5 1.5 0 0 0 0 1.98l-1.1 1.1a1 1 0 0 0 1.42 1.42l1.1-1.1a1.5 1.5 0 0 0 1.98 0l1.1 1.1a1 1 0 0 0 1.42-1.42Z" />
-            <path d="M12 2v4" />
-            <path d="M12 18v4" />
-            <path d="M2 12h4" />
-            <path d="M18 12h4" />
-          </svg>
-        ) : link.pageType === 'concepts' ? (
-          <svg aria-hidden="true" class="size-4 shrink-0 text-site-link-hover" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M12 18V5" />
-            <path d="M9 8c0-1.66 1.34-3 3-3s3 1.34 3 3c0 1.26-.78 2.34-1.88 2.78A4 4 0 0 0 11 14.5V15" />
-            <path d="M12 22h.01" />
-          </svg>
-        ) : link.pageType === 'glossary' ? (
-          <svg aria-hidden="true" class="size-4 shrink-0 text-site-link-hover" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M12 7v14" />
-            <path d="M3 18h18" />
-            <path d="M8 3h8a4 4 0 0 1 4 4v11" />
-            <path d="M4 14V7a4 4 0 0 1 4-4" />
-          </svg>
-        ) : link.pageType === 'topics' ? (
-          <svg aria-hidden="true" class="size-4 shrink-0 text-site-link-hover" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M20 10V4H4v6" />
-            <path d="M4 14v6h16v-6" />
-            <path d="M8 8h8" />
-            <path d="M8 16h8" />
-          </svg>
-        ) : (
-          <svg aria-hidden="true" class="size-4 shrink-0 text-site-link-hover" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <circle cx="6" cy="19" r="3" />
-            <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7H6.74A3 3 0 0 1 4 7.77 3 3 0 0 1 7 5h11" />
-          </svg>
-        )}
+        <DoodleIcon
+          class="shrink-0 text-site-link-hover"
+          name={getNotebookDoodleForPageType(link.pageType)}
+          size={17}
+        />
         {link.label}
       </a>
     ))}

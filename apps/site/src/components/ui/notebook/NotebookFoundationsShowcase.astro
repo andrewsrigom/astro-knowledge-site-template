@@ -1,0 +1,695 @@
+---
+import NotebookButton from '@/components/ui/notebook/NotebookButton.astro'
+import NotebookCallout from '@/components/ui/notebook/NotebookCallout.astro'
+import NotebookCard from '@/components/ui/notebook/NotebookCard.astro'
+import NotebookCheckbox from '@/components/ui/notebook/NotebookCheckbox.astro'
+import NotebookCodeBlock from '@/components/ui/notebook/NotebookCodeBlock.astro'
+import NotebookDivider from '@/components/ui/notebook/NotebookDivider.astro'
+import NotebookInput from '@/components/ui/notebook/NotebookInput.astro'
+import NotebookLink from '@/components/ui/notebook/NotebookLink.astro'
+import NotebookRadio from '@/components/ui/notebook/NotebookRadio.astro'
+import NotebookTabs from '@/components/ui/notebook/NotebookTabs.astro'
+import NotebookTabPanel from '@/components/ui/notebook/NotebookTabPanel.astro'
+import NotebookTextarea from '@/components/ui/notebook/NotebookTextarea.astro'
+
+const codeSample = `function contract(input) {
+  const output = process(input)
+  return output
+}
+
+function process(x) {
+  return x * 2
+}`
+---
+
+<div class="notebook-foundations">
+  <section class="notebook-foundation" aria-labelledby="foundations-typography-title">
+    <header>
+      <h2 id="foundations-typography-title">Tipografia — três vozes</h2>
+      <p>
+        O app é <em>um livro que alguém já anotou pra você</em>. Cada camada tem sua fonte.
+      </p>
+    </header>
+
+    <div class="foundation-voice" data-voice="book">
+      <p class="foundation-voice__label">Voz 1 · <strong>Livro</strong> — <code>var(--notebook-font-book)</code></p>
+      <div class="foundation-voice__samples voice-book">
+        <p class="voice-book__title">Escolhendo a estrutura de dados</p>
+        <p class="voice-book__body">
+          Uma estrutura só faz sentido depois que o contrato do problema está claro.
+          O custo esperado guia a escolha; a escolha muda a implementação; a implementação
+          muda a prova. Três passos, uma direção.
+        </p>
+      </div>
+    </div>
+
+    <NotebookDivider variant="dashed" tone="muted" density="loose" />
+
+    <div class="foundation-voice" data-voice="hand">
+      <p class="foundation-voice__label">Voz 2 · <strong>Anotação</strong> — <code>var(--notebook-font-hand)</code></p>
+      <div class="foundation-voice__samples voice-hand">
+        <p class="voice-hand__xs">HAND-XS — RÓTULOS PEQUENOS · <code>--notebook-hand-xs</code></p>
+        <p class="voice-hand__sm">Hand-sm — labels de post-it · <code>--notebook-hand-sm</code></p>
+        <p class="voice-hand__md">Hand-md — perguntas na margem · <code>--notebook-hand-md</code></p>
+        <p class="voice-hand__lg">Hand-lg — títulos manuscritos · <code>--notebook-hand-lg</code></p>
+        <p class="voice-hand__xl">Hand-xl — selos e destaques</p>
+        <p class="voice-hand__2xl">Hand-2xl — números grandes</p>
+      </div>
+    </div>
+
+    <NotebookDivider variant="dashed" tone="muted" density="loose" />
+
+    <div class="foundation-voice" data-voice="mono">
+      <p class="foundation-voice__label">Voz 3 · <strong>Código</strong> — <code>var(--notebook-font-mono)</code></p>
+      <div class="foundation-voice__samples voice-mono">
+        <pre><code>function contract(input) &lbrace;
+  const output = process(input)
+  return output
+&rbrace;</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="notebook-foundation" aria-labelledby="foundations-divider-title">
+    <header>
+      <h2 id="foundations-divider-title">Divisores</h2>
+      <p>Separadores tracejados na paleta do caderno. Substituem <code>&lt;hr&gt;</code>.</p>
+    </header>
+    <div class="foundation-dividers">
+      <div class="divider-sample">
+        <span class="divider-sample__label">dashed · loose · muted</span>
+        <NotebookDivider variant="dashed" density="loose" tone="muted" />
+      </div>
+      <div class="divider-sample">
+        <span class="divider-sample__label">dashed · regular · ink</span>
+        <NotebookDivider variant="dashed" density="regular" tone="ink" />
+      </div>
+      <div class="divider-sample">
+        <span class="divider-sample__label">dotted · dense · strong</span>
+        <NotebookDivider variant="dotted" density="dense" tone="strong" />
+      </div>
+      <div class="divider-sample">
+        <span class="divider-sample__label">wavy · muted</span>
+        <NotebookDivider variant="wavy" tone="muted" />
+      </div>
+      <div class="divider-sample">
+        <span class="divider-sample__label">dashed · accent</span>
+        <NotebookDivider variant="dashed" tone="accent" />
+      </div>
+      <div class="divider-sample-vertical">
+        <span class="divider-sample__label">vertical · dashed · muted</span>
+        <div class="divider-vertical-row">
+          <span>coluna A</span>
+          <NotebookDivider orientation="vertical" variant="dashed" tone="muted" density="loose" />
+          <span>coluna B</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="notebook-foundation" aria-labelledby="foundations-button-title">
+    <header>
+      <h2 id="foundations-button-title">Botões</h2>
+      <p>Ações no idioma do caderno: post-it de destaque, contorno tracejado, sublinhado à mão.</p>
+    </header>
+
+    <div class="foundation-button-group">
+      <span class="foundation-button-group__label">Variantes · tamanho <code>md</code></span>
+      <div class="foundation-button-row">
+        <NotebookButton icon="target" tone="accent">Confirmar</NotebookButton>
+        <NotebookButton icon="check" tone="mint" variant="secondary">Salvar rascunho</NotebookButton>
+        <NotebookButton icon="reset" tone="coral" variant="ghost">Cancelar</NotebookButton>
+        <NotebookButton icon="arrow-right" tone="lemon" variant="link">
+          Ver referência
+        </NotebookButton>
+      </div>
+    </div>
+
+    <div class="foundation-button-group">
+      <span class="foundation-button-group__label">Tamanhos · variante <code>primary</code></span>
+      <div class="foundation-button-row">
+        <NotebookButton size="sm" tone="accent" icon="spark">Pequeno</NotebookButton>
+        <NotebookButton size="md" tone="accent" icon="spark">Médio</NotebookButton>
+        <NotebookButton size="lg" tone="accent" icon="spark">Grande</NotebookButton>
+      </div>
+    </div>
+
+    <div class="foundation-button-group">
+      <span class="foundation-button-group__label">Tons</span>
+      <div class="foundation-button-row">
+        <NotebookButton tone="accent">Accent</NotebookButton>
+        <NotebookButton tone="mint">Mint</NotebookButton>
+        <NotebookButton tone="lemon">Lemon</NotebookButton>
+        <NotebookButton tone="coral">Coral</NotebookButton>
+        <NotebookButton tone="pink">Pink</NotebookButton>
+        <NotebookButton tone="violet">Violet</NotebookButton>
+      </div>
+    </div>
+
+    <div class="foundation-button-group">
+      <span class="foundation-button-group__label">Como link</span>
+      <div class="foundation-button-row">
+        <NotebookButton href="#" icon="arrow-right" iconPosition="end">Ir para a próxima seção</NotebookButton>
+        <NotebookButton href="#" tone="mint" variant="secondary">Baixar PDF</NotebookButton>
+        <NotebookButton href="#" tone="lemon" variant="link">Termos de uso</NotebookButton>
+      </div>
+    </div>
+
+    <div class="foundation-button-group">
+      <span class="foundation-button-group__label">Estados</span>
+      <div class="foundation-button-row">
+        <NotebookButton tone="accent">Normal</NotebookButton>
+        <NotebookButton tone="accent" disabled>Desabilitado</NotebookButton>
+      </div>
+    </div>
+  </section>
+
+  <section class="notebook-foundation" aria-labelledby="foundations-form-title">
+    <header>
+      <h2 id="foundations-form-title">Formulário</h2>
+      <p>Campos que parecem preenchidos à mão sobre a linha do caderno.</p>
+    </header>
+
+    <div class="foundation-form-frame">
+      <div class="foundation-form-row">
+        <NotebookInput
+          id="demo-name"
+          label="Como você se chama?"
+          hint="Nome que você prefere ver nas anotações."
+          placeholder="Digite aqui…"
+          icon="pencil"
+          tone="accent"
+        />
+        <NotebookInput
+          id="demo-email"
+          label="Email"
+          type="email"
+          hint="Só pra guardar seu progresso."
+          placeholder="voce@exemplo.com"
+          icon="note"
+          tone="mint"
+          required
+        />
+      </div>
+
+      <div class="foundation-form-row">
+        <NotebookInput
+          id="demo-search"
+          label="Buscar"
+          type="search"
+          placeholder="o que você quer encontrar?"
+          icon="search"
+          tone="lemon"
+          size="lg"
+        />
+        <NotebookInput
+          id="demo-invalid"
+          label="Com erro"
+          hint="Este campo parece inválido."
+          value="algo errado"
+          invalid
+        />
+      </div>
+
+      <NotebookTextarea
+        id="demo-notes"
+        label="Suas anotações"
+        hint="Escreva livremente. As linhas ficam alinhadas conforme você digita."
+        placeholder="Comece a escrever…"
+        rows={5}
+        tone="accent"
+      />
+
+      <div class="foundation-form-columns">
+        <div class="foundation-form-column">
+          <span class="foundation-form-column__title">Checkbox</span>
+          <NotebookCheckbox
+            id="demo-check-1"
+            label="Marcar como lido"
+            hint="Some da lista de pendências."
+            tone="mint"
+            checked
+          />
+          <NotebookCheckbox
+            id="demo-check-2"
+            label="Enviar para revisão depois"
+            tone="lemon"
+          />
+          <NotebookCheckbox
+            id="demo-check-3"
+            label="Sincronizar com Anki"
+            hint="Você precisa conectar sua conta primeiro."
+            tone="coral"
+            disabled
+          />
+        </div>
+
+        <div class="foundation-form-column">
+          <span class="foundation-form-column__title">Radio</span>
+          <NotebookRadio
+            id="demo-radio-1"
+            name="demo-mode"
+            value="read"
+            label="Modo leitura"
+            hint="Foca no conteúdo, sem edição."
+            tone="accent"
+            checked
+          />
+          <NotebookRadio
+            id="demo-radio-2"
+            name="demo-mode"
+            value="annotate"
+            label="Modo anotação"
+            hint="Habilita marcadores, notas e stickers."
+            tone="pink"
+          />
+          <NotebookRadio
+            id="demo-radio-3"
+            name="demo-mode"
+            value="study"
+            label="Modo estudo"
+            hint="Proteção de foco: sem distrações."
+            tone="mint"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="notebook-foundation" aria-labelledby="foundations-link-title">
+    <header>
+      <h2 id="foundations-link-title">Links inline</h2>
+      <p>Palavras que valem clique dentro de um parágrafo do livro.</p>
+    </header>
+
+    <div class="foundation-link-frame">
+      <p class="foundation-link-copy">
+        A variância do algoritmo cai quando você define o contrato antes de escolher a
+        <NotebookLink href="#" tone="accent">estrutura de dados</NotebookLink>.
+        Isso é verdade especialmente quando você está lidando com
+        <NotebookLink href="#" tone="mint" variant="highlight">grafos irregulares</NotebookLink>
+        ou com <NotebookLink href="#" tone="coral" variant="highlight">arrays gigantes</NotebookLink>
+        que não cabem em memória.
+      </p>
+      <p class="foundation-link-copy">
+        Para se aprofundar, veja o capítulo
+        <NotebookLink href="#" variant="underline">Estratégias de particionamento</NotebookLink>
+        ou o artigo clássico do Knuth em
+        <NotebookLink href="https://example.com" external variant="underline">TAOCP volume 3</NotebookLink>.
+      </p>
+      <p class="foundation-link-copy">
+        Em rodapés e barras discretas use
+        <NotebookLink href="#" variant="plain">termos de uso</NotebookLink> ou
+        <NotebookLink href="#" variant="plain">política de privacidade</NotebookLink>.
+      </p>
+    </div>
+  </section>
+
+  <section class="notebook-foundation" aria-labelledby="foundations-tabs-title">
+    <header>
+      <h2 id="foundations-tabs-title">Abas</h2>
+      <p>Navegação horizontal com abas tipo marcador de livro. Teclado: setas, Home, End.</p>
+    </header>
+
+    <div class="foundation-tabs-frame">
+      <NotebookTabs
+        ariaLabel="Seções do problema"
+        defaultTab="contrato"
+        groupId="problem-sections"
+        tabs={[
+          { id: 'problema', label: 'Problema', icon: 'question', tone: 'coral' },
+          { id: 'contrato', label: 'Contrato', icon: 'brackets', tone: 'lemon' },
+          { id: 'referencia', label: 'Referência', icon: 'book', tone: 'accent' },
+          { id: 'prova', label: 'Prova', icon: 'check', tone: 'mint' },
+        ]}
+      >
+        <NotebookTabPanel id="problema">
+          <p>Enumere entradas, saídas, restrições e casos de borda antes de qualquer outra coisa.</p>
+        </NotebookTabPanel>
+        <NotebookTabPanel id="contrato">
+          <p>Escreva a assinatura, a pré-condição, a pós-condição e o custo-alvo. Isso guia a estrutura.</p>
+        </NotebookTabPanel>
+        <NotebookTabPanel id="referencia">
+          <p>Encontre uma solução vizinha já conhecida. O que ela faz igual? O que ela faz diferente?</p>
+        </NotebookTabPanel>
+        <NotebookTabPanel id="prova">
+          <p>Argumente informalmente por que o algoritmo está correto <em>antes</em> de escrevê-lo.</p>
+        </NotebookTabPanel>
+      </NotebookTabs>
+    </div>
+  </section>
+
+  <section class="notebook-foundation" aria-labelledby="foundations-card-title">
+    <header>
+      <h2 id="foundations-card-title">Cartões</h2>
+      <p>Retângulos com esquina vincada, para agrupar informação discreta. Pode virar link.</p>
+    </header>
+
+    <div class="foundation-card-grid">
+      <NotebookCard title="Complexidade" kicker="Capítulo 3" icon="brain" tone="mint">
+        <p>Análise assintótica sem enrolação: O grande, teta, ômega, quando importam.</p>
+        <span slot="footer">14 min de leitura · 8 exercícios</span>
+      </NotebookCard>
+
+      <NotebookCard title="Estruturas de dados" kicker="Capítulo 4" icon="box" tone="accent" href="#">
+        <p>Escolha por custo esperado, não por moda. Arrays, listas, árvores, hashes.</p>
+        <span slot="footer">Ir para o capítulo →</span>
+      </NotebookCard>
+
+      <NotebookCard title="Sem tom" kicker="Neutro" icon="target" variant="outlined">
+        <p>Variante <code>outlined</code> é só contorno tracejado. Boa para listas grandes.</p>
+      </NotebookCard>
+
+      <NotebookCard title="Grafos" kicker="Capítulo 7" icon="network" tone="violet">
+        <p>DFS, BFS, Dijkstra, MST. Quando cada aresta vale seu peso.</p>
+        <span slot="footer">3 seções · 22 min</span>
+      </NotebookCard>
+    </div>
+  </section>
+
+  <section class="notebook-foundation" aria-labelledby="foundations-callout-title">
+    <header>
+      <h2 id="foundations-callout-title">Callouts</h2>
+      <p>Blocos de aviso anotados: info, dica, sucesso, atenção e cuidado.</p>
+    </header>
+
+    <div class="foundation-callout-stack">
+      <NotebookCallout variant="info">
+        <p>Este capítulo assume que você já conhece complexidade assintótica.</p>
+      </NotebookCallout>
+
+      <NotebookCallout variant="tip">
+        <p>Escreva o contrato antes de escolher a estrutura de dados. Você evita 3 refatorações.</p>
+      </NotebookCallout>
+
+      <NotebookCallout variant="success">
+        <p>Sua solução passou nos 4 casos de borda testados. Bom trabalho.</p>
+      </NotebookCallout>
+
+      <NotebookCallout variant="warn">
+        <p>Esta abordagem é O(n²) no pior caso — verifique se o input pode chegar grande.</p>
+      </NotebookCallout>
+
+      <NotebookCallout variant="danger">
+        <p>Alterar essa estrutura no meio do loop leva a comportamento indefinido.</p>
+      </NotebookCallout>
+    </div>
+  </section>
+
+  <section class="notebook-foundation" aria-labelledby="foundations-code-title">
+    <header>
+      <h2 id="foundations-code-title">Blocos de código</h2>
+      <p>Moldura tracejada e rótulo de linguagem em fita washi.</p>
+    </header>
+
+    <div class="foundation-code-stack">
+      <NotebookCodeBlock code={codeSample} language="JS" tone="lemon" />
+
+      <NotebookCodeBlock
+        code={codeSample}
+        filename="contract.ts"
+        language="TS"
+        showLineNumbers
+        tone="mint"
+      />
+
+      <NotebookCodeBlock language="bash" tone="coral">
+        <span class="notebook-code-block__line">
+          <span class="notebook-code-block__line-text">$ pnpm install @fontsource/caveat</span>
+        </span>
+        <span class="notebook-code-block__line">
+          <span class="notebook-code-block__line-text">$ pnpm dev</span>
+        </span>
+      </NotebookCodeBlock>
+    </div>
+  </section>
+</div>
+
+<style>
+  .notebook-foundations {
+    display: grid;
+    gap: 3.5rem;
+    margin-bottom: 4rem;
+  }
+
+  .notebook-foundation {
+    display: grid;
+    gap: 1.4rem;
+  }
+
+  .notebook-foundation > header {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .notebook-foundation > header h2 {
+    margin: 0;
+    font-family: var(--notebook-font-book);
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: var(--site-ink);
+  }
+
+  .notebook-foundation > header p {
+    margin: 0;
+    color: var(--site-ink-muted);
+    font-size: 0.95rem;
+  }
+
+  .notebook-foundation code {
+    padding: 0.05rem 0.35rem;
+    background: color-mix(in srgb, var(--site-surface-strong) 60%, transparent);
+    border-radius: 0.3rem;
+    font-family: var(--notebook-font-mono);
+    font-size: 0.82rem;
+  }
+
+  /* Vozes */
+  .foundation-voice {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .foundation-voice__label {
+    margin: 0;
+    color: var(--site-ink-muted);
+    font-size: 0.85rem;
+  }
+
+  .foundation-voice__samples {
+    padding: 1.15rem 1.35rem;
+    border: 1px solid var(--site-line);
+    border-radius: 0.6rem;
+    background: color-mix(in srgb, var(--site-surface) 90%, transparent);
+    color: var(--site-ink);
+  }
+
+  .voice-book__title {
+    margin: 0 0 0.5rem;
+    font-family: var(--notebook-font-book);
+    font-size: 1.7rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .voice-book__body {
+    margin: 0;
+    font-family: var(--notebook-font-book);
+    font-size: 1.05rem;
+    line-height: 1.65;
+  }
+
+  .voice-hand {
+    font-family: var(--notebook-font-hand);
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .voice-hand p {
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .voice-hand__xs {
+    font-size: var(--notebook-hand-xs);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .voice-hand__sm {
+    font-size: var(--notebook-hand-sm);
+    font-weight: 700;
+  }
+
+  .voice-hand__md {
+    font-size: var(--notebook-hand-md);
+    font-weight: var(--notebook-hand-weight-regular);
+  }
+
+  .voice-hand__lg {
+    font-size: var(--notebook-hand-lg);
+    font-weight: 700;
+  }
+
+  .voice-hand__xl {
+    font-size: var(--notebook-hand-xl);
+    font-weight: 700;
+  }
+
+  .voice-hand__2xl {
+    font-size: var(--notebook-hand-2xl);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .voice-mono pre {
+    margin: 0;
+    font-family: var(--notebook-font-mono);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: var(--site-ink);
+    background: transparent;
+    white-space: pre-wrap;
+  }
+
+  /* Divisores */
+  .foundation-dividers {
+    display: grid;
+    gap: 1.6rem;
+    padding: 1.5rem;
+    border: 1px solid var(--site-line);
+    border-radius: 0.6rem;
+    background: color-mix(in srgb, var(--site-surface) 90%, transparent);
+  }
+
+  .divider-sample {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .divider-sample__label {
+    color: var(--site-ink-muted);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+  }
+
+  .divider-sample-vertical {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .divider-vertical-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 3.2rem;
+    color: var(--site-ink);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-md);
+  }
+
+  /* Botões */
+  .foundation-button-group {
+    display: grid;
+    gap: 0.6rem;
+    padding: 1.35rem 1.5rem;
+    border: 1px solid var(--site-line);
+    border-radius: 0.6rem;
+    background: color-mix(in srgb, var(--site-surface) 90%, transparent);
+  }
+
+  .foundation-button-group__label {
+    color: var(--site-ink-muted);
+    font-size: 0.85rem;
+  }
+
+  .foundation-button-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.85rem 1.1rem;
+  }
+
+  /* Formulário */
+  .foundation-form-frame {
+    display: grid;
+    gap: 1.3rem;
+    padding: 1.5rem;
+    border: 1px solid var(--site-line);
+    border-radius: 0.6rem;
+    background: color-mix(in srgb, var(--site-surface) 90%, transparent);
+  }
+
+  .foundation-form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1.2rem;
+  }
+
+  .foundation-form-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1.4rem;
+    padding-top: 0.4rem;
+  }
+
+  .foundation-form-column {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .foundation-form-column__title {
+    color: var(--site-ink-muted);
+    font-size: 0.85rem;
+  }
+
+  /* Links */
+  .foundation-link-frame {
+    display: grid;
+    gap: 1rem;
+    padding: 1.5rem 1.75rem;
+    border: 1px solid var(--site-line);
+    border-radius: 0.6rem;
+    background: color-mix(in srgb, var(--site-surface) 90%, transparent);
+  }
+
+  .foundation-link-copy {
+    margin: 0;
+    color: var(--site-ink);
+    font-family: var(--notebook-font-book);
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+
+  /* Frames dos novos */
+  .foundation-tabs-frame,
+  .foundation-card-grid,
+  .foundation-callout-stack,
+  .foundation-code-stack {
+    padding: 1.5rem;
+    border: 1px solid var(--site-line);
+    border-radius: 0.6rem;
+    background: color-mix(in srgb, var(--site-surface) 90%, transparent);
+  }
+
+  .foundation-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 1.35rem;
+  }
+
+  .foundation-callout-stack {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .foundation-code-stack {
+    display: grid;
+    gap: 1.6rem;
+  }
+</style>

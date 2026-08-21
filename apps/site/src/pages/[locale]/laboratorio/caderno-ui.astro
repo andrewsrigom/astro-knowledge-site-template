@@ -1,0 +1,86 @@
+---
+import DoodlePalette from '@/components/ui/notebook/DoodlePalette.astro'
+import NotebookFoundationsShowcase from '@/components/ui/notebook/NotebookFoundationsShowcase.astro'
+import NotebookContentShowcase from '@/components/ui/notebook/NotebookContentShowcase.astro'
+import NotebookFeedbackShowcase from '@/components/ui/notebook/NotebookFeedbackShowcase.astro'
+import NotebookLayoutsShowcase from '@/components/ui/notebook/NotebookLayoutsShowcase.astro'
+import NotebookLink from '@/components/ui/notebook/NotebookLink.astro'
+import NotebookNavigationShowcase from '@/components/ui/notebook/NotebookNavigationShowcase.astro'
+import NotebookPrimitivesShowcase from '@/components/ui/notebook/NotebookPrimitivesShowcase.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import {
+  getSupportedLocales,
+  type SiteLocale,
+} from '@/lib/locale-config'
+
+export function getStaticPaths() {
+  return getSupportedLocales().map((locale) => ({
+    params: { locale },
+    props: { locale },
+  }))
+}
+
+type Props = {
+  locale: SiteLocale
+}
+
+const { locale } = Astro.props
+const isPortuguese = locale === 'pt-br'
+const title = isPortuguese ? 'Caderno UI' : 'Notebook UI'
+const description = isPortuguese
+  ? 'Vocabulário visual autoral do SeniorPath para anotações, estudo e engenharia.'
+  : 'SeniorPath original visual vocabulary for notes, study, and engineering.'
+const localeHrefs = Object.fromEntries(
+  getSupportedLocales().map((supportedLocale) => [
+    supportedLocale,
+    `/${supportedLocale}/laboratorio/caderno-ui`,
+  ]),
+)
+---
+
+<BaseLayout
+  contentWidth="wide"
+  description={description}
+  localeHrefs={localeHrefs}
+  noindex={true}
+  pagefind={false}
+  title={title}
+>
+  <div class="mx-auto w-full max-w-6xl px-5 py-12 sm:px-7 lg:px-9">
+    <header class="mb-12 grid max-w-3xl gap-4">
+      <p class="m-0 text-xs font-semibold uppercase tracking-[0.18em] text-site-link-hover">
+        SeniorPath · laboratório visual
+      </p>
+      <h1 class="doodle-lab-title m-0 text-site-ink">
+        {title}
+      </h1>
+      <p class="m-0 max-w-2xl text-lg leading-8 text-site-ink-soft">
+        {description} Os desenhos usam SVG puro, herdam a cor do contexto e permanecem legíveis em qualquer tamanho.
+      </p>
+      <p class="m-0 text-sm text-site-ink-muted">
+        40 doodles · adesivos · post-its · marca-textos
+      </p>
+      <NotebookLink href={`/${locale}/laboratorio/tokens`} variant="underline">
+        {isPortuguese ? 'Consultar tokens e regras de composição' : 'View tokens and composition rules'}
+      </NotebookLink>
+    </header>
+
+    <NotebookFoundationsShowcase />
+    <NotebookFeedbackShowcase />
+    <NotebookNavigationShowcase />
+    <NotebookContentShowcase />
+    <NotebookPrimitivesShowcase />
+    <NotebookLayoutsShowcase />
+    <DoodlePalette />
+  </div>
+</BaseLayout>
+
+<style>
+  .doodle-lab-title {
+    font-family: var(--notebook-font-book);
+    font-size: clamp(2.6rem, 6vw, 4.8rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+</style>

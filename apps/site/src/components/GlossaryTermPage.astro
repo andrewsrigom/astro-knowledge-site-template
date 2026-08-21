@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content'
 import { render } from 'astro:content'
 
 import HeaderTagMeta from '@/components/ui/HeaderTagMeta.astro'
+import PreparationGlossaryTermPage from '@/components/PreparationGlossaryTermPage.astro'
 import { toHashtagLabel } from '@/lib/article-meta'
 import { formatEditorialDate } from '@/lib/format-date'
 import {
@@ -13,8 +14,17 @@ import {
 import { getGlossaryTagEntries } from '@/lib/glossary-tags'
 import { getLocalePath, resolveLocalizedEntryHrefMap, resolveLocaleMap } from '@/lib/locale-config'
 import { resolveEntityOgImageUrl } from '@/lib/og-image'
+import {
+  getPreparationGlossaryReferences,
+  resolvePreparationBook,
+} from '@/lib/preparation-book'
 import { createBreadcrumbSchema, createDefinedTermSchema } from '@/lib/seo'
-import { getGlossaryCollection } from '@/lib/site-content'
+import {
+  getGlossaryCollection,
+  getPreparationCatalogCollection,
+  getVisibleChallengesByLocale,
+  getVisiblePreparationByLocale,
+} from '@/lib/site-content'
 import { translateSiteLabel } from '@/lib/site-labels'
 import { getSiteCopy, getSiteDateLocale, getSiteLocale } from '@/lib/site-copy'
 import ReferenceExploreSection from '@/components/ui/ReferenceExploreSection.astro'
@@ -26,14 +36,19 @@ type Props = {
 
 const { term } = Astro.props
 const { Content, headings = [] } = await render(term)
-const allTerms = await getGlossaryCollection()
+const locale = getSiteLocale(term.data.locale)
+const [allTerms, catalogs, visiblePreparation, visibleChallenges] = await Promise.all([
+  getGlossaryCollection(),
+  getPreparationCatalogCollection(),
+  getVisiblePreparationByLocale(locale),
+  getVisibleChallengesByLocale(locale),
+])
 const localizedTerms = allTerms.filter(
   (entry) => entry.data.termId === term.data.termId && entry.data.status === 'active',
 )
 const activeLocaleTerms = allTerms.filter(
   (entry) => entry.data.locale === term.data.locale && entry.data.status === 'active',
 )
-const locale = getSiteLocale(term.data.locale)
 const glossaryTagMap = new Map(
   getGlossaryTagEntries(activeLocaleTerms, locale).map((tag) => [tag.id, tag]),
 )
@@ -98,7 +113,7 @@ const headerTagItems = term.data.tags
     }
   })
   .filter((item, index, items) => items.findIndex((candidate) => candidate.label === item.label) === index)
-const recommendedTerms = activeLocaleTerms
+const recommendedTermEntries = activeLocaleTerms
   .filter((entry) => entry.data.termId !== term.data.termId)
   .map((entry) => ({
     entry,
@@ -107,11 +122,6 @@ const recommendedTerms = activeLocaleTerms
   .filter((item) => item.score > 0)
   .sort((left, right) => right.score - left.score || left.entry.data.title.localeCompare(right.entry.data.title, locale))
   .slice(0, 3)
-  .map(({ entry }) => ({
-    description: entry.data.summary,
-    href: getGlossaryHrefFromEntry(entry),
-    title: entry.data.title,
-  }))
 const exploreGlossaryLinks = [
   {
     href: getGlossaryIndexHref(locale),
@@ -127,31 +137,66 @@ const exploreGlossaryLinks = [
   }),
 ].filter((item, index, items) => items.findIndex((candidate) => candidate.label === item.label) === index)
 const displayHeadings = headings.filter((heading) => heading.depth === 2 || heading.depth === 3)
+const catalog = catalogs.find((entry) =>
+  entry.data.locale === locale
+  && entry.data.status !== 'archived'
+  && (entry.data.status === 'active' || import.meta.env.DEV),
+)
+const book = catalog ? resolvePreparationBook(catalog.data, visiblePreparation, visibleChallenges) : null
+const glossaryBookReferences = book ? getPreparationGlossaryReferences(book, term.data.termId) : []
+const shouldUsePreparationShell = Boolean(book)
+const bookNoindex = catalog?.data.status === 'draft'
+const recommendedTerms = recommendedTermEntries.map(({ entry }) => ({
+  description: entry.data.summary,
+  href: getGlossaryHrefFromEntry(entry),
+  title: entry.data.title,
+}))
 ---
 
-<ReferenceEntryPage
-  alternateLocaleHrefs={alternateLocaleHrefs}
-  createdMeta={formattedPubDate}
-  description={term.data.description}
-  headings={displayHeadings}
-  locale={locale}
-  localeHrefs={localeHrefs}
-  socialImage={socialImage}
-  structuredData={glossaryStructuredData}
-  title={term.data.title}
-  updatedMeta={formattedUpdatedDate}
-  url={articleUrl}
->
-  <Fragment slot="headerMeta">
-    <HeaderTagMeta items={headerTagItems} />
-  </Fragment>
+{shouldUsePreparationShell && book ? (
+  <PreparationGlossaryTermPage
+    alternateLocaleHrefs={alternateLocaleHrefs}
+    book={book}
+    chapterReferences={glossaryBookReferences}
+    description={term.data.description}
+    headerTagItems={headerTagItems}
+    headings={displayHeadings}
+    locale={locale}
+    localeHrefs={localeHrefs}
+    noindex={bookNoindex}
+    recommendedTerms={recommendedTerms}
+    socialImage={socialImage}
+    structuredData={glossaryStructuredData}
+    title={term.data.title}
+    updatedMeta={formattedUpdatedDate}
+  >
+    <Content />
+  </PreparationGlossaryTermPage>
+) : (
+  <ReferenceEntryPage
+    alternateLocaleHrefs={alternateLocaleHrefs}
+    createdMeta={formattedPubDate}
+    description={term.data.description}
+    headings={displayHeadings}
+    locale={locale}
+    localeHrefs={localeHrefs}
+    socialImage={socialImage}
+    structuredData={glossaryStructuredData}
+    title={term.data.title}
+    updatedMeta={formattedUpdatedDate}
+    url={articleUrl}
+  >
+    <Fragment slot="headerMeta">
+      <HeaderTagMeta items={headerTagItems} />
+    </Fragment>
 
-  <Content />
-  <Fragment slot="afterContent">
-    <ReferenceExploreSection
-      badgeLinks={exploreGlossaryLinks}
-      cards={recommendedTerms}
-      title={copy.startHere.supportHeading}
-    />
-  </Fragment>
-</ReferenceEntryPage>
+    <Content />
+    <Fragment slot="afterContent">
+      <ReferenceExploreSection
+        badgeLinks={exploreGlossaryLinks}
+        cards={recommendedTerms}
+        title={copy.startHere.supportHeading}
+      />
+    </Fragment>
+  </ReferenceEntryPage>
+)}

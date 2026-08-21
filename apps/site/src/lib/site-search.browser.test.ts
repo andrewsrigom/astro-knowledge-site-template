@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  filterSiteSearchResultsByPrefixes,
   getPagefindModulePath,
   getSearchResultGroupLabel,
   shouldCloseSearchWithShortcut,
@@ -25,6 +26,20 @@ describe('site search helpers', () => {
     expect(getPagefindModulePath('/')).toBe('/pagefind/pagefind.js')
     expect(getPagefindModulePath('/docs')).toBe('/docs/pagefind/pagefind.js')
     expect(getPagefindModulePath('/docs/')).toBe('/docs/pagefind/pagefind.js')
+  })
+
+  it('limits book search results to the configured route prefix', () => {
+    const results = [
+      { meta: { title: 'Runtime' }, url: '/pt-br/guia/javascript-runtime' },
+      { meta: { title: 'Promises' }, url: '/pt-br/guia/promises?from=search' },
+      { meta: { title: 'Article' }, url: '/pt-br/artigos/promises' },
+    ]
+
+    expect(filterSiteSearchResultsByPrefixes(results, ['/pt-br/guia/'])).toEqual([
+      results[0],
+      results[1],
+    ])
+    expect(filterSiteSearchResultsByPrefixes(results, [])).toEqual(results)
   })
 
   it('opens with slash only outside editable targets', () => {

@@ -1,0 +1,14 @@
+---
+import { getLegacyPreparationProgramRedirectPaths } from '@/lib/preparation-legacy-redirects'
+import {
+  getPreparationProgramCollection,
+} from '@/lib/site-content'
+
+export async function getStaticPaths() {
+  return getLegacyPreparationProgramRedirectPaths(
+    (await getPreparationProgramCollection()).map((program) => program.data),
+  )
+}
+
+return Astro.redirect(Astro.props.targetHref, Astro.props.statusCode)
+---

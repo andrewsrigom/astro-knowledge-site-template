@@ -3,13 +3,14 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const SECTION_MANIFEST_FILE = 'collections.manifest.json'
-const SYNC_TARGETS = ['articles', 'concepts', 'glossary', 'challenges', 'roadmaps']
-const SUPPORTED_PAGE_TYPES = ['articles', 'tracks', 'topics', 'concepts', 'glossary', 'challenges']
+const SYNC_TARGETS = ['articles', 'concepts', 'glossary', 'challenges', 'preparation', 'roadmaps']
+const SUPPORTED_PAGE_TYPES = ['articles', 'tracks', 'topics', 'concepts', 'glossary', 'challenges', 'preparation']
 const TARGET_BY_PAGE_TYPE = {
   articles: 'articles',
   challenges: 'challenges',
   concepts: 'concepts',
   glossary: 'glossary',
+  preparation: 'preparation',
   tracks: 'roadmaps',
 }
 

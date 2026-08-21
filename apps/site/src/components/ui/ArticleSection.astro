@@ -27,7 +27,7 @@ const {
 const HeadingTag = titleTag
 ---
 
-<section class={cn(sectionClass, className)}>
+<section class={cn(sectionClass, className, 'site-notebook-article-section')}>
   <div class={ui.sectionHeader}>
     <div class="grid gap-1">
       <HeadingTag class={titleClass}>{title}</HeadingTag>
@@ -44,3 +44,24 @@ const HeadingTag = titleTag
     <slot />
   )}
 </section>
+
+<style>
+  .site-notebook-article-section :global(h2),
+  .site-notebook-article-section :global(h3) {
+    position: relative;
+    width: fit-content;
+  }
+
+  .site-notebook-article-section :global(h2)::after,
+  .site-notebook-article-section :global(h3)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: -0.32rem;
+    left: 0;
+    height: 0.16rem;
+    background: color-mix(in srgb, var(--site-link-hover) 78%, transparent);
+    border-radius: 999px;
+    clip-path: polygon(0 40%, 100% 0, 98% 100%, 2% 70%);
+  }
+</style>

@@ -1,6 +1,8 @@
 ---
 import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
 import { cn } from '@/lib/cn'
+import type { NotebookDoodleName } from '@/lib/notebook-doodles'
 import { ui } from '@/lib/ui'
 
 type BreadcrumbItem = {
@@ -12,7 +14,7 @@ type Props = {
   breadcrumbs?: BreadcrumbItem[]
   className?: string
   description: string
-  icon?: any
+  doodle?: NotebookDoodleName
   iconLabel?: string
   sectionClass?: string
   title: string
@@ -22,35 +24,40 @@ const {
   breadcrumbs = [],
   className = '',
   description,
-  icon: Icon = null,
+  doodle,
   iconLabel = '',
   sectionClass = ui.compactSection,
   title,
 } = Astro.props
 const pageHeaderTitleClass =
-  'm-0 font-sans text-[clamp(1.35rem,4vw,1.9rem)] font-semibold tracking-[-0.035em] text-site-link-hover lg:text-[clamp(1.5rem,2.5vw,2.1rem)]'
+  'm-0 [font-family:var(--notebook-font-book)] text-[clamp(2.2rem,6vw,4.2rem)] font-semibold leading-[0.98] tracking-[-0.045em] text-site-ink'
 const pageHeaderDescriptionClass = cn(ui.bodyCopy, 'mt-0')
 ---
 
-<section class={sectionClass}>
-  <div class={cn(ui.toolbar, className)}>
+<section class={cn(sectionClass, 'site-notebook-page-header')}>
+  <div class={cn(ui.toolbar, className, 'site-notebook-page-header__inner')}>
     {breadcrumbs.length > 0 ? <Breadcrumbs items={breadcrumbs} /> : null}
-    {Icon ? (
-      <div class="flex items-stretch gap-3 lg:gap-4">
+    {doodle ? (
+      <div class="flex items-start gap-4 lg:gap-6">
         <span
-          aria-hidden="true"
-          class="inline-flex h-full w-24 shrink-0 items-center justify-center self-stretch text-site-link-hover lg:w-28"
+          aria-hidden={iconLabel ? undefined : 'true'}
+          aria-label={iconLabel || undefined}
+          class="site-notebook-page-header__icon inline-flex size-14 shrink-0 items-center justify-center text-site-link-hover lg:size-18"
+          role={iconLabel ? 'img' : undefined}
         >
-          <Icon class="block h-full w-full max-w-none" stroke-width="0.75" />
+          <DoodleIcon name={doodle} size="clamp(2.3rem, 5vw, 3.2rem)" />
         </span>
-        <div class="min-w-0 flex flex-1 flex-col justify-center gap-0">
+        <div class="min-w-0 flex flex-1 flex-col justify-center gap-2">
           <h1 class={pageHeaderTitleClass}>{title}</h1>
           <p class={pageHeaderDescriptionClass}>{description}</p>
           <slot />
         </div>
       </div>
     ) : (
-      <div class={cn(ui.toolbarIntro, 'gap-0 space-y-0')}>
+      <div class={cn(ui.toolbarIntro, 'relative gap-2 space-y-0')}>
+        <span aria-hidden="true" class="site-notebook-page-header__doodle">
+          <DoodleIcon name="note" size={22} />
+        </span>
         <h1 class={pageHeaderTitleClass}>{title}</h1>
         <p class={pageHeaderDescriptionClass}>{description}</p>
         <slot />
@@ -58,3 +65,44 @@ const pageHeaderDescriptionClass = cn(ui.bodyCopy, 'mt-0')
     )}
   </div>
 </section>
+
+<style>
+  .site-notebook-page-header {
+    margin-top: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .site-notebook-page-header__inner {
+    position: relative;
+  }
+
+  .site-notebook-page-header__inner::after {
+    content: '';
+    width: min(8rem, 28vw);
+    height: 0.18rem;
+    margin-top: 0.5rem;
+    background: var(--site-link-hover);
+    border-radius: 999px;
+    clip-path: polygon(0 35%, 100% 0, 98% 100%, 2% 75%);
+  }
+
+  .site-notebook-page-header__icon {
+    border: 1px dashed var(--site-line-strong);
+    border-radius: 48% 52% 46% 54%;
+    background: color-mix(in srgb, var(--notebook-post-it-blue-bg) 28%, var(--site-surface));
+  }
+
+  .site-notebook-page-header__doodle {
+    position: absolute;
+    top: -0.8rem;
+    right: 0.2rem;
+    display: inline-grid;
+    color: var(--site-link-hover);
+    transform: rotate(-3deg);
+  }
+
+  @media (max-width: 40rem) {
+    .site-notebook-page-header__doodle {
+      display: none;
+    }
+  }
+</style>

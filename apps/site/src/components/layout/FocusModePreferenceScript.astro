@@ -1,0 +1,22 @@
+---
+import { siteStorageKeys } from '@/lib/site-config'
+---
+
+<script data-focus-mode-key={siteStorageKeys.focusModePreference} is:inline>
+  try {
+    const currentScript = document.currentScript
+
+    if (!(currentScript instanceof HTMLScriptElement)) {
+      throw new Error('Missing focus mode script context')
+    }
+
+    const storageKey = currentScript.dataset.focusModeKey ?? ''
+    let preference = null
+
+    try {
+      preference = storageKey ? window.localStorage.getItem(storageKey) : null
+    } catch {}
+
+    document.documentElement.dataset.focusMode = preference === 'on' ? 'true' : 'false'
+  } catch {}
+</script>

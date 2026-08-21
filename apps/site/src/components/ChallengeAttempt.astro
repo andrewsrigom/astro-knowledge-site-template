@@ -1,0 +1,61 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import { render } from 'astro:content'
+
+import ChallengePlayground from '@/components/ChallengePlayground.svelte'
+import SolutionReveal from '@/components/SolutionReveal.svelte'
+import { cn } from '@/lib/cn'
+import { getSiteCopy, getSiteLocale } from '@/lib/site-copy'
+import { ui } from '@/lib/ui'
+
+type Props = {
+  challenge: CollectionEntry<'challenges'>
+}
+
+const { challenge } = Astro.props
+const { Content } = await render(challenge)
+const locale = getSiteLocale(challenge.data.locale)
+const copy = getSiteCopy(locale)
+---
+
+{challenge.data.starterCode ? (
+  <div class="scroll-mt-28" id="challenge-playground">
+    <ChallengePlayground
+      className="article-detail-shell mt-8"
+      client:visible
+      challengeId={challenge.data.challengeId}
+      locale={locale}
+      starterCode={challenge.data.starterCode}
+      testCases={challenge.data.testCases}
+      solutionLanguage={challenge.data.solutionLanguage}
+      hints={challenge.data.hints}
+      complexity={challenge.data.complexity ?? null}
+    />
+  </div>
+) : null}
+
+<div class="scroll-mt-28" id="challenge-solution">
+  <SolutionReveal
+    className="article-detail-shell mt-8"
+    client:visible
+    challengeId={challenge.data.challengeId}
+    copy={copy.solutionReveal}
+  >
+    {challenge.data.complexity ? (
+      <section class={cn(ui.panel, 'mb-8 grid gap-3 p-5')}>
+        <h2 class={ui.eyebrow}>{copy.challenge.complexity}</h2>
+        <div class="grid gap-2 text-[0.98rem] leading-7 text-site-ink-soft">
+          <p class="m-0">
+            <strong>{copy.challenge.complexityTimeLabel}:</strong> {challenge.data.complexity.time}
+          </p>
+          <p class="m-0">
+            <strong>{copy.challenge.complexitySpaceLabel}:</strong> {challenge.data.complexity.space}
+          </p>
+        </div>
+      </section>
+    ) : null}
+    <div class="article-prose">
+      <Content />
+    </div>
+  </SolutionReveal>
+</div>

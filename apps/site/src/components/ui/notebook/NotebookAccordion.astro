@@ -1,0 +1,47 @@
+---
+type Props = {
+  class?: string
+  groupId: string
+  mode?: 'multiple' | 'single'
+}
+
+const {
+  class: className,
+  groupId,
+  mode = 'multiple',
+}: Props = Astro.props
+---
+
+<div
+  class:list={['notebook-accordion', className]}
+  data-group-id={groupId}
+  data-mode={mode}
+>
+  <slot />
+</div>
+
+<script>
+  function setupNotebookAccordions() {
+    const accordions = document.querySelectorAll<HTMLElement>('.notebook-accordion')
+
+    for (const accordion of accordions) {
+      if (accordion.dataset.accordionReady === 'true') continue
+      const groupId = accordion.dataset.groupId
+      if (accordion.dataset.mode === 'single' && groupId) {
+        const items = accordion.querySelectorAll<HTMLDetailsElement>(':scope > details[data-notebook-accordion-item]')
+        items.forEach((item) => item.setAttribute('name', groupId))
+      }
+      accordion.dataset.accordionReady = 'true'
+    }
+  }
+
+  setupNotebookAccordions()
+  document.addEventListener('astro:page-load', setupNotebookAccordions)
+</script>
+
+<style>
+  .notebook-accordion {
+    display: grid;
+    gap: 0.75rem;
+  }
+</style>

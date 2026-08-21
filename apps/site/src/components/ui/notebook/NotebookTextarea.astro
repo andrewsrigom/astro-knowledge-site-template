@@ -1,0 +1,162 @@
+---
+type Props = {
+  class?: string
+  hint?: string
+  id: string
+  invalid?: boolean
+  label: string
+  name?: string
+  placeholder?: string
+  required?: boolean
+  rows?: number
+  tone?: 'accent' | 'coral' | 'lemon' | 'mint' | 'pink' | 'violet'
+  value?: string
+}
+
+const {
+  class: className,
+  hint,
+  id,
+  invalid = false,
+  label,
+  name,
+  placeholder,
+  required = false,
+  rows = 4,
+  tone = 'accent',
+  value,
+} = Astro.props
+
+const describedBy = hint ? `${id}-hint` : undefined
+---
+
+<div class:list={['notebook-textarea', className]} data-invalid={invalid ? 'true' : 'false'} data-tone={tone}>
+  <label class="notebook-textarea__label" for={id}>
+    {label}
+    {required ? <span aria-hidden="true" class="notebook-textarea__required">*</span> : null}
+  </label>
+  <textarea
+    aria-describedby={describedBy}
+    aria-invalid={invalid || undefined}
+    class="notebook-textarea__control"
+    id={id}
+    name={name ?? id}
+    placeholder={placeholder}
+    required={required}
+    rows={rows}
+  >{value}</textarea>
+  {hint ? (
+    <p class="notebook-textarea__hint" id={describedBy}>{hint}</p>
+  ) : null}
+</div>
+
+<style>
+  .notebook-textarea {
+    --textarea-ink: var(--site-ink);
+    --textarea-line: color-mix(in srgb, var(--notebook-post-it-blue-ink) 32%, transparent);
+    --textarea-focus: color-mix(in srgb, var(--notebook-post-it-blue-ink) 82%, var(--site-link-hover));
+    --textarea-hint: var(--site-ink-muted);
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .notebook-textarea[data-tone='coral'] {
+    --textarea-line: color-mix(in srgb, var(--notebook-post-it-coral-ink) 32%, transparent);
+    --textarea-focus: var(--notebook-post-it-coral-ink);
+  }
+  .notebook-textarea[data-tone='mint'] {
+    --textarea-line: color-mix(in srgb, var(--notebook-post-it-mint-ink) 32%, transparent);
+    --textarea-focus: var(--notebook-post-it-mint-ink);
+  }
+  .notebook-textarea[data-tone='lemon'] {
+    --textarea-line: color-mix(in srgb, var(--notebook-post-it-lemon-ink) 40%, transparent);
+    --textarea-focus: var(--notebook-post-it-lemon-ink);
+  }
+  .notebook-textarea[data-tone='pink'] {
+    --textarea-line: color-mix(in srgb, var(--notebook-post-it-pink-ink) 32%, transparent);
+    --textarea-focus: var(--notebook-post-it-pink-ink);
+  }
+  .notebook-textarea[data-tone='violet'] {
+    --textarea-line: color-mix(in srgb, var(--notebook-sticker-violet-ink) 32%, transparent);
+    --textarea-focus: var(--notebook-sticker-violet-ink);
+  }
+
+  .notebook-textarea[data-invalid='true'] {
+    --textarea-line: color-mix(in srgb, var(--notebook-post-it-coral-ink) 42%, transparent);
+    --textarea-focus: var(--notebook-post-it-coral-ink);
+  }
+
+  .notebook-textarea__label {
+    color: var(--textarea-focus);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .notebook-textarea__required {
+    margin-left: 0.15rem;
+    color: var(--notebook-post-it-coral-ink);
+  }
+
+  .notebook-textarea__control {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.4rem 0.75rem 0.55rem;
+    color: var(--textarea-ink);
+    background-color: transparent;
+    /* linhas horizontais do caderno via repeating-linear-gradient */
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(var(--notebook-hand-lg) - 1px),
+      var(--textarea-line) calc(var(--notebook-hand-lg) - 1px),
+      var(--textarea-line) var(--notebook-hand-lg)
+    );
+    background-attachment: local;
+    background-position: 0 0.15rem;
+    border: 1.5px dashed color-mix(in srgb, var(--textarea-focus) 30%, transparent);
+    border-radius: 0.5rem 0.65rem 0.5rem 0.6rem;
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-md);
+    font-weight: var(--notebook-hand-weight-regular);
+    line-height: var(--notebook-hand-lg);
+    resize: vertical;
+    transition: border-color 140ms var(--site-transition-smooth);
+  }
+
+  .notebook-textarea__control::placeholder {
+    color: color-mix(in srgb, var(--site-ink-muted) 78%, transparent);
+    font-family: var(--notebook-font-hand);
+    font-style: italic;
+  }
+
+  .notebook-textarea__control:focus {
+    outline: none;
+    border-color: var(--textarea-focus);
+    border-style: solid;
+  }
+
+  .notebook-textarea__control:focus-visible {
+    outline: 2px dashed var(--textarea-focus);
+    outline-offset: 3px;
+  }
+
+  .notebook-textarea__control:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  .notebook-textarea__hint {
+    margin: 0;
+    color: var(--textarea-hint);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+    line-height: 1.3;
+  }
+
+  .notebook-textarea[data-invalid='true'] .notebook-textarea__hint {
+    color: var(--notebook-post-it-coral-ink);
+  }
+</style>

@@ -1,0 +1,12 @@
+---
+import { getDefaultLocalePreparationCompetencyRedirectPaths } from '@/lib/preparation-legacy-redirects'
+import { getPreparationCatalogCollection } from '@/lib/site-content'
+
+export async function getStaticPaths() {
+  return getDefaultLocalePreparationCompetencyRedirectPaths(
+    (await getPreparationCatalogCollection()).map((catalog) => catalog.data),
+  )
+}
+
+return Astro.redirect(Astro.props.targetHref, Astro.props.statusCode)
+---

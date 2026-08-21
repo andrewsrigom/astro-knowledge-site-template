@@ -1,7 +1,29 @@
 @import "tailwindcss";
+@import "@fontsource/caveat/400.css";
+@import "@fontsource/caveat/500.css";
+@import "@fontsource/caveat/600.css";
+@import "@fontsource/caveat/700.css";
 
 :root {
   color-scheme: dark;
+
+  /* Vozes tipográficas — o livro, a anotação e o código */
+  --notebook-font-ui: 'Helvetica Neue', 'SF Pro Display', Arial, Roboto, system-ui, Georgia, serif;
+  --notebook-font-book: Georgia, 'Times New Roman', 'DejaVu Serif', serif;
+  --notebook-font-hand: 'Caveat', 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive;
+  --notebook-font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Escala da voz manuscrita (Caveat é maior que fontes normais, então bumpa em ~15%) */
+  --notebook-hand-xs: 0.9rem;
+  --notebook-hand-sm: 1.05rem;
+  --notebook-hand-md: 1.2rem;
+  --notebook-hand-lg: 1.55rem;
+  --notebook-hand-xl: 2.1rem;
+  --notebook-hand-2xl: 2.85rem;
+
+  /* Peso padrão da voz manuscrita */
+  --notebook-hand-weight-regular: 500;
+  --notebook-hand-weight-strong: 700;
 
   /* Primitive palette and motion */
   --site-base-bg: #1a1b26;
@@ -41,6 +63,44 @@
   --site-ink-subtle: color-mix(in srgb, var(--site-line-strong) 52%, var(--site-link-hover));
   --site-accent: var(--site-base-accent);
   --site-accent-soft: var(--site-base-surface-strong);
+  --book-marker: rgba(250, 204, 21, 0.42);
+  --book-note-bg: #3a3424;
+  --book-note-ink: #fff4c2;
+  --book-note-line: #e9bd4f;
+  --book-pencil: #a8b8ff;
+  --book-tape: rgba(255, 255, 255, 0.2);
+  --book-tab-pink: #d96b9d;
+  --book-tab-green: #4fa883;
+  --book-tab-blue: #7694ef;
+  --notebook-paper-white: #242737;
+  --notebook-sticker-blue-bg: #2f5fb8;
+  --notebook-sticker-blue-ink: #eff4ff;
+  --notebook-sticker-coral-bg: #8a3f36;
+  --notebook-sticker-coral-ink: #fff1ed;
+  --notebook-sticker-lemon-bg: #7a620d;
+  --notebook-sticker-lemon-ink: #fff6bf;
+  --notebook-sticker-mint-bg: #236c50;
+  --notebook-sticker-mint-ink: #ecfff6;
+  --notebook-sticker-violet-bg: #58419b;
+  --notebook-sticker-violet-ink: #f5efff;
+  --notebook-post-it-lemon-bg: #51491f;
+  --notebook-post-it-lemon-ink: #fff1ac;
+  --notebook-post-it-pink-bg: #5a3449;
+  --notebook-post-it-pink-ink: #ffdceb;
+  --notebook-post-it-mint-bg: #274f41;
+  --notebook-post-it-mint-ink: #d8ffec;
+  --notebook-post-it-blue-bg: #293f64;
+  --notebook-post-it-blue-ink: #deebff;
+  --notebook-post-it-coral-bg: #633b32;
+  --notebook-post-it-coral-ink: #ffe1da;
+  --notebook-tape-paper-bg: #65614f;
+  --notebook-highlight-yellow: rgb(255 222 64 / 0.62);
+  --notebook-highlight-pink: rgb(255 96 176 / 0.5);
+  --notebook-highlight-green: rgb(72 224 145 / 0.48);
+  --notebook-highlight-blue: rgb(90 177 255 / 0.5);
+  --notebook-highlight-orange: rgb(255 154 72 / 0.52);
+  --notebook-highlight-violet: rgb(177 126 255 / 0.5);
+  --notebook-shadow-rgb: 0 0 0;
   --site-link-hover: var(--site-base-link);
   --site-hover-surface: color-mix(in srgb, var(--site-surface-strong) 82%, var(--site-surface));
   --site-control-hover: color-mix(in srgb, var(--site-surface-strong) 90%, var(--site-link-hover) 10%);
@@ -117,12 +177,105 @@
   --site-transition-smooth: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --site-base-bg: #f6f7fb;
+  --site-base-surface: #ffffff;
+  --site-base-surface-strong: #eef2ff;
+  --site-base-ink: #162033;
+  --site-base-ink-bright: #0f172a;
+  --site-base-ink-soft: rgba(22, 32, 51, 0.8);
+  --site-base-ink-muted: rgba(22, 32, 51, 0.62);
+  --site-base-line: rgba(55, 76, 119, 0.14);
+  --site-base-line-strong: rgba(55, 76, 119, 0.24);
+  --site-base-accent: #2854d7;
+  --site-base-link: #2450c5;
+  --site-base-success: #1e8a5f;
+  --site-base-highlight-bg: #111827;
+  --site-base-highlight-ink: #fde68a;
+  --site-shadow-dropdown: 0 18px 48px rgba(15, 23, 42, 0.08);
+  --site-shadow-header: 0 18px 48px rgba(15, 23, 42, 0.1);
+  --site-shadow-mobile-progress: 0 -12px 30px color-mix(in srgb, var(--site-bg) 72%, transparent);
+  --site-shadow-overlay: 0 24px 80px rgba(15, 23, 42, 0.16);
+  --site-overlay-backdrop: color-mix(in srgb, var(--site-base-bg) 82%, transparent);
+
+  --site-panel: color-mix(in srgb, var(--site-surface) 92%, var(--site-surface-strong));
+  --site-card: color-mix(in srgb, var(--site-surface) 88%, var(--site-surface-strong));
+  --site-panel-muted: color-mix(in srgb, var(--site-surface) 78%, var(--site-bg));
+  --site-panel-spotlight: color-mix(in srgb, var(--site-surface-strong) 84%, var(--site-bg));
+  --site-panel-border: color-mix(in srgb, var(--site-line) 62%, transparent);
+  --site-accent-soft: #dfe7ff;
+  --book-marker: rgba(255, 209, 51, 0.58);
+  --book-note-bg: #fff4bd;
+  --book-note-ink: #47370f;
+  --book-note-line: #b78014;
+  --book-pencil: #2854d7;
+  --book-tape: rgba(211, 205, 184, 0.62);
+  --book-tab-pink: #ef78ac;
+  --book-tab-green: #5bbd90;
+  --book-tab-blue: #5f82e8;
+  --notebook-paper-white: #ffffff;
+  --notebook-sticker-blue-bg: #85a9ff;
+  --notebook-sticker-blue-ink: #102a5d;
+  --notebook-sticker-coral-bg: #ff8c78;
+  --notebook-sticker-coral-ink: #552115;
+  --notebook-sticker-lemon-bg: #ffe45c;
+  --notebook-sticker-lemon-ink: #493b08;
+  --notebook-sticker-mint-bg: #78ddb1;
+  --notebook-sticker-mint-ink: #123d2d;
+  --notebook-sticker-violet-bg: #bba0ff;
+  --notebook-sticker-violet-ink: #30205e;
+  --notebook-post-it-lemon-bg: #fff1a8;
+  --notebook-post-it-lemon-ink: #49370d;
+  --notebook-post-it-pink-bg: #ffb7d5;
+  --notebook-post-it-pink-ink: #52233a;
+  --notebook-post-it-mint-bg: #a9eacb;
+  --notebook-post-it-mint-ink: #173d2c;
+  --notebook-post-it-blue-bg: #b8d5ff;
+  --notebook-post-it-blue-ink: #18345d;
+  --notebook-post-it-coral-bg: #ffb19f;
+  --notebook-post-it-coral-ink: #55251b;
+  --notebook-tape-paper-bg: #d5cfb9;
+  --notebook-highlight-yellow: rgb(255 222 64 / 0.78);
+  --notebook-highlight-pink: rgb(255 77 166 / 0.58);
+  --notebook-highlight-green: rgb(65 224 137 / 0.6);
+  --notebook-highlight-blue: rgb(67 167 255 / 0.56);
+  --notebook-highlight-orange: rgb(255 139 47 / 0.64);
+  --notebook-highlight-violet: rgb(163 104 255 / 0.55);
+  --notebook-shadow-rgb: 15 23 42;
+  --site-hover-surface: color-mix(in srgb, var(--site-surface-strong) 68%, white 32%);
+  --site-control-hover: color-mix(in srgb, var(--site-surface-strong) 82%, var(--site-link-hover) 18%);
+  --site-progress-track: color-mix(in srgb, var(--site-line) 76%, white 24%);
+  --site-progress-track-strong: color-mix(in srgb, var(--site-surface-strong) 76%, white 24%);
+  --site-progress-fill: color-mix(in srgb, var(--site-link-hover) 76%, white 24%);
+  --site-completion-badge-bg: color-mix(in srgb, var(--site-success) 14%, white 86%);
+  --site-completion-badge-ink: color-mix(in srgb, var(--site-success) 84%, black 16%);
+  --site-scrollbar-track: color-mix(in srgb, var(--site-bg) 82%, white 18%);
+  --site-scrollbar-thumb: color-mix(in srgb, var(--site-line-strong) 34%, rgba(22, 32, 51, 0.36));
+  --site-scrollbar-thumb-hover: color-mix(in srgb, var(--site-link-hover) 42%, rgba(22, 32, 51, 0.42));
+  --article-heading-color: var(--site-base-ink-bright);
+  --article-copy-color: var(--site-base-ink);
+  --article-body-color: #334155;
+  --article-excerpt-color: #526179;
+  --article-tag-tone-color: #6b7280;
+  --article-rule: rgba(55, 76, 119, 0.16);
+  --article-surface: color-mix(in srgb, var(--site-surface-strong) 60%, white 40%);
+  --article-inline-code-bg: color-mix(in srgb, var(--site-surface-strong) 72%, white 28%);
+  --article-inline-code-border: color-mix(in srgb, var(--site-link-hover) 18%, rgba(15, 23, 42, 0.12));
+  --article-inline-code-ink: color-mix(in srgb, var(--site-base-ink-bright) 74%, var(--site-link-hover) 26%);
+  --article-inline-code-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
+  --article-link: color-mix(in srgb, var(--site-link-hover) 88%, var(--site-base-ink-bright) 12%);
+  --article-link-hover: var(--site-base-ink-bright);
+}
+
 @theme {
   --breakpoint-nav: 56rem;
 }
 
 @theme inline {
   --font-sans: var(--article-font-sans);
+  --font-mono: var(--notebook-font-mono);
 
   --color-article-body: var(--article-body-color);
   --color-article-copy: var(--article-copy-color);
@@ -200,7 +353,7 @@ html[data-js="true"] [data-no-js-only="true"] {
 
   body {
     @apply m-0 min-w-80 font-sans text-site-ink antialiased;
-    background: #1a1b26
+    background: var(--site-bg);
   }
 
   body::before {
@@ -350,11 +503,7 @@ html[data-js="true"] [data-no-js-only="true"] {
 
 code,
 pre {
-  font-family:
-    "SFMono-Regular",
-    "Consolas",
-    "Liberation Mono",
-    monospace;
+  font-family: var(--notebook-font-mono);
 }
 
 @layer components {
@@ -528,9 +677,17 @@ pre {
   }
 
   .article-toc-link.is-active {
-    color: var(--site-link-hover) !important;
-    background: transparent;
+    color: var(--site-ink) !important;
+    background: linear-gradient(
+      transparent 58%,
+      color-mix(in srgb, var(--notebook-highlight-blue) 66%, transparent) 59%,
+      color-mix(in srgb, var(--notebook-highlight-blue) 66%, transparent) 92%,
+      transparent 93%
+    );
     box-shadow: none;
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+    font-weight: var(--notebook-hand-weight-strong);
   }
 
   .article-reading-progress.is-complete .article-reading-progress-bar {
@@ -568,4 +725,31 @@ pre {
 }
 
 @media (min-width: 64rem) {
+}
+/* Give circled phrases enough breathing room for the hand-drawn stroke. */
+.preparation-manual-prose [data-sketch-annotation='circle'] {
+  display: inline-block;
+  margin-inline: 0;
+  padding: 0.12em 0.4em 0.16em;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.preparation-manual-prose .book-circled-statement {
+  width: fit-content;
+  max-width: 100%;
+  margin: 2rem auto 2.25rem;
+  color: var(--article-heading-color);
+  font-size: 1.04em;
+  font-weight: 650;
+  text-align: center;
+}
+
+.book-sketch-heading-rule {
+  display: block;
+  width: min(13rem, 46%);
+  height: 0.7rem;
+  margin: -0.55rem 0 1rem;
+  overflow: visible;
+  pointer-events: none;
 }

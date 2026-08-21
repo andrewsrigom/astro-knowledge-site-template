@@ -24,7 +24,7 @@ const optimizedAuthorImage =
   {optimizedAuthorImage ? (
     <img
       alt={author.image.alt || author.name}
-      class="size-11 shrink-0 rounded-full border border-article-rule bg-article-surface object-cover"
+      class="size-11 shrink-0 rounded-[48%_52%_46%_54%] border border-dashed border-article-rule bg-article-surface object-cover"
       decoding="async"
       height={optimizedAuthorImage.height}
       loading="lazy"
@@ -34,7 +34,7 @@ const optimizedAuthorImage =
   ) : hasAuthorImage ? (
     <img
       alt={author.image.alt || author.name}
-      class="size-11 shrink-0 rounded-full border border-article-rule bg-article-surface object-cover"
+      class="size-11 shrink-0 rounded-[48%_52%_46%_54%] border border-dashed border-article-rule bg-article-surface object-cover"
       decoding="async"
       height="48"
       loading="lazy"

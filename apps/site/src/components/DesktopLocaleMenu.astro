@@ -2,6 +2,7 @@
 import { cn } from '@/lib/cn'
 import { desktopLocaleMenuDomHooks, getDataHookAttributes } from '@/lib/dom-hooks'
 import { siteStorageKeys } from '@/lib/storage-keys'
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
 
 type LocaleLinkItem = {
   code: string
@@ -48,9 +49,7 @@ function getLocaleChoiceHandler(code: string) {
     {...getDataHookAttributes(desktopLocaleMenuDomHooks.trigger)}
   >
     <span>{currentLocaleCode}</span>
-    <svg class="size-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path d="m6 9 6 6 6-6" />
-    </svg>
+    <DoodleIcon class="rotate-90" name="arrow-right" size={15} />
   </summary>
 
   <div aria-label={triggerLabel} class={menuClass}>

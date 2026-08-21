@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'astro/config'
 import { getBuildEnv } from './scripts/build-env.mjs'
 import { shouldIncludeInSitemap } from './scripts/sitemap-filter.mjs'
+import remarkMermaidDiagrams from './src/lib/remark-mermaid-diagrams.mjs'
 
 const defaultSiteUrl = 'https://example.com'
 const localPreviewSiteUrl = 'http://127.0.0.1:4321'
@@ -72,6 +73,9 @@ function resolveSiteUrl(env) {
 
 export default defineConfig({
   integrations: [sitemap({ filter: shouldIncludeInSitemap }), svelte()],
+  markdown: {
+    remarkPlugins: [remarkMermaidDiagrams],
+  },
   output: 'static',
   site: resolveSiteUrl(buildEnv),
   vite: {

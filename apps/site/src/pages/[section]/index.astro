@@ -19,13 +19,29 @@ export async function getStaticPaths() {
 }
 
 const defaultLocale = getDefaultLocale()
-const { challenges = [], concepts = [], pageType, posts = [], roadmaps = [], terms = [] } = Astro.props
+const {
+  challenges = [],
+  concepts = [],
+  pageType,
+  posts = [],
+  redirectHref,
+  roadmaps = [],
+  terms = [],
+} = Astro.props
+
+if (redirectHref) {
+  return Astro.redirect(redirectHref, 301)
+}
 
 if (!pageType) {
   return new Response(null, {
     status: 404,
     statusText: 'Not Found',
   })
+}
+
+if (pageType === 'preparation') {
+  return Astro.redirect('/', 301)
 }
 ---
 

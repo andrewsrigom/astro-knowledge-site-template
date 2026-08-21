@@ -86,4 +86,11 @@ test.describe('visual regression coverage', () => {
 
     await expect(page).toHaveScreenshot('search-overlay.png', snapshotOptions)
   })
+
+  test('captures the Notebook UI catalog', async ({ page }) => {
+    await prepareVisualPage(page, '/pt-br/laboratorio/caderno-ui')
+    await expect(page.getByRole('heading', { level: 1, name: 'Caderno UI' })).toBeVisible()
+
+    await expect(page).toHaveScreenshot('notebook-ui-page.png', snapshotOptions)
+  })
 })

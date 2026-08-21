@@ -1,0 +1,134 @@
+---
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+
+type PageItem = number | 'ellipsis-left' | 'ellipsis-right'
+
+type Props = {
+  ariaLabel?: string
+  baseHref: string
+  class?: string
+  page: number
+  pageParam?: string
+  total: number
+}
+
+const {
+  ariaLabel = 'Paginação',
+  baseHref,
+  class: className,
+  page,
+  pageParam = 'pagina',
+  total,
+}: Props = Astro.props
+
+const safeTotal = Math.max(1, Math.floor(total))
+const safePage = Math.min(safeTotal, Math.max(1, Math.floor(page)))
+const candidatePages = new Set([1, safePage - 1, safePage, safePage + 1, safeTotal])
+const pageNumbers = [...candidatePages].filter((item) => item >= 1 && item <= safeTotal).sort((a, b) => a - b)
+const items: PageItem[] = []
+pageNumbers.forEach((item, index) => {
+  const previous = pageNumbers[index - 1]
+  if (previous && item - previous > 1) items.push(previous === 1 ? 'ellipsis-left' : 'ellipsis-right')
+  items.push(item)
+})
+
+const pageHref = (target: number) => {
+  const url = new URL(baseHref, 'https://seniorpath.local')
+  if (target <= 1) url.searchParams.delete(pageParam)
+  else url.searchParams.set(pageParam, String(target))
+  return `${url.pathname}${url.search}${url.hash}`
+}
+---
+
+<nav aria-label={ariaLabel} class:list={['notebook-pagination', className]}>
+  <a
+    aria-disabled={safePage === 1 ? 'true' : undefined}
+    aria-label="Página anterior"
+    class="notebook-pagination__direction"
+    href={safePage === 1 ? undefined : pageHref(safePage - 1)}
+  >
+    <DoodleIcon name="arrow-left" size={17} />
+  </a>
+
+  <ol>
+    {items.map((item) => (
+      <li>
+        {typeof item === 'number' ? (
+          <a
+            aria-current={item === safePage ? 'page' : undefined}
+            aria-label={`Página ${item}`}
+            href={pageHref(item)}
+          >{item}</a>
+        ) : (
+          <span aria-hidden="true" class="notebook-pagination__ellipsis">…</span>
+        )}
+      </li>
+    ))}
+  </ol>
+
+  <a
+    aria-disabled={safePage === safeTotal ? 'true' : undefined}
+    aria-label="Próxima página"
+    class="notebook-pagination__direction"
+    href={safePage === safeTotal ? undefined : pageHref(safePage + 1)}
+  >
+    <DoodleIcon name="arrow-right" size={17} />
+  </a>
+</nav>
+
+<style>
+  .notebook-pagination,
+  .notebook-pagination ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+  }
+
+  .notebook-pagination ol {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .notebook-pagination a,
+  .notebook-pagination__ellipsis {
+    display: inline-grid;
+    place-items: center;
+    min-width: 2.15rem;
+    height: 2.15rem;
+    padding: 0 0.35rem;
+    color: var(--site-ink-muted);
+    border-radius: 50% 48% 52% 47%;
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-md);
+    font-weight: var(--notebook-hand-weight-strong);
+  }
+
+  .notebook-pagination a:hover {
+    color: var(--site-link-hover);
+    background: var(--site-control-hover);
+  }
+
+  .notebook-pagination a[aria-current='page'] {
+    color: var(--notebook-post-it-blue-ink);
+    background: var(--notebook-post-it-blue-bg);
+    border: 1.5px solid color-mix(in srgb, var(--notebook-post-it-blue-ink) 44%, transparent);
+    transform: rotate(-1deg);
+  }
+
+  .notebook-pagination a:focus-visible {
+    outline: 2px dashed var(--site-link-hover);
+    outline-offset: 3px;
+  }
+
+  .notebook-pagination a[aria-disabled='true'] {
+    opacity: 0.42;
+    pointer-events: none;
+  }
+
+  .notebook-pagination__direction {
+    border: 1px dashed var(--site-line-strong);
+  }
+</style>

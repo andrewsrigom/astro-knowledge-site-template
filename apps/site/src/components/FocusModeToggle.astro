@@ -1,0 +1,112 @@
+---
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+import { siteStorageKeys } from '@/lib/site-config'
+
+type Props = {
+  className?: string
+  enterLabel: string
+  exitLabel: string
+  floating?: boolean
+}
+
+const {
+  className = '',
+  enterLabel,
+  exitLabel,
+  floating = false,
+} = Astro.props
+---
+
+<button
+  aria-label={floating ? exitLabel : enterLabel}
+  aria-pressed="false"
+  class:list={[
+    'focus-mode-toggle min-h-10 items-center justify-center gap-2 rounded-md border border-dashed border-site-line-strong bg-site-panel px-3 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-semibold text-site-ink shadow-sm transition-colors hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover',
+    floating
+      ? 'focus-mode-exit fixed right-4 top-4 z-60 shadow-(--site-shadow-dropdown) sm:right-6 sm:top-6'
+      : 'inline-flex',
+    className,
+  ]}
+  data-enter-label={enterLabel}
+  data-exit-label={exitLabel}
+  data-floating={floating ? 'true' : 'false'}
+  data-focus-mode-toggle
+  data-storage-key={siteStorageKeys.focusModePreference}
+  title={floating ? exitLabel : enterLabel}
+  type="button"
+>
+  <DoodleIcon name="target" size={18} />
+  {floating ? <span class="hidden sm:inline" data-focus-mode-label>{exitLabel}</span> : (
+    <span class="sr-only" data-focus-mode-label>{enterLabel}</span>
+  )}
+</button>
+
+<script is:inline data-astro-rerun>
+  try {
+    const currentScript = document.currentScript
+    const button = currentScript instanceof HTMLScriptElement
+      ? currentScript.previousElementSibling
+      : null
+
+    if (!(button instanceof HTMLButtonElement)) {
+      throw new Error('Missing focus mode toggle')
+    }
+
+    const root = document.documentElement
+    const storageKey = button.dataset.storageKey ?? ''
+    const enterLabel = button.dataset.enterLabel ?? 'Enter focus mode'
+    const exitLabel = button.dataset.exitLabel ?? 'Exit focus mode'
+    const labelNode = button.querySelector('[data-focus-mode-label]')
+
+    const readFocusMode = () => root.dataset.focusMode === 'true'
+
+    const syncButton = () => {
+      const enabled = readFocusMode()
+      const nextLabel = enabled ? exitLabel : enterLabel
+
+      button.setAttribute('aria-pressed', enabled ? 'true' : 'false')
+      button.setAttribute('aria-label', nextLabel)
+      button.setAttribute('title', nextLabel)
+
+      if (labelNode instanceof HTMLElement) {
+        labelNode.textContent = nextLabel
+      }
+    }
+
+    const writeFocusMode = (enabled) => {
+      root.dataset.focusMode = enabled ? 'true' : 'false'
+
+      try {
+        if (storageKey) {
+          window.localStorage.setItem(storageKey, enabled ? 'on' : 'off')
+        }
+      } catch {}
+
+      window.dispatchEvent(new CustomEvent('site-focus-mode-change', { detail: { enabled } }))
+    }
+
+    button.addEventListener('click', () => {
+      writeFocusMode(!readFocusMode())
+      syncButton()
+    })
+
+    window.addEventListener('site-focus-mode-change', syncButton)
+    document.addEventListener('astro:after-swap', syncButton)
+    document.addEventListener('astro:page-load', syncButton)
+    syncButton()
+  } catch {}
+</script>
+
+<style>
+  .focus-mode-exit {
+    display: none;
+  }
+
+  :global(html[data-focus-mode='true']) .focus-mode-exit {
+    display: inline-flex;
+  }
+
+  :global(html[data-js='false']) .focus-mode-toggle {
+    display: none;
+  }
+</style>

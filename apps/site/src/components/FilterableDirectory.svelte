@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte'
-  import ArrowRightIcon from '@/components/ui/icons/ArrowRightIcon.svelte'
-  import CircleCheckIcon from '@/components/ui/icons/CircleCheckIcon.svelte'
+  import DoodleIcon from '@/components/ui/notebook/DoodleIcon.svelte'
   import { cn } from '@/lib/cn'
   import { completedArticlesSetStore } from '@/lib/completed-articles-store'
   import type { DirectoryItem, DirectoryTag } from '@/lib/directory'
@@ -535,7 +534,7 @@
                 class={cn('content-directory-complete-badge', ui.completionBadgeLinear)}
                 {...getDataHookAttributes(completionDomHooks.completeBadge)}
               >
-                ✓
+                <DoodleIcon name="check" size={16} />
               </span>
             {/if}
             {#if item.eyebrow || item.badgeLabel}
@@ -563,23 +562,23 @@
               {#if isComplete(item)}
                 <span class={cn('content-directory-mobile-complete-text', ui.inlineCta, 'md:hidden')}>
                   <span>{getCompletedCtaLabel(item)}</span>
-                  <ArrowRightIcon className="size-[0.88rem]" />
+                  <DoodleIcon name="arrow-right" size={15} />
                 </span>
                 <span class={ui.completionRailLg}>
                   <span class={cn('content-directory-complete-text', ui.completionDesktopCtaInteractive)} {...getDataHookAttributes(completionDomHooks.completeText)}>
                     <span>{getCompletedCtaLabel(item)}</span>
-                    <ArrowRightIcon className="size-[0.88rem]" />
+                    <DoodleIcon name="arrow-right" size={15} />
                   </span>
                 </span>
               {:else}
                 <span class={cn('content-directory-mobile-default-cta', ui.inlineCta, 'md:hidden')}>
                   <span>{item.ctaLabel}</span>
-                  <ArrowRightIcon className="size-[0.88rem]" />
+                  <DoodleIcon name="arrow-right" size={15} />
                 </span>
                 <span class={ui.completionRailInlineMd}>
                   <span class={cn('content-directory-default-cta', ui.completionDesktopCtaInteractive)}>
                     <span>{item.ctaLabel}</span>
-                    <ArrowRightIcon className="size-[0.88rem]" />
+                    <DoodleIcon name="arrow-right" size={15} />
                   </span>
                 </span>
               {/if}
@@ -623,7 +622,7 @@
               class={cn('content-directory-complete-badge', ui.completionBadgeCard)}
               {...getDataHookAttributes(completionDomHooks.completeBadge)}
             >
-              ✓
+              <DoodleIcon name="check" size={16} />
             </span>
           {/if}
           <div class="grid gap-2">
@@ -631,13 +630,13 @@
               <h2 class={cn('content-directory-title', ui.linkCardTitle)}>{item.title}</h2>
               {#if item.completionId}
                 <span class="content-directory-trailing-arrow">
-                  <ArrowRightIcon className="size-4 shrink-0 text-site-ink-muted transition-colors duration-150 group-hover:text-site-link-hover group-focus-within:text-site-link-hover" />
+                  <DoodleIcon className="shrink-0 text-site-ink-muted transition-colors duration-150 group-hover:text-site-link-hover group-focus-within:text-site-link-hover" name="arrow-right" size={19} />
                 </span>
                 <span class="content-directory-trailing-complete-icon">
-                  <CircleCheckIcon className="size-4 shrink-0 text-site-success" />
+                  <DoodleIcon className="shrink-0 text-site-success" name="check" size={17} />
                 </span>
               {:else}
-                <ArrowRightIcon className="size-4 shrink-0 text-site-ink-muted transition-colors duration-150 group-hover:text-site-link-hover group-focus-within:text-site-link-hover" />
+                <DoodleIcon className="shrink-0 text-site-ink-muted transition-colors duration-150 group-hover:text-site-link-hover group-focus-within:text-site-link-hover" name="arrow-right" size={19} />
               {/if}
             </div>
             {#if item.description}

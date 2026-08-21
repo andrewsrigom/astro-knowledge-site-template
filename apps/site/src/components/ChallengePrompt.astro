@@ -1,0 +1,68 @@
+---
+import type { CollectionEntry } from 'astro:content'
+
+import { marked } from 'marked'
+
+import { cn } from '@/lib/cn'
+import { articleReadingDomHooks, getDataHookAttributes } from '@/lib/dom-hooks'
+import { getSiteCopy, getSiteLocale } from '@/lib/site-copy'
+import { ui } from '@/lib/ui'
+
+type Props = {
+  challenge: CollectionEntry<'challenges'>
+}
+
+const { challenge } = Astro.props
+const locale = getSiteLocale(challenge.data.locale)
+const copy = getSiteCopy(locale)
+const problemStatementHtml = challenge.data.problemStatement
+  ? await marked.parse(challenge.data.problemStatement)
+  : null
+const walkthroughHtml = challenge.data.walkthrough
+  ? await marked.parse(challenge.data.walkthrough)
+  : null
+---
+
+<div {...getDataHookAttributes(articleReadingDomHooks.content)}>
+  {problemStatementHtml ? (
+    <section class="article-reading-shell mx-auto mt-6 w-full scroll-mt-28" id="read-challenge">
+      <div class="article-prose" set:html={problemStatementHtml} />
+    </section>
+  ) : null}
+
+  {challenge.data.whatToNotice.length > 0 ? (
+    <section
+      class={cn(ui.panel, 'article-reading-shell mx-auto mt-6 grid w-full scroll-mt-28 gap-3 p-5')}
+      id="what-to-notice"
+    >
+      <h2 class={ui.eyebrow}>{copy.challenge.whatToNotice}</h2>
+      <ul class="grid list-disc gap-2 pl-6 text-[0.98rem] leading-7 text-site-ink-soft marker:text-site-link-hover">
+        {challenge.data.whatToNotice.map((item) => (
+          <li class="pl-1">{item}</li>
+        ))}
+      </ul>
+    </section>
+  ) : null}
+
+  {challenge.data.commonMistakes.length > 0 ? (
+    <section
+      class={cn(ui.panel, 'article-reading-shell mx-auto mt-6 grid w-full scroll-mt-28 gap-3 p-5')}
+      id="common-mistakes"
+    >
+      <h2 class={ui.eyebrow}>{copy.challenge.commonMistakes}</h2>
+      <ul class="grid list-disc gap-2 pl-6 text-[0.98rem] leading-7 text-site-ink-soft marker:text-site-link-hover">
+        {challenge.data.commonMistakes.map((item) => (
+          <li class="pl-1">{item}</li>
+        ))}
+      </ul>
+    </section>
+  ) : null}
+
+  {walkthroughHtml ? (
+    <section class="article-reading-shell mx-auto mt-8 w-full scroll-mt-28" id="challenge-walkthrough">
+      <div class="article-prose" set:html={walkthroughHtml} />
+    </section>
+  ) : null}
+
+  <div aria-hidden="true" class="h-px" {...getDataHookAttributes(articleReadingDomHooks.end)}></div>
+</div>

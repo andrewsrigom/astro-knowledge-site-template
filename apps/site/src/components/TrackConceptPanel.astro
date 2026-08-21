@@ -29,7 +29,7 @@ const copy = getSiteCopy(locale)
 ---
 
 <section
-  class={cn('border-t border-site-line px-[0.45rem] py-[0.8rem] first:border-t-0 lg:px-[0.55rem] lg:py-[0.95rem]', className)}
+  class={cn('border-t border-dashed border-site-line-strong px-[0.45rem] py-[0.8rem] first:border-t-0 lg:px-[0.55rem] lg:py-[0.95rem]', className)}
   {...getDataHookAttributes(trackPageDomHooks.concept, node.id)}
 >
   <div class={cn(ui.panel, ui.spotlightPanel)}>
@@ -46,7 +46,7 @@ const copy = getSiteCopy(locale)
     </div>
 
     {articleItems.length > 0 ? (
-      <div class="grid gap-3 border-t border-site-line pt-4">
+      <div class="grid gap-3 border-t border-dashed border-site-line-strong pt-4">
         <FilterableDirectory items={articleItems} layout="cards" />
       </div>
     ) : null}

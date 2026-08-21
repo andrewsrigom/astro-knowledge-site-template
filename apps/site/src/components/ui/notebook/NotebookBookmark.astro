@@ -1,0 +1,126 @@
+---
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+
+type Props = {
+  activeLabel?: string
+  bookmarked?: boolean
+  class?: string
+  id: string
+  label: string
+  persist?: boolean
+}
+
+const {
+  activeLabel = 'Remover marcador',
+  bookmarked = false,
+  class: className,
+  id,
+  label,
+  persist = false,
+}: Props = Astro.props
+---
+
+<button
+  aria-label={bookmarked ? activeLabel : label}
+  aria-pressed={bookmarked ? 'true' : 'false'}
+  class:list={['notebook-bookmark', className]}
+  data-active-label={activeLabel}
+  data-bookmark-id={id}
+  data-label={label}
+  data-persist={persist ? 'true' : 'false'}
+  type="button"
+>
+  <DoodleIcon name="bookmark" size={22} />
+  <span>{bookmarked ? activeLabel : label}</span>
+</button>
+
+<script>
+  const bookmarkKey = (id: string) => `seniorpath:notebook-bookmark:${id}`
+
+  function setupNotebookBookmarks() {
+    const bookmarks = document.querySelectorAll<HTMLButtonElement>('.notebook-bookmark')
+
+    for (const bookmark of bookmarks) {
+      if (bookmark.dataset.bookmarkReady === 'true') continue
+      const id = bookmark.dataset.bookmarkId
+      const label = bookmark.dataset.label ?? 'Salvar'
+      const activeLabel = bookmark.dataset.activeLabel ?? 'Remover marcador'
+      const shouldPersist = bookmark.dataset.persist === 'true'
+
+      const render = (active: boolean) => {
+        bookmark.setAttribute('aria-pressed', active ? 'true' : 'false')
+        bookmark.setAttribute('aria-label', active ? activeLabel : label)
+        const copy = bookmark.querySelector<HTMLElement>('span')
+        if (copy) copy.textContent = active ? activeLabel : label
+      }
+
+      if (id && shouldPersist) {
+        try {
+          render(localStorage.getItem(bookmarkKey(id)) === 'true')
+        } catch {
+          // A preferência continua funcional na sessão quando o armazenamento não está disponível.
+        }
+      }
+
+      bookmark.addEventListener('click', () => {
+        const active = bookmark.getAttribute('aria-pressed') !== 'true'
+        render(active)
+        if (id && shouldPersist) {
+          try {
+            localStorage.setItem(bookmarkKey(id), String(active))
+          } catch {
+            // O estado visual ainda muda quando o armazenamento está bloqueado.
+          }
+        }
+        bookmark.dispatchEvent(new CustomEvent('notebook:bookmarkchange', {
+          bubbles: true,
+          detail: { active, id },
+        }))
+      })
+      bookmark.dataset.bookmarkReady = 'true'
+    }
+  }
+
+  setupNotebookBookmarks()
+  document.addEventListener('astro:page-load', setupNotebookBookmarks)
+</script>
+
+<style>
+  .notebook-bookmark {
+    --bookmark-bg: var(--notebook-post-it-blue-bg);
+    --bookmark-ink: var(--notebook-post-it-blue-ink);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.75rem 0.5rem 0.55rem;
+    color: var(--bookmark-ink);
+    background: color-mix(in srgb, var(--bookmark-bg) 32%, var(--site-surface));
+    border: 1.5px dashed color-mix(in srgb, var(--bookmark-ink) 45%, transparent);
+    border-radius: 0.45rem 0.6rem 0.45rem 0.55rem;
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+    font-weight: var(--notebook-hand-weight-strong);
+  }
+
+  .notebook-bookmark[aria-pressed='true'] {
+    background: var(--bookmark-bg);
+    border-style: solid;
+  }
+
+  .notebook-bookmark:hover {
+    background: color-mix(in srgb, var(--bookmark-bg) 66%, var(--site-surface));
+  }
+
+  .notebook-bookmark:focus-visible {
+    outline: 2px dashed var(--bookmark-ink);
+    outline-offset: 3px;
+  }
+
+  .notebook-bookmark :global(.notebook-doodle-icon) {
+    transition: transform 140ms var(--site-transition-smooth);
+  }
+
+  .notebook-bookmark[aria-pressed='true'] :global(.notebook-doodle-icon) {
+    transform: translateY(0.15rem);
+  }
+</style>

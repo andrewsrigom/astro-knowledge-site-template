@@ -1,0 +1,103 @@
+---
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+import type { NotebookDoodleName } from '@/lib/notebook-doodles'
+
+type Props = {
+  class?: string
+  description: string
+  icon?: NotebookDoodleName
+  title: string
+  variant?: 'no-access' | 'no-data' | 'no-results'
+}
+
+const {
+  class: className,
+  description,
+  icon,
+  title,
+  variant = 'no-data',
+}: Props = Astro.props
+
+const variantIcons: Record<NonNullable<Props['variant']>, NotebookDoodleName> = {
+  'no-access': 'lock',
+  'no-data': 'note',
+  'no-results': 'search',
+}
+---
+
+<section class:list={['notebook-empty', className]} data-variant={variant}>
+  <div aria-hidden="true" class="notebook-empty__icon">
+    <DoodleIcon name={icon ?? variantIcons[variant]} size={56} />
+  </div>
+  <div class="notebook-empty__copy">
+    <h3>{title}</h3>
+    <p>{description}</p>
+  </div>
+  <div class="notebook-empty__action"><slot /></div>
+</section>
+
+<style>
+  .notebook-empty {
+    display: grid;
+    justify-items: center;
+    gap: 0.9rem;
+    width: min(100%, 34rem);
+    padding: 2.4rem 1.5rem 2.2rem;
+    color: var(--site-ink);
+    text-align: center;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 1.75rem,
+      color-mix(in srgb, var(--site-line-strong) 46%, transparent) 1.75rem,
+      color-mix(in srgb, var(--site-line-strong) 46%, transparent) calc(1.75rem + 1px)
+    );
+    border: 1.5px dashed var(--site-line-strong);
+    border-radius: 0.9rem 1.1rem 0.85rem 1rem;
+  }
+
+  .notebook-empty__icon {
+    display: inline-grid;
+    place-items: center;
+    color: var(--site-link-hover);
+    transform: rotate(-2deg);
+  }
+
+  .notebook-empty[data-variant='no-access'] .notebook-empty__icon {
+    color: var(--notebook-post-it-coral-ink);
+  }
+
+  .notebook-empty[data-variant='no-results'] .notebook-empty__icon {
+    color: var(--notebook-post-it-lemon-ink);
+  }
+
+  .notebook-empty__copy {
+    display: grid;
+    gap: 0.35rem;
+    max-width: 28rem;
+    padding-inline: 0.6rem;
+    background: color-mix(in srgb, var(--site-surface) 92%, transparent);
+  }
+
+  .notebook-empty__copy h3,
+  .notebook-empty__copy p {
+    margin: 0;
+  }
+
+  .notebook-empty__copy h3 {
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-xl);
+    font-weight: var(--notebook-hand-weight-strong);
+    line-height: 1;
+  }
+
+  .notebook-empty__copy p {
+    color: var(--site-ink-soft);
+    font-family: var(--notebook-font-book);
+    line-height: 1.55;
+  }
+
+  .notebook-empty__action:empty {
+    display: none;
+  }
+</style>

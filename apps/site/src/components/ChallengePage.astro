@@ -1,16 +1,10 @@
 ---
 import type { CollectionEntry } from 'astro:content'
-import { render } from 'astro:content'
-import ArrowLeft from '@lucide/astro/icons/arrow-left'
-import ArrowRight from '@lucide/astro/icons/arrow-right'
-import ChevronLeft from '@lucide/astro/icons/chevron-left'
-import ChevronRight from '@lucide/astro/icons/chevron-right'
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
 
-import { marked } from 'marked'
-
-import ChallengePlayground from '@/components/ChallengePlayground.svelte'
 import ArticleStickyMeta from '@/components/ArticleStickyMeta.astro'
-import SolutionReveal from '@/components/SolutionReveal.svelte'
+import ChallengeAttempt from '@/components/ChallengeAttempt.astro'
+import ChallengePrompt from '@/components/ChallengePrompt.astro'
 import FilterableDirectory from '@/components/FilterableDirectory.svelte'
 import ArticleSection from '@/components/ui/ArticleSection.astro'
 import ContentArticleHeader from '@/components/ui/ContentArticleHeader.astro'
@@ -21,7 +15,6 @@ import { getChallengeLanguageLabel, getChallengeLevelLabel, sortChallenges } fro
 import { getChallengeHrefFromEntry, getChallengeIndexHref } from '@/lib/challenge-links'
 import { cn } from '@/lib/cn'
 import { resolveActiveRelatedArticles } from '@/lib/content-integrity'
-import { articleReadingDomHooks, getDataHookAttributes } from '@/lib/dom-hooks'
 import { formatEditorialDate } from '@/lib/format-date'
 import { getLocalePath, resolveLocalizedEntryHrefMap, resolveLocaleMap } from '@/lib/locale-config'
 import { resolveEntityOgImageUrl } from '@/lib/og-image'
@@ -38,8 +31,9 @@ type Props = {
 }
 
 const { challenge } = Astro.props
-const { Content } = await render(challenge)
+const isDraft = challenge.data.status === 'draft'
 const locale = getSiteLocale(challenge.data.locale)
+const draftLabel = locale === 'pt-br' ? 'Rascunho local' : 'Local draft'
 const copy = getSiteCopy(locale)
 const challengeSectionLabel = getPageTypeLabel('challenges', locale)
 const allChallenges = await getChallengeCollection()
@@ -83,21 +77,15 @@ const levelLabel = getChallengeLevelLabel(challenge.data.level, locale)
 const solutionLanguageLabel = getChallengeLanguageLabel(challenge.data.solutionLanguage)
 const dateLocale = getSiteDateLocale(locale)
 const formattedPubDate = formatEditorialDate(challenge.data.pubDate, dateLocale)
-const complexityTimeLabel = copy.challenge.complexityTimeLabel
-const complexitySpaceLabel = copy.challenge.complexitySpaceLabel
-const problemStatementHtml = challenge.data.problemStatement
-  ? await marked.parse(challenge.data.problemStatement)
-  : null
-const walkthroughHtml = challenge.data.walkthrough
-  ? await marked.parse(challenge.data.walkthrough)
-  : null
-const headerTagItems = challenge.data.tags
-  .map((tag) => ({
+const headerTagItems = [
+  ...(isDraft ? [{ label: draftLabel }] : []),
+  ...challenge.data.tags.map((tag) => ({
     label: toHashtagLabel(tag, locale) ?? tag,
-  }))
+  })),
+]
   .filter((item, index, items) => items.findIndex((candidate) => candidate.label === item.label) === index)
 const challengeGuideHeadings = [
-  problemStatementHtml
+  challenge.data.problemStatement
     ? {
         depth: 2,
         slug: 'read-challenge',
@@ -174,6 +162,8 @@ const challengeStructuredData = [
   contentWidth="wide"
   description={challenge.data.description}
   localeHrefs={localeHrefs}
+  noindex={isDraft}
+  pagefind={!isDraft}
   socialImage={socialImage}
   structuredData={challengeStructuredData}
   title={challenge.data.title}
@@ -192,8 +182,12 @@ const challengeStructuredData = [
         {levelLabel}
         <span aria-hidden="true" class="px-2">•</span>
         {challenge.data.estimatedMinutes} min
-        <span aria-hidden="true" class="px-2">•</span>
-        {solutionLanguageLabel}
+        {challenge.data.format === 'coding' ? (
+          <>
+            <span aria-hidden="true" class="px-2">•</span>
+            {solutionLanguageLabel}
+          </>
+        ) : null}
       </p>
       <HeaderTagMeta items={headerTagItems} />
     </ContentArticleHeader>
@@ -212,47 +206,7 @@ const challengeStructuredData = [
 
     <div class={ui.articleRailLayout}>
       <div class={ui.articleRailLayoutMain}>
-        <div {...getDataHookAttributes(articleReadingDomHooks.content)}>
-          {problemStatementHtml ? (
-            <section class="article-reading-shell mx-auto mt-6 w-full scroll-mt-28" id="read-challenge">
-              <div class="article-prose" set:html={problemStatementHtml} />
-            </section>
-          ) : null}
-
-          {challenge.data.whatToNotice.length > 0 ? (
-            <section class="article-reading-shell mx-auto mt-6 w-full scroll-mt-28" id="what-to-notice">
-              <section class={cn(ui.panel, 'grid gap-3 p-5')}>
-                <p class={ui.eyebrow}>{copy.challenge.whatToNotice}</p>
-                <ul class="grid list-disc gap-2 pl-6 text-[0.98rem] leading-7 text-site-ink-soft marker:text-site-link-hover">
-                  {challenge.data.whatToNotice.map((item) => (
-                    <li class="pl-1">{item}</li>
-                  ))}
-                </ul>
-              </section>
-            </section>
-          ) : null}
-
-          {challenge.data.commonMistakes.length > 0 ? (
-            <section class="article-reading-shell mx-auto mt-6 w-full scroll-mt-28" id="common-mistakes">
-              <section class={cn(ui.panel, 'grid gap-3 p-5')}>
-                <p class={ui.eyebrow}>{copy.challenge.commonMistakes}</p>
-                <ul class="grid list-disc gap-2 pl-6 text-[0.98rem] leading-7 text-site-ink-soft marker:text-site-link-hover">
-                  {challenge.data.commonMistakes.map((item) => (
-                    <li class="pl-1">{item}</li>
-                  ))}
-                </ul>
-              </section>
-            </section>
-          ) : null}
-
-          {walkthroughHtml ? (
-            <div class="article-reading-shell mx-auto mt-8 w-full">
-              <div class="article-prose" set:html={walkthroughHtml} />
-            </div>
-          ) : null}
-
-          <div aria-hidden="true" class="h-px" {...getDataHookAttributes(articleReadingDomHooks.end)}></div>
-        </div>
+        <ChallengePrompt challenge={challenge} />
       </div>
 
       <div class={ui.articleRailLayoutGuide} data-pagefind-ignore>
@@ -267,47 +221,11 @@ const challengeStructuredData = [
       </div>
     </div>
 
-    {challenge.data.starterCode ? (
-      <ChallengePlayground
-        className="article-detail-shell mt-8"
-        client:visible
-        challengeId={challenge.data.challengeId}
-        locale={locale}
-        starterCode={challenge.data.starterCode}
-        testCases={challenge.data.testCases}
-        solutionLanguage={challenge.data.solutionLanguage}
-        hints={challenge.data.hints}
-        complexity={challenge.data.complexity ?? null}
-      />
-    ) : null}
-
-    <SolutionReveal
-      className="article-detail-shell mt-8"
-      client:visible
-      challengeId={challenge.data.challengeId}
-      copy={copy.solutionReveal}
-    >
-      {challenge.data.complexity ? (
-        <section class={cn(ui.panel, 'mb-8 grid gap-3 p-5')}>
-          <p class={ui.eyebrow}>{copy.challenge.complexity}</p>
-          <div class="grid gap-2 text-[0.98rem] leading-7 text-site-ink-soft">
-            <p class="m-0">
-              <strong>{complexityTimeLabel}:</strong> {challenge.data.complexity.time}
-            </p>
-            <p class="m-0">
-              <strong>{complexitySpaceLabel}:</strong> {challenge.data.complexity.space}
-            </p>
-          </div>
-        </section>
-      ) : null}
-      <div class="article-prose">
-        <Content />
-      </div>
-    </SolutionReveal>
+    <ChallengeAttempt challenge={challenge} />
 
     <div data-pagefind-ignore>
       {previousChallenge || nextChallenge ? (
-        <section class="article-detail-shell mx-auto mt-8 grid w-full gap-4 border-t border-article-rule pt-8 md:grid-cols-2 md:items-stretch">
+        <section class="article-detail-shell mx-auto mt-8 grid w-full gap-4 border-t border-dashed border-article-rule pt-8 md:grid-cols-2 md:items-stretch">
           {nextChallenge ? (
             <a
               class={cn(ui.navCardLink, 'justify-between md:order-3')}
@@ -316,11 +234,11 @@ const challengeStructuredData = [
               <span class="grid gap-1 content-start text-left md:ml-auto md:justify-items-end md:text-right">
                 <span class={cn(ui.eyebrowSentence, 'inline-flex items-center gap-1.5 leading-none md:justify-self-end')}>
                   <span class="leading-none">{copy.challenge.nextChallenge}</span>
-                  <ArrowRight aria-hidden="true" class="size-3.5 shrink-0 md:hidden" />
+                  <DoodleIcon class="shrink-0 md:hidden" name="arrow-right" size={15} />
                 </span>
                 <span class={ui.linkCardTitle}>{nextChallenge.data.title}</span>
               </span>
-              <ChevronRight aria-hidden="true" class="hidden size-6 shrink-0 text-article-body md:block" />
+              <DoodleIcon class="hidden shrink-0 text-article-body md:block" name="arrow-right" size={22} />
             </a>
           ) : <div class="md:order-3" />}
           {previousChallenge ? (
@@ -328,10 +246,10 @@ const challengeStructuredData = [
               class={cn(ui.navCardLink, 'text-left md:order-1')}
               href={getChallengeHrefFromEntry(previousChallenge)}
             >
-              <ChevronLeft aria-hidden="true" class="hidden size-6 shrink-0 text-article-body md:block" />
+              <DoodleIcon class="hidden shrink-0 text-article-body md:block" name="arrow-left" size={22} />
               <span class="grid gap-1 content-start">
                 <span class={cn(ui.eyebrowSentence, 'inline-flex items-center gap-1.5 leading-none')}>
-                  <ArrowLeft aria-hidden="true" class="size-3.5 shrink-0 md:hidden" />
+                  <DoodleIcon class="shrink-0 md:hidden" name="arrow-left" size={15} />
                   <span class="leading-none">{copy.challenge.previousChallenge}</span>
                 </span>
                 <span class={ui.linkCardTitle}>{previousChallenge.data.title}</span>

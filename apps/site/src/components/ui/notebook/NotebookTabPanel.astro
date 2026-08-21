@@ -1,0 +1,35 @@
+---
+type Props = {
+  class?: string
+  id: string
+}
+
+const {
+  class: className,
+  id,
+}: Props = Astro.props
+---
+
+<section
+  class:list={['notebook-tab-panel', className]}
+  data-notebook-tab={id}
+>
+  <slot />
+</section>
+
+<style>
+  .notebook-tab-panel {
+    color: var(--site-ink);
+    font-family: var(--notebook-font-book);
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .notebook-tab-panel :global(> :first-child) {
+    margin-top: 0;
+  }
+
+  .notebook-tab-panel :global(> :last-child) {
+    margin-bottom: 0;
+  }
+</style>

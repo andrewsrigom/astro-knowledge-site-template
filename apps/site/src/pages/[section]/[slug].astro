@@ -3,12 +3,15 @@ import ArticlePage from '@/components/ArticlePage.astro'
 import ChallengePage from '@/components/ChallengePage.astro'
 import ConceptPage from '@/components/ConceptPage.astro'
 import GlossaryTermPage from '@/components/GlossaryTermPage.astro'
+import PreparationPracticePage from '@/components/PreparationPracticePage.astro'
+import PreparationSubjectPage from '@/components/PreparationSubjectPage.astro'
 import TopicGroupPage from '@/components/TopicGroupPage.astro'
 import TrackPage from '@/components/TrackPage.astro'
 import { getArticleHrefFromEntry } from '@/lib/article-links'
 import { getDynamicSectionDetailPaths } from '@/lib/dynamic-section-pages'
 import { getDefaultArticleNotePaths } from '@/lib/localized-article-pages'
 import { getDefaultLocale } from '@/lib/locale-config'
+import { getPreparationPracticePageContext } from '@/lib/preparation-practice'
 
 export async function getStaticPaths() {
   const defaultLocale = getDefaultLocale()
@@ -27,9 +30,16 @@ const {
   pageType,
   post,
   posts = [],
+  preparation = [],
+  redirectHref,
   roadmap,
+  subjectId,
   term,
 } = Astro.props
+
+if (redirectHref) {
+  return Astro.redirect(redirectHref, 301)
+}
 
 if (!pageType) {
   return new Response(null, {
@@ -46,6 +56,10 @@ if (pageType === 'articles' && post) {
     return Astro.redirect(canonicalHref, 301)
   }
 }
+
+const preparationPracticeContext = pageType === 'challenges' && challenge
+  ? await getPreparationPracticePageContext(challenge)
+  : null
 ---
 
 {pageType === 'articles' && post ? <ArticlePage post={post} /> : null}
@@ -55,4 +69,11 @@ if (pageType === 'articles' && post) {
 ) : null}
 {pageType === 'concepts' && concept ? <ConceptPage concept={concept} /> : null}
 {pageType === 'glossary' && term ? <GlossaryTermPage term={term} /> : null}
-{pageType === 'challenges' && challenge ? <ChallengePage challenge={challenge} /> : null}
+{pageType === 'challenges' && challenge ? (
+  preparationPracticeContext
+    ? <PreparationPracticePage challenge={challenge} context={preparationPracticeContext} />
+    : <ChallengePage challenge={challenge} />
+) : null}
+{pageType === 'preparation' && subjectId ? (
+  <PreparationSubjectPage locale={defaultLocale} preparation={preparation} subjectId={subjectId} />
+) : null}

@@ -1,0 +1,105 @@
+---
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+
+type BreadcrumbItem = {
+  href?: string
+  label: string
+}
+
+type Props = {
+  ariaLabel?: string
+  class?: string
+  items: BreadcrumbItem[]
+}
+
+const {
+  ariaLabel = 'Navegação estrutural',
+  class: className,
+  items,
+}: Props = Astro.props
+---
+
+<nav aria-label={ariaLabel} class:list={['notebook-breadcrumb', className]}>
+  <ol>
+    {items.map((item, index) => {
+      const isCurrent = index === items.length - 1
+      return (
+        <li>
+          {index > 0 ? (
+            <span aria-hidden="true" class="notebook-breadcrumb__separator">
+              <DoodleIcon name="arrow-right" size={15} />
+            </span>
+          ) : null}
+          {isCurrent || !item.href ? (
+            <span aria-current={isCurrent ? 'page' : undefined} class="notebook-breadcrumb__current">
+              {item.label}
+            </span>
+          ) : (
+            <a href={item.href}>{item.label}</a>
+          )}
+        </li>
+      )
+    })}
+  </ol>
+</nav>
+
+<style>
+  .notebook-breadcrumb ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .notebook-breadcrumb li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  .notebook-breadcrumb a,
+  .notebook-breadcrumb__current {
+    color: var(--site-ink-muted);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+    font-weight: var(--notebook-hand-weight-regular);
+    line-height: 1.1;
+  }
+
+  .notebook-breadcrumb a {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--site-link-hover) 48%, transparent);
+    text-decoration-style: wavy;
+    text-underline-offset: 0.2rem;
+  }
+
+  .notebook-breadcrumb a:hover {
+    color: var(--site-link-hover);
+  }
+
+  .notebook-breadcrumb a:focus-visible {
+    outline: 2px dashed var(--site-link-hover);
+    outline-offset: 3px;
+  }
+
+  .notebook-breadcrumb__current {
+    color: var(--site-ink);
+    font-weight: var(--notebook-hand-weight-strong);
+    background: linear-gradient(
+      transparent 62%,
+      color-mix(in srgb, var(--notebook-post-it-blue-bg) 65%, transparent) 63%,
+      color-mix(in srgb, var(--notebook-post-it-blue-bg) 65%, transparent) 94%,
+      transparent 95%
+    );
+  }
+
+  .notebook-breadcrumb__separator {
+    display: inline-grid;
+    color: var(--site-ink-muted);
+    transform: rotate(-2deg);
+  }
+</style>

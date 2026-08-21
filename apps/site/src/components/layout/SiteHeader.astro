@@ -1,5 +1,4 @@
 ---
-import NewspaperIcon from '@lucide/astro/icons/newspaper'
 import BrandIcon from '@/brand/BrandIcon.astro'
 import DesktopExploreMenu from '@/components/DesktopExploreMenu.astro'
 import DesktopLocaleMenu from '@/components/DesktopLocaleMenu.astro'
@@ -14,7 +13,6 @@ type SiteCopy = ReturnType<typeof getSiteCopy>
 
 type ExploreLink = {
   href: string
-  icon: typeof NewspaperIcon
   isActive: boolean
   label: string
   pageType: string
@@ -52,7 +50,7 @@ const {
   searchableSections = [],
 } = Astro.props
 
-const desktopPrimaryLinks = ['articles', 'tracks', 'challenges'].flatMap((pageType) => {
+const desktopPrimaryLinks = ['preparation', 'articles', 'tracks', 'challenges'].flatMap((pageType) => {
   const link = exploreLinks.find((entry) => entry.pageType === pageType)
   return link ? [link] : []
 })
@@ -65,14 +63,14 @@ const brandLinkClass =
 const brandIconWrapClass = 'inline-flex size-7 shrink-0 items-center justify-center nav:size-8 lg:size-[2.1rem]'
 const brandIconClass = 'size-[1.1rem] nav:size-[1.2rem] lg:size-[1.35rem]'
 const brandLabelClass =
-  'block font-sans text-[1.05rem] font-semibold leading-[1] tracking-[-0.02em] nav:text-[clamp(1.18rem,2.2vw,1.48rem)] lg:text-[clamp(1.28rem,1.7vw,1.72rem)]'
+  'block [font-family:var(--notebook-font-book)] text-[1.05rem] font-semibold leading-none tracking-[-0.025em] nav:text-[clamp(1.18rem,2.2vw,1.48rem)] lg:text-[clamp(1.28rem,1.7vw,1.72rem)]'
 const mobileNavLinkClass = ui.navMenuLink
 const mobileNavActiveClass = 'bg-site-hover text-site-link-hover'
 const localeSwitchClass =
-  'inline-flex items-center rounded-full border border-site-line bg-site-panel p-1'
+  'inline-flex items-center rounded-md border border-dashed border-site-line-strong bg-site-panel p-1'
 const localeOptionActiveClass = 'bg-site-hover text-site-link-hover'
 const mobileLocaleOptionClass =
-  'inline-flex min-h-9 min-w-12 items-center justify-center rounded-full px-3 py-1.5 text-[0.76rem] font-semibold tracking-[0.08em] text-site-ink transition-colors duration-150 hover:text-site-link-hover focus-visible:text-site-link-hover focus-visible:outline-none'
+  'inline-flex min-h-9 min-w-12 items-center justify-center rounded-md px-3 py-1.5 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-semibold text-site-ink transition-colors duration-150 hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover'
 const desktopDropdownTriggerClass = ui.dropdownTrigger
 const desktopDropdownMenuClass =
   cn(ui.dropdownMenu, 'min-w-52 lg:min-w-56')
@@ -80,24 +78,21 @@ const desktopExploreLinkClass = ui.navMenuRowLink
 const desktopPrimaryLinkClass = ui.navPillLink
 const desktopPrimaryActiveClass = 'text-site-link-hover'
 const desktopLocaleTriggerClass =
-  cn(ui.controlButton, 'min-h-9 cursor-pointer list-none gap-1 px-2.5 py-2 text-[0.78rem] font-semibold tracking-[0.08em] text-site-ink lg:min-h-10 lg:gap-1.5 lg:px-3 lg:text-[0.86rem] focus-visible:outline-none [&::-webkit-details-marker]:hidden')
+  cn(ui.controlButton, 'min-h-9 cursor-pointer list-none gap-1 px-2.5 py-2 text-(--notebook-hand-sm) font-semibold text-site-ink lg:min-h-10 lg:gap-1.5 lg:px-3 [&::-webkit-details-marker]:hidden')
 const desktopTriggerClass =
-  cn(ui.controlButton, 'hidden nav:inline-flex nav:h-9 nav:w-54 nav:justify-between nav:gap-3 px-3 py-0 text-left text-[0.9rem] text-site-ink-muted lg:h-10 lg:w-60 lg:gap-3.5 lg:text-[0.98rem]')
+  cn(ui.controlButton, 'hidden nav:inline-flex nav:h-9 nav:w-54 nav:justify-between nav:gap-3 px-3 py-0 text-left text-(--notebook-hand-sm) text-site-ink-muted lg:h-10 lg:w-60 lg:gap-3.5')
 const mobileTriggerClass =
   cn(ui.controlButton, 'min-h-10 px-3 py-2 nav:hidden lg:min-h-11')
 const mobileNavPanelClass = cn(
   ui.panel,
-  'site-dropdown-shadow grid gap-3 overflow-hidden rounded-[1.35rem] p-3',
+  'site-dropdown-shadow grid gap-3 overflow-hidden rounded-md p-3',
 )
 const searchFallbackHref = searchableSections[0]?.href ?? homeHref
-const headerBackdropClass =
-  'pointer-events-none absolute inset-x-0 top-0 h-[calc(100%+0.5rem)] bg-[linear-gradient(180deg,color-mix(in_srgb,var(--site-bg)_90%,transparent)_0%,color-mix(in_srgb,var(--site-bg)_66%,transparent)_58%,transparent_100%)] backdrop-blur-xl [mask-image:linear-gradient(to_bottom,black_0%,black_78%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_78%,transparent_100%)]'
 ---
 
-<header class="sticky top-0 z-30 mb-5 bg-transparent">
-  <div class={cn(ui.frame, 'relative pb-1.5 pt-3 nav:pb-2.5 nav:pt-3')}>
-    <div class={headerBackdropClass}></div>
-    <div class="relative z-10 flex items-center justify-between gap-3 rounded-[1.4rem] border border-site-line/80 bg-[color-mix(in_srgb,var(--site-panel)_84%,transparent)] px-4 py-2.5 shadow-(--site-shadow-header) backdrop-blur-xl nav:gap-4 nav:px-5 nav:py-3 lg:px-6 lg:py-3.5">
+<header class="site-notebook-header sticky top-0 z-30 mb-5 border-b border-dashed border-site-line-strong bg-[color-mix(in_srgb,var(--site-bg)_94%,transparent)] backdrop-blur-lg">
+  <div class={cn(ui.frame, 'relative py-2.5 nav:py-3')}>
+    <div class="relative z-10 flex items-center justify-between gap-3 nav:gap-4">
       <a class={brandLinkClass} href={homeHref}>
         <span class={brandIconWrapClass}>
           <BrandIcon className={brandIconClass} />
@@ -176,3 +171,18 @@ const headerBackdropClass =
     </div>
   </div>
 </header>
+
+<style>
+  .site-notebook-header::after {
+    content: '';
+    position: absolute;
+    right: clamp(1.25rem, 6vw, 5rem);
+    bottom: -0.13rem;
+    width: clamp(4rem, 12vw, 8rem);
+    height: 0.2rem;
+    background: var(--site-link-hover);
+    border-radius: 999px;
+    clip-path: polygon(0 35%, 100% 0, 98% 100%, 3% 75%);
+    pointer-events: none;
+  }
+</style>

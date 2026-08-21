@@ -1,0 +1,487 @@
+---
+import BrandIcon from '@/brand/BrandIcon.astro'
+import DesktopLocaleMenu from '@/components/DesktopLocaleMenu.astro'
+import FocusModeToggle from '@/components/FocusModeToggle.astro'
+import PreparationBookNavigation from '@/components/PreparationBookNavigation.astro'
+import SearchLauncher from '@/components/SearchLauncher.svelte'
+import ThemeToggle from '@/components/ThemeToggle.astro'
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+import FocusModePreferenceScript from '@/components/layout/FocusModePreferenceScript.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import {
+  getLocaleHtmlLang,
+  getLocaleLabel,
+  getLocalePath,
+  getLocaleShortLabel,
+  getSupportedLocaleDefinitions,
+} from '@/lib/locale-config'
+import type { ResolvedPreparationBook } from '@/lib/preparation-book'
+import { getPreparationIndexHref } from '@/lib/preparation-links'
+import { isFeatureEnabled } from '@/lib/site-config'
+import {
+  getSectionByPageType,
+  getSectionLabel,
+} from '@/lib/section-manifest'
+import { getSearchLauncherEmptyState, getSiteCopy } from '@/lib/site-copy'
+import type { SiteLocale } from '@/lib/site-copy'
+import { ui } from '@/lib/ui'
+
+type Props = {
+  alternateLocaleHrefs?: Record<string, string | null>
+  book: ResolvedPreparationBook
+  currentGuideId?: string | null
+  currentVolumeId?: string | null
+  description: string
+  isHome?: boolean
+  locale: SiteLocale
+  localeHrefs?: Record<string, string | null>
+  noindex?: boolean
+  pagefind?: boolean
+  socialImage?: string
+  structuredData?: Record<string, unknown> | Record<string, unknown>[]
+  title: string
+}
+
+const {
+  alternateLocaleHrefs = {},
+  book,
+  currentGuideId = null,
+  currentVolumeId = null,
+  description,
+  isHome = false,
+  locale,
+  localeHrefs = {},
+  noindex = false,
+  pagefind = true,
+  socialImage,
+  structuredData = [],
+  title,
+} = Astro.props
+
+const siteCopy = getSiteCopy(locale)
+const homeHref = getLocalePath(locale)
+const preparationHomeHref = getPreparationIndexHref(locale)
+const hasSearch = isFeatureEnabled('search')
+const hasLocaleSwitcher = isFeatureEnabled('localeSwitcher')
+const preparationSection = getSectionByPageType('preparation')
+const searchableSections = preparationSection
+  ? [{
+      href: preparationHomeHref,
+      id: preparationSection.id,
+      label: getSectionLabel(preparationSection.id, locale),
+    }]
+  : []
+const searchableList = searchableSections.map((section) => section.label.toLowerCase()).join(', ')
+const emptyState = getSearchLauncherEmptyState(locale, searchableList)
+const localeSwitchLinks = getSupportedLocaleDefinitions().map((definition) => ({
+  code: definition.code,
+  href: localeHrefs[definition.code] ?? getPreparationIndexHref(definition.code),
+  htmlLang: getLocaleHtmlLang(definition.code),
+  isActive: definition.code === locale,
+  label: getLocaleLabel(definition.code),
+  shortLabel: getLocaleShortLabel(definition.code),
+}))
+const labels = locale === 'pt-br'
+  ? {
+      bookNavigation: 'Navegação do livro',
+      closeNavigation: 'Fechar sumário',
+      enterFocus: 'Ativar modo foco',
+      exitFocus: 'Sair do modo foco',
+      guide: 'Guia de engenharia',
+      home: 'Início',
+      openNavigation: 'Abrir sumário',
+      searchHint: 'Pesquise pelos capítulos e conceitos do guia.',
+      searchPlaceholder: 'Buscar no guia...',
+      searchTitle: 'Buscar no guia',
+    }
+  : {
+      bookNavigation: 'Book navigation',
+      closeNavigation: 'Close contents',
+      enterFocus: 'Enter focus mode',
+      exitFocus: 'Exit focus mode',
+      guide: 'Engineering guide',
+      home: 'Home',
+      openNavigation: 'Open contents',
+      searchHint: 'Search the guide chapters and concepts.',
+      searchPlaceholder: 'Search the guide...',
+      searchTitle: 'Search the guide',
+    }
+const bookSearchCopy = {
+  ...siteCopy.searchLauncher,
+  hint: labels.searchHint,
+  placeholder: labels.searchPlaceholder,
+  title: labels.searchTitle,
+}
+const searchTriggerClass =
+  'inline-flex min-h-10 w-full items-center justify-between gap-3 rounded-md border border-dashed border-site-line-strong bg-site-panel px-3 py-2 text-left [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) text-site-ink-muted transition-colors hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover'
+const localeTriggerClass =
+  'inline-flex min-h-10 items-center justify-center gap-1 rounded-md border border-dashed border-site-line-strong bg-site-panel px-3 py-2 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.08em] text-site-ink transition-colors hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover [&::-webkit-details-marker]:hidden'
+---
+
+<BaseLayout
+  alternateLocaleHrefs={alternateLocaleHrefs}
+  chrome="book"
+  description={description}
+  localeHrefs={localeHrefs}
+  noindex={noindex}
+  pagefind={pagefind}
+  socialImage={socialImage}
+  structuredData={structuredData}
+  title={title}
+>
+  <Fragment slot="head">
+    <FocusModePreferenceScript />
+  </Fragment>
+
+  <FocusModeToggle
+    enterLabel={labels.enterFocus}
+    exitLabel={labels.exitFocus}
+    floating
+  />
+
+  <div class="preparation-book-shell min-h-screen xl:grid xl:grid-cols-[20rem_minmax(0,1fr)]" data-book-shell data-nav-open="false">
+    <header class="book-mobile-header sticky top-0 z-40 flex min-h-16 items-center justify-between gap-3 border-b border-dashed border-site-line-strong bg-site-bg/95 px-4 py-3 backdrop-blur-lg xl:hidden">
+        <a class="inline-flex min-w-0 items-center gap-2.5" href={homeHref}>
+          <span class="inline-flex size-8 shrink-0 items-center justify-center">
+            <BrandIcon className="size-5" />
+          </span>
+          <span class="truncate [font-family:var(--notebook-font-book)] text-base font-semibold tracking-[-0.02em] text-site-ink">
+            {siteCopy.header.brand}
+          </span>
+        </a>
+        <button
+          aria-controls="preparation-book-navigation"
+          aria-expanded="false"
+          aria-label={labels.openNavigation}
+          class="inline-flex size-10 items-center justify-center rounded-md border border-dashed border-site-line-strong bg-site-panel text-site-ink transition-colors hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
+          data-book-nav-toggle
+          data-close-label={labels.closeNavigation}
+          data-open-label={labels.openNavigation}
+          type="button"
+        >
+          <span class="book-nav-open-icon inline-grid">
+            <DoodleIcon name="brackets" size={20} />
+          </span>
+          <span class="book-nav-close-icon hidden">
+            <DoodleIcon name="cross" size={20} />
+          </span>
+        </button>
+    </header>
+
+    <button
+      aria-label={labels.closeNavigation}
+      class="book-navigation-overlay fixed inset-0 z-40 backdrop-blur-[2px] xl:hidden"
+      data-book-nav-close
+      tabindex="-1"
+      type="button"
+    ></button>
+
+    <aside
+      aria-label={labels.bookNavigation}
+      class="book-navigation-panel fixed inset-y-0 left-0 z-50 flex w-[min(22rem,calc(100vw-2rem))] flex-col overflow-hidden border-r border-dashed border-site-line-strong bg-site-bg shadow-(--site-shadow-overlay) xl:sticky xl:top-0 xl:z-0 xl:h-dvh xl:w-auto xl:bg-site-panel-muted xl:shadow-none"
+      id="preparation-book-navigation"
+    >
+        <div class="flex min-h-16 items-center justify-between gap-3 border-b border-dashed border-site-line-strong px-4 py-3 xl:hidden">
+          <span class="[font-family:var(--notebook-font-book)] text-sm font-semibold text-site-ink">{labels.guide}</span>
+          <button
+            aria-label={labels.closeNavigation}
+            class="inline-flex size-10 items-center justify-center rounded-md border border-dashed border-site-line-strong bg-site-panel text-site-ink transition-colors hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
+            data-book-nav-close
+            type="button"
+          >
+            <DoodleIcon name="cross" size={20} />
+          </button>
+        </div>
+
+        <div class="hidden border-b border-dashed border-site-line-strong px-5 py-5 xl:block">
+          <a class="inline-flex items-center gap-3" href={homeHref}>
+            <span class="inline-flex size-9 items-center justify-center">
+              <BrandIcon className="size-[1.35rem]" />
+            </span>
+            <span class="[font-family:var(--notebook-font-book)] text-[1.22rem] font-semibold tracking-[-0.025em] text-site-ink">
+              {siteCopy.header.brand}
+            </span>
+          </a>
+          <p class="mb-0 mt-2 pl-12 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-medium text-site-ink-muted">{labels.guide}</p>
+        </div>
+
+        <div class="grid gap-2 border-b border-dashed border-site-line-strong px-4 py-4">
+          {hasSearch ? (
+            <SearchLauncher
+              client:visible
+              copy={bookSearchCopy}
+              desktopTriggerClass={searchTriggerClass}
+              dialogClass={ui.searchDialog}
+              dialogHintClass={ui.dialogHint}
+              emptyState={emptyState}
+              fallbackGroupLabel={siteCopy.directory.page}
+              isDev={import.meta.env.DEV}
+              mobileTriggerClass="hidden"
+              noJsHref={preparationHomeHref}
+              noJsLabel={siteCopy.searchLauncher.noJsFallback}
+              resultUrlPrefixes={[preparationHomeHref]}
+              searchableSections={searchableSections}
+              searchResultLinkClass={ui.searchResultLink}
+            />
+          ) : null}
+
+          <div class="flex items-center gap-2">
+            {hasLocaleSwitcher ? (
+              <DesktopLocaleMenu
+                activeClass="bg-site-hover text-site-link-hover"
+                currentLocaleCode={getLocaleShortLabel(locale)}
+                itemClass="block rounded-md px-3 py-2 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) text-site-ink-soft hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
+                localeLinks={localeSwitchLinks}
+                menuClass="absolute left-0 top-full z-50 mt-2 min-w-44 rounded-md border border-dashed border-site-line-strong bg-site-panel p-2 shadow-(--site-shadow-dropdown)"
+                triggerClass={localeTriggerClass}
+                triggerLabel={siteCopy.header.languageSwitcher}
+              />
+            ) : null}
+            <ThemeToggle
+              className="rounded-md"
+              darkLabel={locale === 'pt-br' ? 'Usar tema escuro' : 'Use dark theme'}
+              label={siteCopy.layout.themeToggle}
+              lightLabel={locale === 'pt-br' ? 'Usar tema claro' : 'Use light theme'}
+            />
+            <FocusModeToggle
+              className="rounded-md"
+              enterLabel={labels.enterFocus}
+              exitLabel={labels.exitFocus}
+            />
+          </div>
+        </div>
+
+        <div class="min-h-0 flex-1 overflow-y-auto px-3 py-4" data-book-nav-scroll>
+          <PreparationBookNavigation
+            book={book}
+            currentGuideId={currentGuideId}
+            currentVolumeId={currentVolumeId}
+            homeHref={homeHref}
+            homeLabel={labels.home}
+            isHome={isHome}
+            label={labels.bookNavigation}
+          />
+        </div>
+
+    </aside>
+
+    <main
+      class="min-w-0"
+      data-book-content
+      data-pagefind-body={pagefind ? true : undefined}
+      id="main-content"
+      tabindex="-1"
+    >
+      <slot />
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .book-navigation-panel {
+    visibility: hidden;
+    transform: translateX(-100%);
+    transition:
+      transform 220ms var(--site-transition-smooth),
+      visibility 220ms step-end;
+  }
+
+  .book-navigation-overlay {
+    background: var(--site-overlay-backdrop);
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 180ms ease,
+      visibility 180ms step-end;
+  }
+
+  .preparation-book-shell[data-nav-open='true'] .book-navigation-panel {
+    visibility: visible;
+    transform: translateX(0);
+    transition:
+      transform 220ms var(--site-transition-smooth),
+      visibility 0ms step-start;
+  }
+
+  .preparation-book-shell[data-nav-open='true'] .book-navigation-overlay {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transition:
+      opacity 180ms ease,
+      visibility 0ms step-start;
+  }
+
+  .preparation-book-shell[data-nav-open='true'] .book-nav-open-icon {
+    display: none;
+  }
+
+  .preparation-book-shell[data-nav-open='true'] .book-nav-close-icon {
+    display: block;
+  }
+
+  @media (min-width: 80rem) {
+    .book-navigation-panel {
+      visibility: visible;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  :global(html[data-focus-mode='true']) .preparation-book-shell {
+    display: block;
+  }
+
+  :global(html[data-focus-mode='true'] .book-mobile-header),
+  :global(html[data-focus-mode='true'] .book-navigation-panel),
+  :global(html[data-focus-mode='true'] .book-navigation-overlay),
+  :global(html[data-focus-mode='true'] [data-book-secondary-ui]),
+  :global(html[data-focus-mode='true'] [data-book-context]) {
+    display: none !important;
+  }
+
+  :global(html[data-focus-mode='true'] [data-book-reading-frame]) {
+    max-width: 64rem;
+  }
+
+  :global(html[data-focus-mode='true'] [data-book-reading-layout]) {
+    display: block;
+    max-width: 54rem;
+    margin-inline: auto;
+  }
+
+  @media (max-width: 79.999rem) {
+    :global(html[data-js='false']) .book-navigation-panel {
+      position: static;
+      width: 100%;
+      height: auto;
+      max-height: none;
+      visibility: visible;
+      transform: none;
+      box-shadow: none;
+    }
+
+    :global(html[data-js='false']) [data-book-nav-toggle],
+    :global(html[data-js='false']) [data-book-nav-close] {
+      display: none;
+    }
+  }
+</style>
+
+<script is:inline data-astro-rerun>
+  (() => {
+    const shell = document.querySelector('[data-book-shell]')
+
+    if (!(shell instanceof HTMLElement) || shell.dataset.navInitialized === 'true') return
+
+    shell.dataset.navInitialized = 'true'
+    const toggle = shell.querySelector('[data-book-nav-toggle]')
+    const closeButtons = shell.querySelectorAll('[data-book-nav-close]')
+    const panel = shell.querySelector('.book-navigation-panel')
+    const content = shell.querySelector('[data-book-content]')
+    const navigationScroll = shell.querySelector('[data-book-nav-scroll]')
+
+    if (
+      !(toggle instanceof HTMLButtonElement)
+      || !(panel instanceof HTMLElement)
+      || !(content instanceof HTMLElement)
+      || !(navigationScroll instanceof HTMLElement)
+    ) return
+
+    const scrollCurrentItemIntoView = () => {
+      const currentItem = navigationScroll.querySelector('[aria-current="page"]')
+
+      if (!(currentItem instanceof HTMLElement)) return
+
+      const containerRect = navigationScroll.getBoundingClientRect()
+      const itemRect = currentItem.getBoundingClientRect()
+      const nextScrollTop = navigationScroll.scrollTop
+        + itemRect.top
+        - containerRect.top
+        - (navigationScroll.clientHeight - itemRect.height) / 2
+
+      navigationScroll.scrollTo({
+        behavior: 'auto',
+        top: Math.max(0, nextScrollTop),
+      })
+    }
+
+    const getFocusableElements = () => [...panel.querySelectorAll(
+      'a[href], button:not([disabled]), summary, [tabindex]:not([tabindex="-1"])',
+    )].filter((element) => element instanceof HTMLElement && element.offsetParent !== null)
+
+    const setOpen = (open) => {
+      const trapsPage = open && window.innerWidth < 1280
+
+      shell.dataset.navOpen = open ? 'true' : 'false'
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false')
+      toggle.setAttribute(
+        'aria-label',
+        open ? toggle.dataset.closeLabel ?? '' : toggle.dataset.openLabel ?? '',
+      )
+      content.inert = trapsPage
+      document.documentElement.style.overflow = trapsPage ? 'hidden' : ''
+    }
+
+    toggle.addEventListener('click', () => {
+      const nextOpen = shell.dataset.navOpen !== 'true'
+      setOpen(nextOpen)
+
+      if (nextOpen) {
+        requestAnimationFrame(scrollCurrentItemIntoView)
+        getFocusableElements()[0]?.focus()
+      }
+    })
+
+    closeButtons.forEach((closeButton) => {
+      closeButton.addEventListener('click', () => {
+        setOpen(false)
+        toggle.focus()
+      })
+    })
+
+    panel.addEventListener('click', (event) => {
+      if (window.innerWidth < 1280 && event.target instanceof Element && event.target.closest('a')) {
+        setOpen(false)
+      }
+    })
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && shell.dataset.navOpen === 'true') {
+        setOpen(false)
+        toggle.focus()
+        return
+      }
+
+      if (
+        event.key === 'Tab'
+        && shell.dataset.navOpen === 'true'
+        && window.innerWidth < 1280
+      ) {
+        const focusable = getFocusableElements()
+        const first = focusable[0]
+        const last = focusable.at(-1)
+
+        if (!(first instanceof HTMLElement) || !(last instanceof HTMLElement)) return
+
+        if (event.shiftKey && (document.activeElement === first || !panel.contains(document.activeElement))) {
+          event.preventDefault()
+          last.focus()
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault()
+          first.focus()
+        }
+      }
+    })
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1280 && shell.dataset.navOpen === 'true') {
+        setOpen(false)
+        panel.querySelector('[aria-current="page"], a, summary')?.focus()
+      }
+    })
+
+    requestAnimationFrame(scrollCurrentItemIntoView)
+  })()
+</script>

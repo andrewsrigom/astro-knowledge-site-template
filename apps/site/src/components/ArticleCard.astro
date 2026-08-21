@@ -11,7 +11,7 @@ import {
   articleCardTitleVariants,
   eyebrowVariants,
 } from '@/lib/ui-variants'
-import ArrowRightIcon from '@/components/ui/icons/ArrowRightIcon.astro'
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
 
 type Props = {
   categoryLabel?: string
@@ -55,7 +55,7 @@ const completedCtaLabel = copy.directory.readAgain
       )}
       {...getDataHookAttributes(completionDomHooks.completeBadge)}
     >
-      ✓
+      <DoodleIcon name="check" size={16} />
     </span>
     {eyebrow ? (
       <p class={eyebrowVariants({ tone: eyebrowVariant })}>
@@ -76,7 +76,7 @@ const completedCtaLabel = copy.directory.readAgain
           {...getDataHookAttributes(completionDomHooks.mobileDefaultText)}
         >
           <span>{ctaLabel}</span>
-          <ArrowRightIcon className="size-[0.88rem]" />
+          <DoodleIcon name="arrow-right" size={15} />
         </span>
         <span
           aria-hidden="true"
@@ -84,7 +84,7 @@ const completedCtaLabel = copy.directory.readAgain
           {...getDataHookAttributes(completionDomHooks.mobileCompleteText)}
         >
           <span>{completedCtaLabel}</span>
-          <ArrowRightIcon className="size-[0.88rem]" />
+          <DoodleIcon name="arrow-right" size={15} />
         </span>
         <span class={ui.completionRailMd}>
           <span
@@ -93,7 +93,7 @@ const completedCtaLabel = copy.directory.readAgain
             {...getDataHookAttributes(completionDomHooks.completeText)}
           >
             <span>{completedCtaLabel}</span>
-            <ArrowRightIcon className="size-[0.88rem]" />
+            <DoodleIcon name="arrow-right" size={15} />
           </span>
           <span
             aria-hidden="true"
@@ -101,7 +101,7 @@ const completedCtaLabel = copy.directory.readAgain
             {...getDataHookAttributes(completionDomHooks.defaultText)}
           >
             <span>{ctaLabel}</span>
-            <ArrowRightIcon className="size-[0.88rem]" />
+            <DoodleIcon name="arrow-right" size={15} />
           </span>
         </span>
       </>

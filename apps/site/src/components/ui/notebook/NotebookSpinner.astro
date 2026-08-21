@@ -1,0 +1,73 @@
+---
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+
+type Props = {
+  class?: string
+  label: string
+  size?: 'lg' | 'md' | 'sm'
+  tone?: 'accent' | 'coral' | 'lemon' | 'mint' | 'violet'
+}
+
+const {
+  class: className,
+  label,
+  size = 'md',
+  tone = 'accent',
+}: Props = Astro.props
+
+const iconSize = size === 'sm' ? 18 : size === 'lg' ? 42 : 28
+---
+
+<span
+  aria-label={label}
+  class:list={['notebook-spinner', className]}
+  data-size={size}
+  data-tone={tone}
+  role="status"
+>
+  <span aria-hidden="true" class="notebook-spinner__icon">
+    <DoodleIcon name="reset" size={iconSize} />
+  </span>
+</span>
+
+<style>
+  .notebook-spinner {
+    --spinner-ink: var(--notebook-post-it-blue-ink);
+    display: inline-grid;
+    place-items: center;
+    color: var(--spinner-ink);
+  }
+
+  .notebook-spinner[data-tone='coral'] {
+    --spinner-ink: var(--notebook-post-it-coral-ink);
+  }
+
+  .notebook-spinner[data-tone='lemon'] {
+    --spinner-ink: var(--notebook-post-it-lemon-ink);
+  }
+
+  .notebook-spinner[data-tone='mint'] {
+    --spinner-ink: var(--notebook-post-it-mint-ink);
+  }
+
+  .notebook-spinner[data-tone='violet'] {
+    --spinner-ink: var(--notebook-sticker-violet-ink);
+  }
+
+  .notebook-spinner__icon {
+    display: inline-grid;
+    animation: notebook-spinner-turn 900ms steps(12, end) infinite;
+  }
+
+  @keyframes notebook-spinner-turn {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .notebook-spinner__icon {
+      animation: none;
+    }
+  }
+</style>

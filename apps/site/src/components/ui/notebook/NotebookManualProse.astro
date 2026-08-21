@@ -1,0 +1,285 @@
+---
+import '@/styles/notebook-post-it.css'
+
+type Props = {
+  class?: string
+}
+
+const { class: className }: Props = Astro.props
+---
+
+<div class:list={['article-prose', 'notebook-manual-prose', className]}>
+  <slot />
+</div>
+
+<style>
+  .notebook-manual-prose {
+    margin-inline: 0;
+    max-width: none;
+  }
+
+  :global(.notebook-manual-prose > :first-child) {
+    margin-top: 0;
+  }
+
+  :global(.notebook-manual-prose > h2) {
+    position: relative;
+    margin-top: 3.8rem;
+    margin-bottom: 0.85rem;
+    color: var(--site-ink);
+    font-family: var(--notebook-font-book);
+    font-size: clamp(1.75rem, 2.6vw, 2.15rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+
+  :global(.notebook-manual-prose > h2::before) {
+    position: absolute;
+    top: -0.75rem;
+    left: 0.05rem;
+    width: 3.6rem;
+    height: 0.42rem;
+    background: color-mix(in srgb, var(--notebook-post-it-blue-bg) 72%, transparent);
+    border-radius: 0.12rem;
+    content: '';
+    transform: rotate(-0.25deg);
+  }
+
+  :global(.notebook-manual-prose > h3) {
+    color: var(--site-ink);
+    font-family: var(--notebook-font-book);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  :global(.notebook-manual-prose .interview-question) {
+    --accordion-bg: var(--notebook-post-it-blue-bg);
+    --accordion-ink: var(--notebook-post-it-blue-ink);
+    margin-block: 0.75rem;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--accordion-bg) 18%, var(--site-surface));
+    border: 1px solid color-mix(in srgb, var(--accordion-ink) 30%, transparent);
+    border-radius: 0.65rem 0.85rem 0.6rem 0.8rem;
+    interpolate-size: allow-keywords;
+  }
+
+  :global(.notebook-manual-prose .interview-question summary) {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.95rem 3rem 0.9rem 1rem;
+    color: var(--accordion-ink);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-md);
+    font-weight: var(--notebook-hand-weight-strong);
+    line-height: 1.15;
+    list-style: none;
+  }
+
+  :global(.notebook-manual-prose .interview-question summary::before) {
+    position: absolute;
+    top: -0.1rem;
+    left: 1.1rem;
+    width: 3.2rem;
+    height: 0.45rem;
+    background: color-mix(in srgb, var(--accordion-bg) 72%, transparent);
+    content: '';
+    transform: rotate(-0.25deg);
+  }
+
+  :global(.notebook-manual-prose .interview-question summary::-webkit-details-marker) {
+    display: none;
+  }
+
+  :global(.notebook-manual-prose .interview-question summary::after) {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    color: var(--accordion-ink);
+    content: '→';
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-lg);
+    font-weight: var(--notebook-hand-weight-strong);
+    line-height: 1;
+    transform: translateY(-50%) rotate(0deg);
+    transition: transform 150ms var(--site-transition-smooth);
+  }
+
+  :global(.notebook-manual-prose .interview-question[open] summary::after) {
+    transform: translateY(-50%) rotate(90deg);
+  }
+
+  :global(.notebook-manual-prose .interview-question summary:focus-visible) {
+    outline: 2px dashed var(--accordion-ink);
+    outline-offset: -4px;
+  }
+
+  :global(.notebook-manual-prose .interview-answer) {
+    padding: 0.15rem 1rem 1rem;
+    color: var(--site-ink);
+    border-top: 1px dashed color-mix(in srgb, var(--accordion-ink) 24%, transparent);
+    font-family: var(--notebook-font-book);
+    line-height: 1.65;
+  }
+
+  :global(.notebook-manual-prose .interview-answer p) {
+    margin: 0.9rem 0 0;
+  }
+
+  :global(.notebook-manual-prose blockquote:not(.interview-answer)) {
+    position: relative;
+    margin-block: 2rem;
+    padding: 1.25rem 1.35rem 1.15rem 3.25rem;
+    color: var(--site-ink);
+    background: color-mix(in srgb, var(--notebook-post-it-blue-bg) 12%, var(--site-surface));
+    border: 0;
+    border-left: 0.35rem solid color-mix(in srgb, var(--notebook-post-it-blue-ink) 55%, transparent);
+    border-radius: 0.35rem 0.85rem 0.7rem 0.35rem;
+    font-family: var(--notebook-font-book);
+    font-style: italic;
+  }
+
+  :global(.notebook-manual-prose blockquote:not(.interview-answer)::before) {
+    position: absolute;
+    top: 0.7rem;
+    left: 0.85rem;
+    color: var(--notebook-post-it-blue-ink);
+    content: '“';
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-2xl);
+    font-weight: var(--notebook-hand-weight-strong);
+    line-height: 0.72;
+    transform: rotate(-2deg);
+  }
+
+  :global(.notebook-manual-prose table) {
+    border: 1px solid var(--site-line);
+    border-radius: 0.7rem 0.9rem 0.65rem 0.85rem;
+    background: transparent;
+  }
+
+  :global(.notebook-manual-prose table th) {
+    color: var(--site-ink);
+    background: color-mix(in srgb, var(--notebook-post-it-blue-bg) 24%, var(--site-surface));
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+    font-weight: var(--notebook-hand-weight-strong);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  :global(.notebook-manual-prose table tbody tr:first-child td),
+  :global(.notebook-manual-prose table tbody tr + tr td) {
+    border-top: 1px dashed var(--site-line-strong);
+  }
+
+  :global(.notebook-manual-prose mark),
+  :global(.notebook-manual-prose .book-marker) {
+    padding-inline: 0.08em;
+    color: inherit;
+    background-color: transparent;
+    background-image: linear-gradient(
+      177deg,
+      transparent 15%,
+      var(--notebook-highlight-yellow) 16%,
+      var(--notebook-highlight-yellow) 88%,
+      transparent 89%
+    );
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  :global(.notebook-manual-prose .book-sketch-note) {
+    position: relative;
+    margin-block: 2rem 2.5rem;
+    padding: 1.05rem 1.2rem 1rem 1.35rem;
+    color: var(--site-ink);
+    background: color-mix(in srgb, var(--notebook-post-it-blue-bg) 15%, var(--site-surface));
+    border: 1.5px dashed color-mix(in srgb, var(--notebook-post-it-blue-ink) 32%, transparent);
+    border-radius: 0.65rem 0.9rem 0.65rem 0.85rem;
+  }
+
+  :global(.notebook-manual-prose .book-sketch-note p) {
+    margin: 0;
+  }
+
+  :global(.notebook-manual-prose .book-sketch-note__label) {
+    margin-bottom: 0.35rem;
+    color: var(--notebook-post-it-blue-ink);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+    font-weight: var(--notebook-hand-weight-strong);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  :global(.notebook-manual-prose .notebook-post-it) {
+    margin: 2.25rem 0 2.75rem auto;
+  }
+
+  :global(.notebook-manual-prose .book-pencil-note) {
+    display: flex;
+    width: fit-content;
+    max-width: min(100%, 18rem);
+    align-items: center;
+    gap: 0.45rem;
+    margin-block: -0.25rem 1.75rem;
+    color: var(--book-pencil);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+    font-weight: var(--notebook-hand-weight-regular);
+    line-height: 1.4;
+    transform: rotate(-0.35deg);
+  }
+
+  :global(.notebook-manual-prose .book-pencil-note--right) {
+    margin-left: auto;
+  }
+
+  :global(.notebook-manual-prose .book-pencil-note--bracket) {
+    display: block;
+    max-width: 15rem;
+    margin-left: auto;
+    padding-right: 0.6rem;
+    text-align: right;
+  }
+
+  :global(.notebook-manual-prose [data-sketch-arrow-canvas]) {
+    width: 3.6rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+
+  :global(.notebook-manual-prose [data-sketch-annotation='underline']) {
+    color: var(--article-heading-color);
+    font-weight: 650;
+    white-space: nowrap;
+  }
+
+  :global(.notebook-manual-prose [data-sketch-annotation='circle']) {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 40rem) {
+    :global(.notebook-manual-prose .notebook-post-it) {
+      width: calc(100% - 0.75rem);
+      margin-right: auto;
+    }
+
+    :global(.notebook-manual-prose .book-pencil-note) {
+      max-width: 15rem;
+      margin-top: 0.25rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.notebook-manual-prose .interview-question summary::after) {
+      transition: none;
+    }
+  }
+</style>

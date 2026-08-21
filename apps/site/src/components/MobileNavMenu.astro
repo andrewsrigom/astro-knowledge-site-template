@@ -1,6 +1,7 @@
 ---
 import { getDataHookAttributes, mobileNavMenuDomHooks } from '@/lib/dom-hooks'
 import { siteStorageKeys } from '@/lib/storage-keys'
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
 
 type LinkItem = {
   href: string
@@ -65,18 +66,11 @@ function getLocaleChoiceHandler(code: string) {
   <summary
     aria-controls="mobile-site-nav"
     aria-label={menuLabel}
-    class="inline-flex min-h-10 items-center justify-center rounded-xs border border-site-line bg-site-panel px-3 py-2 text-sm font-semibold tracking-[0.04em] text-site-ink transition-colors duration-150 hover:bg-site-hover hover:text-site-link-hover focus-visible:bg-site-hover focus-visible:text-site-link-hover focus-visible:outline-none list-none [&::-webkit-details-marker]:hidden"
+    class="inline-flex min-h-10 items-center justify-center rounded-md border border-dashed border-site-line-strong bg-site-panel px-3 py-2 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-semibold text-site-ink transition-colors duration-150 hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover list-none [&::-webkit-details-marker]:hidden"
     {...getDataHookAttributes(mobileNavMenuDomHooks.trigger)}
   >
-    <svg class="size-4 group-open:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path d="M4 7h16" />
-      <path d="M4 12h16" />
-      <path d="M4 17h16" />
-    </svg>
-    <svg class="hidden size-4 group-open:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path d="m18 6-12 12" />
-      <path d="m6 6 12 12" />
-    </svg>
+    <DoodleIcon class="group-open:hidden" name="brackets" size={17} />
+    <DoodleIcon class="hidden group-open:block" name="cross" size={17} />
     <span class="sr-only">{menuLabel} / {closeLabel}</span>
   </summary>
 
@@ -101,8 +95,8 @@ function getLocaleChoiceHandler(code: string) {
       ) : null}
 
       {showLocaleSwitcher ? (
-        <div class="grid gap-2 border-t border-site-line pt-3">
-          <p class="m-0 text-[0.72rem] font-bold uppercase tracking-[0.18em] text-site-line-strong">
+        <div class="grid gap-2 border-t border-dashed border-site-line-strong pt-3">
+          <p class="m-0 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-bold uppercase tracking-[0.12em] text-site-line-strong">
             {localeSwitcherLabel}
           </p>
           <div class={`${localeSwitchClass} w-fit flex-wrap`}>

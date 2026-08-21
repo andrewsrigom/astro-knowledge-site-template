@@ -1,0 +1,69 @@
+---
+type RailLink = {
+  href: string
+  title: string
+}
+
+type Props = {
+  chapters?: RailLink[]
+  locale: string
+  owner: RailLink
+  sections: RailLink[]
+}
+
+const { chapters = [], locale, owner, sections } = Astro.props
+const labels = locale === 'pt-br'
+  ? {
+      chapters: 'Capítulos desta parte',
+      owner: 'No guia',
+      sections: 'Nesta prática',
+    }
+  : {
+      chapters: 'Chapters in this part',
+      owner: 'In the guide',
+      sections: 'In this practice',
+    }
+---
+
+<div class="grid gap-4" data-pagefind-ignore>
+  {sections.length > 0 ? (
+    <nav aria-label={labels.sections} class="rounded-md border border-dashed border-site-line-strong bg-site-panel p-4">
+      <p class="m-0 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
+        {labels.sections}
+      </p>
+      <ul class="mb-0 mt-3 grid list-none gap-2 p-0 text-sm leading-5">
+        {sections.map((section) => (
+          <li>
+            <a class="text-site-link-hover hover:text-site-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover" href={section.href}>
+              {section.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  ) : null}
+
+  <section class="rounded-md border border-dashed border-site-line-strong bg-site-panel p-4">
+    <p class="m-0 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
+      {labels.owner}
+    </p>
+    <a class="mt-3 block [font-family:var(--notebook-font-book)] text-sm font-semibold leading-5 text-site-link-hover hover:text-site-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover" href={owner.href}>
+      {owner.title}
+    </a>
+
+    {chapters.length > 0 ? (
+      <div class="mt-4 border-t border-dashed border-site-line-strong pt-4">
+        <p class="m-0 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
+          {labels.chapters}
+        </p>
+        <ul class="mb-0 mt-3 grid list-none gap-2 p-0 text-sm leading-5">
+          {chapters.map((chapter) => (
+            <li>
+              <a class="text-site-link-hover hover:text-site-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover" href={chapter.href}>{chapter.title}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ) : null}
+  </section>
+</div>

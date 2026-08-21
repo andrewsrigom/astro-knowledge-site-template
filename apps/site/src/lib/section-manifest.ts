@@ -9,6 +9,7 @@ export type SectionPageType =
   | 'concepts'
   | 'glossary'
   | 'challenges'
+  | 'preparation'
 
 type LocalizedSectionText = Record<string, string>
 
@@ -52,6 +53,7 @@ const supportedPageTypes = new Set<SectionPageType>([
   'concepts',
   'glossary',
   'challenges',
+  'preparation',
 ])
 
 export function getAllSections() {

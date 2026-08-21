@@ -31,6 +31,7 @@ type TestArticleNode = {
   articleId: string
   href: string
   id: string
+  isAvailableInLocale: boolean
   kind: 'article'
   position: { x: number; y: number }
   post: {
@@ -74,6 +75,7 @@ function createArticleNode(options: {
     articleId,
     href: `/articles/${articleId}`,
     id,
+    isAvailableInLocale: true,
     kind: 'article',
     position: { x: 0, y: 0 },
     post: {

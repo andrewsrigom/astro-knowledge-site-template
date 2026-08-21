@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { EditorView } from '@codemirror/view'
   import { onMount, onDestroy } from 'svelte'
+  import DoodleIcon from '@/components/ui/notebook/DoodleIcon.svelte'
   import { copyTextToClipboard } from '@/lib/clipboard'
   import { cn } from '@/lib/cn'
   import { markChallengeSolved } from '@/lib/challenge-progress'
@@ -349,7 +350,7 @@ const __cases = ${JSON.stringify(cases)};
             EditorView.theme({
               '&': { fontSize: '0.875rem' },
               '.cm-scroller': {
-                fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+                fontFamily: 'var(--notebook-font-mono)',
               },
               '.cm-content': { padding: '12px 0' },
             }),
@@ -526,20 +527,20 @@ const __cases = ${JSON.stringify(cases)};
 </script>
 
 <div
-  class={cn('article-utility-shell mx-auto mt-10 w-full rounded-xl border border-site-line bg-site-panel p-5', className)}
+  class={cn('article-utility-shell mx-auto mt-10 w-full rounded-md border border-dashed border-site-line-strong bg-site-panel p-5', className)}
   data-no-js-only="true"
   data-pagefind-ignore
   {...getDataHookAttributes(challengePlaygroundDomHooks.noJsFallback)}
 >
   <div class="grid gap-4">
-    <p class="text-sm leading-6 text-site-ink-soft">
+    <p class="[font-family:var(--notebook-font-book)] text-sm leading-6 text-site-ink-soft">
       {playgroundCopy.noJsDescription}
     </p>
     <div class="grid gap-2">
-      <p class="text-xs font-semibold uppercase tracking-[0.16em] text-site-ink-muted">
+      <p class="[font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
         {playgroundCopy.noJsCodeLabel}
       </p>
-      <pre class="overflow-x-auto rounded-xs border border-site-line bg-site-bg px-4 py-3 text-sm leading-6 text-site-ink"><code>{starterCode}</code></pre>
+      <pre class="overflow-x-auto rounded-md border border-dashed border-site-line-strong bg-site-bg px-4 py-3 text-sm leading-6 text-site-ink"><code>{starterCode}</code></pre>
     </div>
   </div>
 </div>
@@ -549,9 +550,9 @@ const __cases = ${JSON.stringify(cases)};
   data-js-only="true"
   {...getDataHookAttributes(challengePlaygroundDomHooks.root)}
 >
-  <div class="challenge-playground-shell overflow-hidden rounded-xl border border-site-line">
+  <div class="challenge-playground-shell overflow-hidden rounded-md border border-dashed border-site-line-strong">
     <!-- Toolbar -->
-    <div class="challenge-playground-toolbar flex items-center justify-between gap-4 border-b px-4 py-2.5">
+    <div class="challenge-playground-toolbar flex items-center justify-between gap-4 border-b border-dashed px-4 py-2.5">
       <div class="flex items-center gap-3">
         <span class="challenge-playground-filename font-mono text-xs">
           {solutionLanguage === 'typescript'
@@ -564,12 +565,9 @@ const __cases = ${JSON.stringify(cases)};
           <button
             onclick={reset}
             title={playgroundCopy.resetTitle}
-            class="challenge-playground-toolbar-action inline-flex items-center gap-1.5 rounded px-2 py-1 text-xs transition-colors"
+            class="challenge-playground-toolbar-action inline-flex items-center gap-1.5 rounded-md px-2 py-1 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
           >
-            <svg class="size-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-              <path d="M3 3v5h5" />
-            </svg>
+            <DoodleIcon name="reset" size={14} />
             {playgroundCopy.reset}
           </button>
         {/if}
@@ -585,29 +583,13 @@ const __cases = ${JSON.stringify(cases)};
           disabled={running || !supportsExecution}
           title={supportsExecution ? playgroundCopy.runTitle : playgroundCopy.interactiveExecutionOnly}
           {...getDataHookAttributes(challengePlaygroundDomHooks.runButton)}
-          class="challenge-playground-primary inline-flex items-center gap-2 rounded-md px-4 py-1.5 text-sm font-medium transition-opacity hover:opacity-90 active:opacity-75 disabled:opacity-60"
+          class="challenge-playground-primary inline-flex items-center gap-2 rounded-md border border-dashed border-site-line-strong px-4 py-1.5 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-medium transition-opacity hover:opacity-90 active:opacity-75 disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
         >
           {#if running}
-            <svg class="size-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
-              ></circle>
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-              ></path>
-            </svg>
+            <DoodleIcon className="animate-spin" name="reset" size={16} />
             {playgroundCopy.running}
           {:else if supportsExecution}
-            <svg
-              class="size-3.5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <polygon points="5 3 19 12 5 21 5 3" />
-            </svg>
+            <DoodleIcon name="arrow-right" size={16} />
             {playgroundCopy.run}
           {:else}
             {playgroundCopy.runUnavailable}
@@ -618,15 +600,11 @@ const __cases = ${JSON.stringify(cases)};
 
     {#if !storageAvailable}
       <div
-        class="challenge-playground-panel border-b px-4 py-3"
+        class="challenge-playground-panel border-b border-dashed px-4 py-3"
         {...getDataHookAttributes(challengePlaygroundDomHooks.storageWarning)}
       >
         <div class="challenge-playground-warning-card flex items-start gap-2.5 rounded-md px-3 py-2">
-          <svg class="challenge-playground-warning-ink mt-0.5 size-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
+          <DoodleIcon className="challenge-playground-warning-ink mt-0.5 shrink-0" name="exclamation" size={16} />
           <p class="challenge-playground-warning-copy text-xs">
             {playgroundCopy.storageUnavailable}
           </p>
@@ -636,7 +614,7 @@ const __cases = ${JSON.stringify(cases)};
 
     <!-- CodeMirror editor (or fallback textarea) -->
     {#if mountError}
-      <div class="challenge-playground-editor-error border-b p-3 font-mono text-xs">
+      <div class="challenge-playground-editor-error border-b border-dashed p-3 font-mono text-xs">
         {playgroundCopy.editorErrorPrefix}: {mountError}
       </div>
     {/if}
@@ -652,7 +630,7 @@ const __cases = ${JSON.stringify(cases)};
 
     <!-- Hints panel -->
     {#if hints.length > 0 && !allPass}
-      <div class="challenge-playground-panel border-t px-4 py-3">
+      <div class="challenge-playground-panel border-t border-dashed px-4 py-3">
         <div class="flex items-center justify-between">
           <span class="challenge-playground-meta text-xs">
             {formatHintStatus(unlockedHints, hints.length)}
@@ -660,13 +638,9 @@ const __cases = ${JSON.stringify(cases)};
           {#if unlockedHints < hints.length}
             <button
               onclick={unlockHint}
-              class="challenge-playground-toolbar-action challenge-playground-outline-action inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-medium transition-colors"
+              class="challenge-playground-toolbar-action challenge-playground-outline-action inline-flex items-center gap-1.5 rounded-md border border-dashed border-site-line-strong px-2.5 py-1 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
             >
-              <svg class="size-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
+              <DoodleIcon name="lightbulb" size={14} />
               {unlockedHints === 0 ? playgroundCopy.showHint : playgroundCopy.nextHint}
             </button>
           {/if}
@@ -686,21 +660,11 @@ const __cases = ${JSON.stringify(cases)};
 
     <!-- Results panel -->
     {#if hasRun}
-      <div class="challenge-playground-panel border-t p-4">
+      <div class="challenge-playground-panel border-t border-dashed p-4">
         {#if compileError}
           <div class="flex items-start gap-2.5">
             <span class="challenge-playground-issue-ink mt-0.5">
-              <svg
-                class="size-4"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
+              <DoodleIcon name="bug" size={17} />
             </span>
             <div>
               <p class="challenge-playground-issue-title text-sm font-medium">{playgroundCopy.executionErrorTitle}</p>
@@ -718,18 +682,10 @@ const __cases = ${JSON.stringify(cases)};
             </span>
             {#if allPass}
               <span
-                class="badge-allpass challenge-playground-success-badge inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium"
+                class="badge-allpass challenge-playground-success-badge inline-flex items-center gap-1 rounded-md border border-dashed border-site-line-strong px-2 py-0.5 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-medium"
                 {...getDataHookAttributes(challengePlaygroundDomHooks.allPassingBadge)}
               >
-                <svg
-                  class="size-3"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  viewBox="0 0 24 24"
-                >
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
+                <DoodleIcon name="check" size={14} />
                 {playgroundCopy.testsAllPassing}
               </span>
             {/if}
@@ -737,7 +693,7 @@ const __cases = ${JSON.stringify(cases)};
 
           {#if allPass}
             <div class="mb-3 grid gap-2">
-              <div class="challenge-playground-success-card flex flex-wrap items-center justify-between gap-3 rounded-md px-3 py-2">
+              <div class="challenge-playground-success-card flex flex-wrap items-center justify-between gap-3 rounded-md border border-dashed px-3 py-2">
                 <div class="flex flex-wrap items-center gap-4">
                   {#if solvedAtAttempt !== null}
                     <span class="challenge-playground-success-copy text-xs font-medium">
@@ -748,30 +704,24 @@ const __cases = ${JSON.stringify(cases)};
                 <button
                   onclick={shareCode}
                   title={playgroundCopy.shareTitle}
-                  class="challenge-playground-share inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-medium transition-colors"
+                  class="challenge-playground-share inline-flex items-center gap-1.5 rounded-md border border-dashed px-2.5 py-1 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
                 >
                   {#if shareCopied}
-                    <svg class="size-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
+                    <DoodleIcon name="check" size={14} />
                     {playgroundCopy.linkCopied}
                   {:else}
-                    <svg class="size-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-                      <polyline points="16 6 12 2 8 6" />
-                      <line x1="12" y1="2" x2="12" y2="15" />
-                    </svg>
+                    <DoodleIcon name="note" size={14} />
                     {playgroundCopy.share}
                   {/if}
                 </button>
               </div>
               {#if shareFallbackUrl}
-                <div class="grid gap-2 rounded-md border border-site-line/70 px-3 py-2">
+                <div class="grid gap-2 rounded-md border border-dashed border-site-line-strong px-3 py-2">
                   <p class="challenge-playground-meta text-xs">
                     {playgroundCopy.shareManualCopy}
                   </p>
                   <input
-                    class="challenge-playground-fallback rounded-md border border-site-line bg-transparent px-3 py-2 font-mono text-xs outline-none"
+                    class="challenge-playground-fallback rounded-md border border-dashed border-site-line-strong bg-transparent px-3 py-2 font-mono text-xs outline-none focus:border-site-link-hover focus:outline-2 focus:outline-offset-2 focus:outline-dashed focus:outline-site-link-hover"
                     readonly
                     type="text"
                     value={shareFallbackUrl}
@@ -782,12 +732,8 @@ const __cases = ${JSON.stringify(cases)};
                 </div>
               {/if}
               {#if complexity}
-                <div class="challenge-playground-warning-card flex items-start gap-2.5 rounded-md px-3 py-2">
-                  <svg class="challenge-playground-warning-ink mt-0.5 size-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="12" y1="8" x2="12" y2="12" />
-                    <line x1="12" y1="16" x2="12.01" y2="16" />
-                  </svg>
+                <div class="challenge-playground-warning-card flex items-start gap-2.5 rounded-md border border-dashed px-3 py-2">
+                  <DoodleIcon className="challenge-playground-warning-ink mt-0.5 shrink-0" name="gauge" size={16} />
                   <p class="challenge-playground-warning-copy text-xs">
                     {#each getEfficiencyMessageParts(playgroundCopy.successfulButMoreEfficient, {
                       time: complexity.time,
@@ -811,7 +757,7 @@ const __cases = ${JSON.stringify(cases)};
           <ul class="grid gap-2">
             {#each results as result}
               <li
-                class="challenge-playground-result-card flex items-start gap-2.5 rounded-md px-3 py-2.5 {result.pass
+                class="challenge-playground-result-card flex items-start gap-2.5 rounded-md border border-dashed px-3 py-2.5 {result.pass
                   ? 'challenge-playground-result-card--pass'
                   : 'challenge-playground-result-card--fail'}"
               >
@@ -821,26 +767,9 @@ const __cases = ${JSON.stringify(cases)};
                     : 'challenge-playground-issue-ink'}"
                 >
                   {#if result.pass}
-                    <svg
-                      class="size-4"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                      viewBox="0 0 24 24"
-                    >
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
+                    <DoodleIcon name="check" size={17} />
                   {:else}
-                    <svg
-                      class="size-4"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
+                    <DoodleIcon name="cross" size={17} />
                   {/if}
                 </span>
                 <div class="min-w-0 flex-1">
@@ -908,12 +837,7 @@ const __cases = ${JSON.stringify(cases)};
     );
     --challenge-issue-bg: color-mix(in srgb, var(--site-link-hover) 8%, transparent);
     --challenge-issue-ring: color-mix(in srgb, var(--site-link-hover) 20%, transparent);
-    background:
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--site-surface-strong) 86%, var(--site-bg)) 0%,
-        color-mix(in srgb, var(--site-bg) 82%, black 18%) 100%
-      );
+    background: var(--site-panel);
   }
 
   .challenge-playground-toolbar,
@@ -985,7 +909,7 @@ const __cases = ${JSON.stringify(cases)};
   }
 
   .challenge-playground-success-card {
-    border: 1px solid var(--challenge-success-ring);
+    border-color: var(--challenge-success-ring);
     background: var(--challenge-success-bg);
   }
 
@@ -995,7 +919,7 @@ const __cases = ${JSON.stringify(cases)};
 
   .challenge-playground-share {
     color: var(--challenge-success-ink);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--challenge-success-ink) 32%, transparent);
+    border-color: color-mix(in srgb, var(--challenge-success-ink) 42%, transparent);
   }
 
   .challenge-playground-share:hover {
@@ -1003,7 +927,7 @@ const __cases = ${JSON.stringify(cases)};
   }
 
   .challenge-playground-warning-card {
-    border: 1px solid var(--challenge-warning-ring);
+    border-color: var(--challenge-warning-ring);
     background: var(--challenge-warning-bg);
   }
 
@@ -1012,7 +936,7 @@ const __cases = ${JSON.stringify(cases)};
   }
 
   .challenge-playground-result-card {
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--site-line) 40%, transparent);
+    border-color: color-mix(in srgb, var(--site-line-strong) 70%, transparent);
   }
 
   .challenge-playground-result-card--pass {

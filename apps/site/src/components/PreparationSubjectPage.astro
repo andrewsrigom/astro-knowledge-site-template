@@ -1,0 +1,346 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import { render } from 'astro:content'
+
+import BookSketchAnnotations from '@/components/BookSketchAnnotations.astro'
+import BookWiredElements from '@/components/BookWiredElements.astro'
+import MermaidDiagrams from '@/components/MermaidDiagrams.astro'
+import PreparationBookShell from '@/components/PreparationBookShell.astro'
+import PreparationChapterPager from '@/components/PreparationChapterPager.astro'
+import PreparationChapterRail from '@/components/PreparationChapterRail.astro'
+import NotebookBookmark from '@/components/ui/notebook/NotebookBookmark.astro'
+import NotebookBreadcrumb from '@/components/ui/notebook/NotebookBreadcrumb.astro'
+import NotebookManualProse from '@/components/ui/notebook/NotebookManualProse.astro'
+import NotebookSticker from '@/components/ui/notebook/NotebookSticker.astro'
+import { getChallengeHrefFromEntry } from '@/lib/challenge-links'
+import { resolveLocaleHrefMap, resolveLocaleMap } from '@/lib/locale-config'
+import { getGlossaryHrefFromEntry } from '@/lib/glossary-links'
+import {
+  getPreparationChapterContext,
+  resolvePreparationBook,
+} from '@/lib/preparation-book'
+import type { ResolvedPreparationChapter } from '@/lib/preparation-book'
+import { getPreparationCopy } from '@/lib/preparation-copy'
+import {
+  getPreparationIndexHref,
+  getPreparationSubjectHref,
+  getPreparationVolumeHref,
+} from '@/lib/preparation-links'
+import {
+  getActiveGlossaryByLocale,
+  getPreparationCatalogCollection,
+  getPreparationCollection,
+  getVisibleChallengesByLocale,
+  getVisiblePreparationByLocale,
+} from '@/lib/site-content'
+import type { SiteLocale } from '@/lib/site-copy'
+import '@/styles/article-prose.css'
+
+type Props = {
+  locale: SiteLocale
+  preparation: CollectionEntry<'preparation'>[]
+  subjectId: string
+}
+
+const { locale, preparation, subjectId } = Astro.props
+const guide = preparation.find((entry) => entry.data.subjectId === subjectId)
+
+if (!guide) {
+  return new Response(null, {
+    status: 404,
+    statusText: 'Not Found',
+  })
+}
+
+const { Content, headings } = await render(guide)
+const hasMermaidDiagrams = guide.body?.includes('```mermaid') ?? false
+const copy = getPreparationCopy(locale)
+const isDraft = guide.data.status === 'draft'
+const sectionLinks = headings
+  .filter((heading) => heading.depth === 2)
+  .map((heading) => ({
+    href: `#${heading.slug}`,
+    title: heading.text.replace(/^\d+(?:\.\d+)*\.?\s+/, ''),
+  }))
+const sourceGroups = Object.entries(copy.sourceKinds).flatMap(([kind, label]) => {
+  const sources = guide.data.sources.filter((source) => source.kind === kind)
+  return sources.length > 0 ? [{ kind, label, sources }] : []
+})
+const [catalogs, activeGlossary, allPreparation, visibleGuides, visibleChallenges] = await Promise.all([
+  getPreparationCatalogCollection(),
+  getActiveGlossaryByLocale(locale),
+  getPreparationCollection(),
+  getVisiblePreparationByLocale(locale),
+  getVisibleChallengesByLocale(locale),
+])
+const catalog = catalogs.find((entry) =>
+  entry.data.locale === locale
+  && entry.data.status !== 'archived'
+  && (entry.data.status === 'active' || import.meta.env.DEV),
+)
+const book = catalog
+  ? resolvePreparationBook(catalog.data, visibleGuides, visibleChallenges)
+  : null
+const chapterContext = book
+  ? getPreparationChapterContext(book, guide.data.guideId)
+  : null
+
+if (!catalog || !book || !chapterContext) {
+  return new Response(null, {
+    status: 404,
+    statusText: 'Not Found',
+  })
+}
+const relatedGlossary = (guide.data.glossaryIds ?? []).flatMap((termId) => {
+  const term = activeGlossary.find((entry) => entry.data.termId === termId)
+
+  return term ? [{
+    href: getGlossaryHrefFromEntry(term),
+    title: term.data.title,
+  }] : []
+})
+const relatedPractices = (guide.data.practiceIds ?? []).flatMap((challengeId) => {
+  const challenge = visibleChallenges.find((entry) => entry.data.challengeId === challengeId)
+
+  return challenge ? [{
+    description: challenge.data.description,
+    href: getChallengeHrefFromEntry(challenge),
+    title: challenge.data.title,
+  }] : []
+})
+const localizedGuides = allPreparation.filter(
+  (entry) => entry.data.subjectId === subjectId && entry.data.status !== 'archived',
+)
+const alternateLocaleHrefs = resolveLocaleMap((supportedLocale) => {
+  const localizedGuide = localizedGuides.find((entry) => entry.data.locale === supportedLocale)
+  return localizedGuide?.data.status === 'active'
+    ? getPreparationSubjectHref(subjectId, supportedLocale)
+    : null
+})
+const localeHrefs = resolveLocaleHrefMap((supportedLocale) => {
+  const localizedGuide = localizedGuides.find((entry) => entry.data.locale === supportedLocale)
+  return localizedGuide
+    ? getPreparationSubjectHref(subjectId, supportedLocale)
+    : getPreparationIndexHref(supportedLocale)
+})
+
+function toRomanNumeral(value: number) {
+  const numerals = [
+    [10, 'X'],
+    [9, 'IX'],
+    [5, 'V'],
+    [4, 'IV'],
+    [1, 'I'],
+  ] as const
+  let remaining = value
+  let result = ''
+
+  numerals.forEach(([amount, symbol]) => {
+    while (remaining >= amount) {
+      result += symbol
+      remaining -= amount
+    }
+  })
+
+  return result
+}
+
+const catalogHref = getPreparationIndexHref(locale)
+const catalogLabel = catalog.data.title
+const volumeNumber = toRomanNumeral(chapterContext.volume.order)
+const volumeHref = getPreparationVolumeHref(chapterContext.volume.id, locale)
+const chapterNumbers = new Map(
+  book.chapters.map((chapter, index) => [chapter.guideId, index + 1]),
+)
+const currentChapterNumber = chapterNumbers.get(chapterContext.chapter.guideId) ?? 1
+
+function toPagerChapter(chapter: ResolvedPreparationChapter | null) {
+  if (!chapter) return null
+
+  return {
+    context: `${chapter.volumeTitle} · ${chapter.partTitle}`,
+    href: chapter.href,
+    title: chapter.guide.data.title,
+  }
+}
+
+const previousChapter = toPagerChapter(chapterContext.previousChapter)
+const nextChapter = toPagerChapter(chapterContext.nextChapter)
+const chapterLabel = locale === 'pt-br' ? 'Capítulo' : 'Chapter'
+const partLabel = locale === 'pt-br' ? 'Parte' : 'Part'
+const breadcrumbLabel = locale === 'pt-br' ? 'Localização no guia' : 'Guide location'
+const bookmarkLabel = locale === 'pt-br' ? 'Salvar capítulo' : 'Save chapter'
+const activeBookmarkLabel = locale === 'pt-br' ? 'Remover marcador' : 'Remove bookmark'
+const breadcrumbItems = [
+  { href: catalogHref, label: catalogLabel },
+  { href: volumeHref, label: chapterContext.volume.title },
+  {
+    href: `${volumeHref}#volume-${chapterContext.volume.id}-${chapterContext.part.id}`,
+    label: chapterContext.part.title,
+  },
+  { label: guide.data.title },
+]
+---
+
+<PreparationBookShell
+  alternateLocaleHrefs={alternateLocaleHrefs}
+  book={book}
+  currentGuideId={guide.data.guideId}
+  currentVolumeId={chapterContext.volume.id}
+  description={guide.data.description}
+  locale={locale}
+  localeHrefs={localeHrefs}
+  noindex={isDraft}
+  pagefind={!isDraft}
+  title={guide.data.title}
+>
+  <div class="mx-auto w-full max-w-352 px-5 pb-14 pt-8 sm:px-7 lg:px-9 xl:px-10 xl:pt-10" data-book-reading-frame>
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,48rem)_16rem] lg:items-start lg:justify-center xl:grid-cols-[minmax(0,50rem)_17rem] xl:gap-12" data-book-reading-layout>
+      <article class="min-w-0" data-book-sketch-page>
+        <header class="border-b border-dashed border-site-line-strong pb-7">
+          <NotebookBreadcrumb
+            ariaLabel={breadcrumbLabel}
+            class="book-chapter-breadcrumb"
+            items={breadcrumbItems}
+          />
+
+          <p class="mb-0 mt-7 flex items-center gap-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-site-link-hover" data-book-context>
+            <span>Volume {volumeNumber} · {partLabel} {chapterContext.part.order} · {chapterLabel}</span>
+            <span>{currentChapterNumber}</span>
+          </p>
+          <h1 class="preparation-book-title mb-0 mt-3 text-[clamp(2.35rem,5vw,3.9rem)] font-semibold leading-[1.01] tracking-[-0.04em] text-site-ink">
+            {guide.data.title}
+          </h1>
+          <wired-divider class="book-chapter-divider mt-5" elevation="1" aria-hidden="true"></wired-divider>
+          <div class="mt-6 grid items-center gap-3 sm:grid-cols-[minmax(0,1fr)_9rem]">
+            <p class="m-0 max-w-[65ch] text-[1.05rem] leading-8 text-site-ink-soft">
+              {guide.data.description}
+            </p>
+            <div class="book-chapter-lead-actions" data-pagefind-ignore>
+              <aside class="book-chapter-lead-note" data-sketch-arrow="left" data-sketch-color="pencil" aria-hidden="true">
+                <NotebookSticker icon="spark" label="ideia central" size="small" tone="blue" />
+              </aside>
+              <NotebookBookmark
+                activeLabel={activeBookmarkLabel}
+                id={guide.data.guideId}
+                label={bookmarkLabel}
+                persist
+              />
+            </div>
+          </div>
+          {isDraft ? (
+            <p class="mt-4 inline-flex rounded-md border border-dashed border-site-line-strong bg-site-panel px-3 py-1 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold text-site-ink-muted" data-pagefind-ignore>
+              {copy.draft}
+            </p>
+          ) : null}
+        </header>
+
+        <div class="mt-6 lg:hidden" data-book-secondary-ui>
+          <PreparationChapterRail
+            glossary={[]}
+            locale={locale}
+            practices={[]}
+            sections={sectionLinks}
+          />
+        </div>
+
+        <NotebookManualProse class="preparation-manual-prose mt-9 min-w-0">
+          <Content />
+        </NotebookManualProse>
+
+        <div class="mt-10 lg:hidden" data-book-secondary-ui>
+          <PreparationChapterRail
+            glossary={relatedGlossary}
+            locale={locale}
+            practices={relatedPractices}
+            sections={[]}
+          />
+        </div>
+
+        <section class="mt-12 grid gap-5 border-t border-dashed border-site-line-strong pt-7" data-pagefind-ignore>
+          <p class="m-0 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-site-ink-muted">
+            {copy.sources}
+          </p>
+          {sourceGroups.map((group) => (
+            <div class="grid gap-2">
+              <h2 class="m-0 text-base font-semibold text-site-ink">{group.label}</h2>
+              <ul class="m-0 grid gap-2 pl-5 md:grid-cols-2">
+                {group.sources.map((source) => (
+                  <li>
+                    <a class="text-site-link-hover underline underline-offset-4" href={source.url} rel="noreferrer">
+                      {source.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </section>
+
+        <PreparationChapterPager locale={locale} next={nextChapter} previous={previousChapter} />
+      </article>
+
+      <aside class="hidden max-h-[calc(100vh-4rem)] overflow-y-auto lg:sticky lg:top-8 lg:block" data-book-secondary-ui data-pagefind-ignore>
+        <PreparationChapterRail
+          glossary={relatedGlossary}
+          locale={locale}
+          practices={relatedPractices}
+          sections={sectionLinks}
+        />
+      </aside>
+    </div>
+  </div>
+  <BookSketchAnnotations />
+  <BookWiredElements />
+  {hasMermaidDiagrams ? <MermaidDiagrams locale={locale} /> : null}
+</PreparationBookShell>
+
+<style>
+  .preparation-book-title {
+    font-family: var(--notebook-font-book);
+  }
+
+  .book-chapter-divider {
+    display: block;
+    width: 3.5rem;
+    min-height: 0.4rem;
+    color: var(--site-accent);
+    border-top: 2px solid var(--site-accent);
+  }
+
+  .book-chapter-divider:defined {
+    border-top-color: transparent;
+  }
+
+  .book-chapter-lead-actions {
+    display: grid;
+    justify-items: end;
+    gap: 0.7rem;
+  }
+
+  .book-chapter-lead-note {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--book-pencil);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+    font-weight: var(--notebook-hand-weight-regular);
+    line-height: 1.35;
+    transform: rotate(-0.35deg);
+  }
+
+  .book-chapter-lead-note :global([data-sketch-arrow-canvas]) {
+    width: 3.4rem;
+    height: 1.7rem;
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+
+  @media (max-width: 39.99rem) {
+    .book-chapter-lead-actions,
+    .book-chapter-lead-note {
+      margin-left: auto;
+    }
+  }
+</style>

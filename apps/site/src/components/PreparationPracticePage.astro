@@ -1,0 +1,266 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+
+import ChallengeAttempt from '@/components/ChallengeAttempt.astro'
+import ChallengePrompt from '@/components/ChallengePrompt.astro'
+import PreparationBookShell from '@/components/PreparationBookShell.astro'
+import PreparationPracticeRail from '@/components/PreparationPracticeRail.astro'
+import NotebookBreadcrumb from '@/components/ui/notebook/NotebookBreadcrumb.astro'
+import NotebookDivider from '@/components/ui/notebook/NotebookDivider.astro'
+import { getChallengeHrefFromEntry } from '@/lib/challenge-links'
+import { cn } from '@/lib/cn'
+import {
+  resolveLocalizedEntryHrefMap,
+  resolveLocaleMap,
+} from '@/lib/locale-config'
+import { resolveEntityOgImageUrl } from '@/lib/og-image'
+import type { PreparationPracticePageContext } from '@/lib/preparation-practice'
+import {
+  getPreparationIndexHref,
+  getPreparationVolumeHref,
+} from '@/lib/preparation-links'
+import { createBreadcrumbSchema, createLearningResourceSchema } from '@/lib/seo'
+import {
+  getChallengeLanguageLabel,
+  getChallengeLevelLabel,
+} from '@/lib/challenge-meta'
+import { getChallengeCollection } from '@/lib/site-content'
+import { getSiteLocale } from '@/lib/site-copy'
+import { ui } from '@/lib/ui'
+import '@/styles/article-prose.css'
+
+type Props = {
+  challenge: CollectionEntry<'challenges'>
+  context: PreparationPracticePageContext
+}
+
+const { challenge, context } = Astro.props
+const { book, owner } = context
+const { part, volume } = owner
+const locale = getSiteLocale(challenge.data.locale)
+const labels = locale === 'pt-br'
+  ? {
+      back: `Voltar para ${part.title}`,
+      breadcrumb: 'Localização no guia',
+      commonMistakes: 'Erros comuns',
+      draft: 'Rascunho local',
+      languageSeparator: '·',
+      notice: 'O que observar',
+      part: 'Parte',
+      playground: 'Editor e testes',
+      practice: 'Prática',
+      prompt: 'Enunciado',
+      solution: 'Solução',
+      walkthrough: 'Explicação',
+    }
+  : {
+      back: `Back to ${part.title}`,
+      breadcrumb: 'Guide location',
+      commonMistakes: 'Common mistakes',
+      draft: 'Local draft',
+      languageSeparator: '·',
+      notice: 'What to notice',
+      part: 'Part',
+      playground: 'Editor and tests',
+      practice: 'Practice',
+      prompt: 'Prompt',
+      solution: 'Solution',
+      walkthrough: 'Walkthrough',
+    }
+const isDraft = challenge.data.status === 'draft' || book.catalog.status === 'draft'
+const volumeHref = getPreparationVolumeHref(volume.id, locale)
+const partHref = `${volumeHref}#volume-${volume.id}-${part.id}`
+const allChallenges = await getChallengeCollection()
+const localizedChallenges = allChallenges.filter(
+  (entry) => entry.data.challengeId === challenge.data.challengeId,
+)
+const activeLocalizedChallenges = localizedChallenges.filter(
+  (entry) => entry.data.status === 'active',
+)
+const switchableLocalizedChallenges = localizedChallenges.filter(
+  (entry) => entry.data.status === 'active' || entry.id === challenge.id,
+)
+const alternateLocaleHrefs = resolveLocaleMap((supportedLocale) => {
+  const localizedEntry = activeLocalizedChallenges.find(
+    (entry) => entry.data.locale === supportedLocale,
+  )
+
+  return localizedEntry ? getChallengeHrefFromEntry(localizedEntry) : null
+})
+const localeHrefs = resolveLocalizedEntryHrefMap(
+  switchableLocalizedChallenges,
+  (entry) => getChallengeHrefFromEntry(entry),
+  (supportedLocale) => getPreparationIndexHref(supportedLocale),
+)
+const levelLabel = getChallengeLevelLabel(challenge.data.level, locale)
+const solutionLanguageLabel = getChallengeLanguageLabel(challenge.data.solutionLanguage)
+const sectionLinks = [
+  challenge.data.problemStatement
+    ? { href: '#read-challenge', title: labels.prompt }
+    : null,
+  challenge.data.whatToNotice.length > 0
+    ? { href: '#what-to-notice', title: labels.notice }
+    : null,
+  challenge.data.commonMistakes.length > 0
+    ? { href: '#common-mistakes', title: labels.commonMistakes }
+    : null,
+  challenge.data.walkthrough
+    ? { href: '#challenge-walkthrough', title: labels.walkthrough }
+    : null,
+  challenge.data.starterCode
+    ? { href: '#challenge-playground', title: labels.playground }
+    : null,
+  { href: '#challenge-solution', title: labels.solution },
+].filter((entry): entry is { href: string; title: string } => Boolean(entry))
+const chapterLinks = part.chapters.map((chapter) => ({
+  href: chapter.href,
+  title: chapter.guide.data.title,
+}))
+const ownerLink = {
+  href: partHref,
+  title: `${volume.title} · ${part.title}`,
+}
+const breadcrumbItems = [
+  { href: getPreparationIndexHref(locale), label: book.catalog.title },
+  { href: volumeHref, label: volume.title },
+  { href: partHref, label: part.title },
+  { label: challenge.data.title },
+]
+const challengeUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString()
+const socialImage = resolveEntityOgImageUrl(
+  Astro.site ?? Astro.url,
+  'challenges',
+  locale,
+  challenge.data.challengeId,
+)
+const structuredData = [
+  createLearningResourceSchema({
+    dateModified: challenge.data.updatedDate?.toISOString() ?? null,
+    datePublished: challenge.data.pubDate.toISOString(),
+    description: challenge.data.description,
+    estimatedMinutes: challenge.data.estimatedMinutes,
+    keywords: [...challenge.data.tags, challenge.data.typeLabel, solutionLanguageLabel],
+    level: challenge.data.level,
+    locale,
+    resourceType: challenge.data.typeLabel,
+    teaches: challenge.data.whatToNotice,
+    title: challenge.data.title,
+    url: challengeUrl,
+  }),
+  createBreadcrumbSchema({
+    items: [
+      {
+        name: book.catalog.title,
+        url: new URL(getPreparationIndexHref(locale), Astro.site ?? Astro.url).toString(),
+      },
+      {
+        name: volume.title,
+        url: new URL(volumeHref, Astro.site ?? Astro.url).toString(),
+      },
+      {
+        name: part.title,
+        url: new URL(partHref, Astro.site ?? Astro.url).toString(),
+      },
+      {
+        name: challenge.data.title,
+        url: challengeUrl,
+      },
+    ],
+  }),
+]
+---
+
+<PreparationBookShell
+  alternateLocaleHrefs={alternateLocaleHrefs}
+  book={book}
+  currentVolumeId={volume.id}
+  description={challenge.data.description}
+  locale={locale}
+  localeHrefs={localeHrefs}
+  noindex={isDraft}
+  pagefind={!isDraft}
+  socialImage={socialImage}
+  structuredData={structuredData}
+  title={challenge.data.title}
+>
+  <div class="mx-auto w-full max-w-352 px-5 pb-14 pt-8 sm:px-7 lg:px-9 xl:px-10 xl:pt-10" data-book-reading-frame>
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,48rem)_16rem] lg:items-start lg:justify-center xl:grid-cols-[minmax(0,50rem)_17rem] xl:gap-12" data-book-reading-layout>
+      <article class="min-w-0">
+        <header class="border-b border-dashed border-site-line-strong pb-7">
+          <NotebookBreadcrumb
+            ariaLabel={labels.breadcrumb}
+            class="book-practice-breadcrumb"
+            items={breadcrumbItems}
+          />
+
+          <p class={cn(ui.eyebrow, 'mb-0 mt-7')} data-book-context>
+            Volume {String(volume.order).padStart(2, '0')} · {labels.part} {part.order} · {labels.practice}
+          </p>
+          <h1 class="preparation-practice-title mb-0 mt-3 text-[clamp(2.35rem,5vw,3.9rem)] font-semibold leading-[1.01] tracking-[-0.04em] text-site-ink">
+            {challenge.data.title}
+          </h1>
+          <div class="mt-5 w-14">
+            <NotebookDivider density="dense" tone="accent" variant="wavy" />
+          </div>
+          <p class="mb-0 mt-6 max-w-[65ch] [font-family:var(--notebook-font-book)] text-[1.05rem] leading-8 text-site-ink-soft">
+            {challenge.data.description}
+          </p>
+          <p class={cn(ui.metaQuiet, 'mt-4 flex flex-wrap items-center gap-x-2 gap-y-1')}>
+            <span>{challenge.data.typeLabel}</span>
+            <span aria-hidden="true">{labels.languageSeparator}</span>
+            <span>{levelLabel}</span>
+            {challenge.data.format === 'coding' ? (
+              <>
+                <span aria-hidden="true">{labels.languageSeparator}</span>
+                <span>{solutionLanguageLabel}</span>
+              </>
+            ) : null}
+          </p>
+          {isDraft ? (
+            <p class="mt-4 inline-flex rounded-md border border-dashed border-site-line-strong bg-site-panel px-3 py-1 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold text-site-ink-muted" data-pagefind-ignore>
+              {labels.draft}
+            </p>
+          ) : null}
+        </header>
+
+        <div class="mt-6 lg:hidden" data-book-secondary-ui>
+          <PreparationPracticeRail
+            chapters={[]}
+            locale={locale}
+            owner={ownerLink}
+            sections={sectionLinks}
+          />
+        </div>
+
+        <ChallengePrompt challenge={challenge} />
+        <ChallengeAttempt challenge={challenge} />
+
+        <div class="mt-12 border-t border-dashed border-site-line-strong pt-7" data-book-secondary-ui data-pagefind-ignore>
+          <a
+            class="inline-flex items-center gap-2 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-semibold text-site-link-hover hover:text-site-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
+            href={partHref}
+          >
+            <DoodleIcon name="arrow-left" size={17} />
+            {labels.back}
+          </a>
+        </div>
+      </article>
+
+      <aside class="hidden max-h-[calc(100vh-4rem)] overflow-y-auto lg:sticky lg:top-8 lg:block" data-book-secondary-ui data-pagefind-ignore>
+        <PreparationPracticeRail
+          chapters={chapterLinks}
+          locale={locale}
+          owner={ownerLink}
+          sections={sectionLinks}
+        />
+      </aside>
+    </div>
+  </div>
+</PreparationBookShell>
+
+<style>
+  .preparation-practice-title {
+    font-family: var(--notebook-font-book);
+  }
+</style>

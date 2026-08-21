@@ -3,6 +3,8 @@ import { glob } from 'astro/loaders'
 import { z } from 'astro/zod'
 import { TOPIC_DEFINITIONS } from '@template/content'
 
+import { PREPARATION_AREA_IDS } from '@/lib/preparation-areas'
+
 const topicIdSchema = z.enum(TOPIC_DEFINITIONS.map((topic) => topic.id) as [string, ...string[]])
 
 const articles = defineCollection({
@@ -106,6 +108,7 @@ const challenges = defineCollection({
       .optional(),
     description: z.string().min(1),
     estimatedMinutes: z.number().int().positive().default(20),
+    format: z.enum(['coding', 'debugging', 'system-design', 'incident', 'oral']).default('coding'),
     hints: z.array(z.string()).default([]),
     level: z.enum(['beginner', 'intermediate', 'advanced']).default('intermediate'),
     locale: z.string().min(1).default('en'),
@@ -115,6 +118,7 @@ const challenges = defineCollection({
     walkthrough: z.string().optional(),
     pubDate: z.coerce.date(),
     relatedChallengeIds: z.array(z.string().min(1)).default([]),
+    relatedPreparationIds: z.array(z.string().min(1)).default([]),
     relatedArticleIds: z.array(z.string()).default([]),
     solutionLanguage: z.enum(['javascript', 'typescript', 'python']).default('typescript'),
     starterCode: z.string().optional(),
@@ -138,9 +142,162 @@ const challenges = defineCollection({
   }),
 })
 
+const preparation = defineCollection({
+  loader: glob({
+    base: './.content/preparation',
+    pattern: '**/*.md',
+  }),
+  schema: z.object({
+    areaId: z.enum(PREPARATION_AREA_IDS),
+    description: z.string().min(1),
+    estimatedMinutes: z.number().int().positive(),
+    guideId: z.string().min(1),
+    glossaryIds: z.array(z.string().min(1)).default([]),
+    level: z.enum(['beginner', 'intermediate', 'advanced']),
+    locale: z.string().min(1),
+    objectives: z.array(z.string().min(1)).min(3),
+    order: z.number().int().nonnegative(),
+    review: z.object({
+      editorial: z.boolean(),
+      practiced: z.boolean(),
+      technical: z.boolean(),
+    }),
+    practiceIds: z.array(z.string().min(1)).default([]),
+    sources: z.array(
+      z.object({
+        kind: z
+          .enum(['interview-reference', 'official-documentation', 'engineering-case-study', 'research'])
+          .default('official-documentation'),
+        label: z.string().min(1),
+        url: z.url(),
+      }),
+    ).min(4),
+    status: z.enum(['active', 'archived', 'draft']).default('draft'),
+    subjectId: z.string().min(1),
+    title: z.string().min(1),
+  }),
+})
+
+const preparationPrograms = defineCollection({
+  loader: glob({
+    base: './.content/preparation/programs',
+    pattern: '**/*.json',
+  }),
+  schema: z.object({
+    description: z.string().min(1),
+    competencies: z.array(
+      z.object({
+        goal: z.string().min(1),
+        groups: z.array(
+          z.object({
+            id: z.string().min(1),
+            items: z.array(
+              z.object({
+                id: z.string().min(1),
+                kind: z.enum(['guide', 'challenge', 'checkpoint']),
+                label: z.string().min(1),
+                refId: z.string().min(1).optional(),
+              }),
+            ).min(1),
+            order: z.number().int().positive(),
+            priority: z.enum(['essential', 'recommended', 'optional']),
+            title: z.string().min(1),
+          }),
+        ).min(1),
+        id: z.string().min(1),
+        order: z.number().int().positive(),
+        title: z.string().min(1),
+      }),
+    ).min(1),
+    legacyProgramIds: z.array(z.string().min(1)).default([]),
+    locale: z.string().min(1),
+    programId: z.string().min(1),
+    status: z.enum(['active', 'archived', 'draft']).default('draft'),
+    title: z.string().min(1),
+  }),
+})
+
+const preparationCatalogs = defineCollection({
+  loader: glob({
+    base: './.content/preparation/catalogs',
+    pattern: '**/*.json',
+  }),
+  schema: z.object({
+    catalogId: z.literal('preparation-book'),
+    competencies: z.array(
+      z.object({
+        description: z.string().min(1),
+        groups: z.array(
+          z.object({
+            id: z.string().min(1),
+            items: z.array(
+              z.object({
+                kind: z.enum(['guide', 'challenge']),
+                refId: z.string().min(1),
+              }),
+            ).min(1),
+            order: z.number().int().positive(),
+            title: z.string().min(1),
+          }),
+        ).min(1),
+        id: z.string().min(1),
+        order: z.number().int().positive(),
+        title: z.string().min(1),
+      }),
+    ).default([]),
+    description: z.string().min(1),
+    locale: z.string().min(1),
+    schemaVersion: z.literal(2),
+    status: z.enum(['active', 'archived', 'draft']).default('draft'),
+    title: z.string().min(1),
+    volumes: z.array(
+      z.object({
+        description: z.string().min(1),
+        id: z.string().min(1),
+        legacyCompetencyIds: z.array(z.string().min(1)).default([]),
+        order: z.number().int().positive(),
+        parts: z.array(
+          z.object({
+            chapters: z.array(
+              z.object({
+                guideId: z.string().min(1),
+                order: z.number().int().positive(),
+              }),
+            ),
+            description: z.string().trim().min(1).optional(),
+            id: z.string().min(1),
+            order: z.number().int().positive(),
+            practices: z.array(
+              z.object({
+                challengeId: z.string().min(1),
+                order: z.number().int().positive(),
+              }),
+            ),
+            references: z.array(
+              z.object({
+                kind: z.enum(['guide', 'challenge']),
+                refId: z.string().min(1),
+                relation: z.enum(['prerequisite', 'related', 'practice']),
+              }),
+            ),
+            title: z.string().min(1),
+          }).refine(
+            (part) => part.chapters.length + part.practices.length + part.references.length > 0,
+            { message: 'A preparation book part must contain a chapter, practice, or reference.' },
+          ),
+        ).min(1),
+        title: z.string().min(1),
+      }),
+    ).min(1),
+  }),
+})
+
 export const collections = {
   articles,
   challenges,
   concepts,
   glossary,
+  preparation,
+  preparationCatalogs,
+  preparationPrograms,
 }

@@ -1,6 +1,6 @@
 ---
 import { randomUUID } from 'node:crypto'
-import ArrowRightIcon from '@/components/ui/icons/ArrowRightIcon.astro'
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
 import TrackProgressPanelClient from '@/components/TrackProgressPanelClient.svelte'
 import { cn } from '@/lib/cn'
 import { getDataHookAttributes, sharedDomHooks, trackProgressDomHooks } from '@/lib/dom-hooks'
@@ -44,7 +44,7 @@ const controllerId = randomUUID()
   {...getDataHookAttributes(trackProgressDomHooks.completedLabel, copy.startHere.trackCompleted)}
   {...getDataHookAttributes(trackProgressDomHooks.continueLabel, copy.trackProgress.continueTrack)}
 >
-  <div class="grid gap-5 border-y border-site-line bg-transparent px-[0.45rem] py-5 lg:gap-6 lg:px-[0.55rem] lg:py-6">
+  <div class="grid gap-5 border-y border-dashed border-site-line-strong bg-transparent px-[0.45rem] py-5 lg:gap-6 lg:px-[0.55rem] lg:py-6">
     <div class="grid gap-2.5">
       <p class={ui.progressMeta}>
         {metaLine}
@@ -76,12 +76,15 @@ const controllerId = randomUUID()
       href={initialHref}
     >
       <span {...getDataHookAttributes(trackProgressDomHooks.ctaLabel)}>{copy.startHere.continueWhereLeftOff}</span>
-      <ArrowRightIcon className="size-[0.92rem]" />
+      <DoodleIcon name="arrow-right" size={16} />
     </a>
 
-    <div class="grid gap-3 border-t border-site-line pt-4" hidden>
+    <div class="grid gap-3 border-t border-dashed border-site-line-strong pt-4" hidden>
       <p class={cn(ui.progressStatus, 'track-progress-overall m-0 flex items-center justify-center gap-2 text-center text-[0.98rem] font-semibold lg:text-[1.08rem]')}>
-        <span aria-hidden="true" class="text-site-ink-muted" {...getDataHookAttributes(trackProgressDomHooks.overallIcon)}>→</span>
+        <span aria-hidden="true" class="text-site-ink-muted" {...getDataHookAttributes(trackProgressDomHooks.overallIcon)}>
+          <DoodleIcon class="track-progress-overall-continue" name="arrow-right" size={17} />
+          <DoodleIcon class="track-progress-overall-complete hidden text-site-success" name="check" size={17} />
+        </span>
         <span {...getDataHookAttributes(trackProgressDomHooks.overallText)}>{copy.trackProgress.continueTrack}</span>
       </p>
     </div>

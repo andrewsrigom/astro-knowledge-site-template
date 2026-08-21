@@ -169,8 +169,8 @@ export const siteConfig = {
 } as const
 
 export const siteAppearance = {
-  backgroundColor: 'rgb(11 17 32)',
-  themeColor: 'rgb(11 17 32)',
+  backgroundColor: 'rgb(246 247 251)',
+  themeColor: 'rgb(246 247 251)',
 } as const
 
 export const siteAssetPaths = {
@@ -190,7 +190,10 @@ export const siteStorageKeys = {
   challengeCodePrefix: `${siteConfig.site.storageNamespace}.challenge-code`,
   challengeSolvedPrefix: `${siteConfig.site.storageNamespace}.challenge-solved`,
   completedArticles: `${siteConfig.site.storageNamespace}.completed-articles.v1`,
+  focusModePreference: `${siteConfig.site.storageNamespace}.guide-focus-mode.v1`,
   localePreference: `${siteConfig.site.storageNamespace}.locale-preference.v1`,
+  preparationProgramPrefix: `${siteConfig.site.storageNamespace}.preparation-program`,
+  themePreference: `${siteConfig.site.storageNamespace}.theme-preference.v1`,
 } as const
 
 export const siteEvents = {

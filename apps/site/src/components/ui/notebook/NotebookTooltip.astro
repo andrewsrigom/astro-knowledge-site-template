@@ -1,0 +1,121 @@
+---
+type Props = {
+  class?: string
+  id: string
+  position?: 'bottom' | 'left' | 'right' | 'top'
+  text: string
+}
+
+const {
+  class: className,
+  id,
+  position = 'top',
+  text,
+}: Props = Astro.props
+---
+
+<span class:list={['notebook-tooltip', className]} data-position={position} data-tooltip-id={id}>
+  <span class="notebook-tooltip__trigger"><slot /></span>
+  <span class="notebook-tooltip__bubble" id={id} role="tooltip">{text}</span>
+</span>
+
+<script>
+  function setupNotebookTooltips() {
+    const tooltips = document.querySelectorAll<HTMLElement>('.notebook-tooltip')
+
+    for (const tooltip of tooltips) {
+      if (tooltip.dataset.tooltipReady === 'true') continue
+      const trigger = tooltip.querySelector<HTMLElement>('.notebook-tooltip__trigger > :first-child')
+      const tooltipId = tooltip.dataset.tooltipId
+      if (!trigger || !tooltipId) continue
+
+      const describedBy = new Set((trigger.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean))
+      describedBy.add(tooltipId)
+      trigger.setAttribute('aria-describedby', [...describedBy].join(' '))
+      tooltip.dataset.tooltipReady = 'true'
+    }
+  }
+
+  setupNotebookTooltips()
+  document.addEventListener('astro:page-load', setupNotebookTooltips)
+</script>
+
+<style>
+  .notebook-tooltip {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .notebook-tooltip__trigger {
+    display: inline-flex;
+  }
+
+  .notebook-tooltip__bubble {
+    position: absolute;
+    z-index: 30;
+    width: max-content;
+    max-width: min(16rem, 76vw);
+    padding: 0.45rem 0.7rem 0.5rem;
+    color: var(--notebook-post-it-lemon-ink);
+    background: var(--notebook-post-it-lemon-bg);
+    border: 1px solid color-mix(in srgb, var(--notebook-post-it-lemon-ink) 34%, transparent);
+    border-radius: 0.45rem 0.6rem 0.4rem 0.55rem;
+    box-shadow: 0 0.45rem 0.9rem rgb(var(--notebook-shadow-rgb) / 0.14);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+    font-weight: var(--notebook-hand-weight-regular);
+    line-height: 1.15;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms var(--site-transition-smooth), transform 120ms var(--site-transition-smooth);
+  }
+
+  .notebook-tooltip[data-position='top'] .notebook-tooltip__bubble {
+    bottom: calc(100% + 0.55rem);
+    left: 50%;
+    transform: translate(-50%, 0.25rem) rotate(-0.3deg);
+  }
+
+  .notebook-tooltip[data-position='bottom'] .notebook-tooltip__bubble {
+    top: calc(100% + 0.55rem);
+    left: 50%;
+    transform: translate(-50%, -0.25rem) rotate(0.3deg);
+  }
+
+  .notebook-tooltip[data-position='left'] .notebook-tooltip__bubble {
+    top: 50%;
+    right: calc(100% + 0.55rem);
+    transform: translate(0.25rem, -50%) rotate(-0.3deg);
+  }
+
+  .notebook-tooltip[data-position='right'] .notebook-tooltip__bubble {
+    top: 50%;
+    left: calc(100% + 0.55rem);
+    transform: translate(-0.25rem, -50%) rotate(0.3deg);
+  }
+
+  .notebook-tooltip:hover .notebook-tooltip__bubble,
+  .notebook-tooltip:focus-within .notebook-tooltip__bubble {
+    opacity: 1;
+  }
+
+  .notebook-tooltip[data-position='top']:hover .notebook-tooltip__bubble,
+  .notebook-tooltip[data-position='top']:focus-within .notebook-tooltip__bubble,
+  .notebook-tooltip[data-position='bottom']:hover .notebook-tooltip__bubble,
+  .notebook-tooltip[data-position='bottom']:focus-within .notebook-tooltip__bubble {
+    transform: translate(-50%, 0) rotate(0deg);
+  }
+
+  .notebook-tooltip[data-position='left']:hover .notebook-tooltip__bubble,
+  .notebook-tooltip[data-position='left']:focus-within .notebook-tooltip__bubble,
+  .notebook-tooltip[data-position='right']:hover .notebook-tooltip__bubble,
+  .notebook-tooltip[data-position='right']:focus-within .notebook-tooltip__bubble {
+    transform: translate(0, -50%) rotate(0deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .notebook-tooltip__bubble {
+      transition: none;
+    }
+  }
+</style>

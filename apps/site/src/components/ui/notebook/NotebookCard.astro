@@ -1,0 +1,216 @@
+---
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+import type { NotebookDoodleName } from '@/lib/notebook-doodles'
+
+type Props = {
+  class?: string
+  cornerFold?: boolean
+  href?: string
+  icon?: NotebookDoodleName
+  kicker?: string
+  title?: string
+  tone?: 'accent' | 'coral' | 'lemon' | 'mint' | 'neutral' | 'pink' | 'violet'
+  variant?: 'outlined' | 'paper'
+}
+
+const {
+  class: className,
+  cornerFold = true,
+  href,
+  icon,
+  kicker,
+  title,
+  tone = 'neutral',
+  variant = 'paper',
+} = Astro.props
+
+const tag = href ? 'a' : 'article'
+---
+
+<Fragment>
+  {tag === 'a' ? (
+    <a
+      class:list={['notebook-card', className]}
+      data-corner-fold={cornerFold ? 'on' : 'off'}
+      data-tone={tone}
+      data-variant={variant}
+      href={href}
+    >
+      {(title || kicker || icon) && (
+        <header class="notebook-card__header">
+          {kicker ? <p class="notebook-card__kicker">{kicker}</p> : null}
+          {(title || icon) && (
+            <div class="notebook-card__title-row">
+              {icon ? <DoodleIcon name={icon} size={20} /> : null}
+              {title ? <h3 class="notebook-card__title">{title}</h3> : null}
+            </div>
+          )}
+        </header>
+      )}
+      <div class="notebook-card__body"><slot /></div>
+      <div class="notebook-card__footer"><slot name="footer" /></div>
+    </a>
+  ) : (
+    <article
+      class:list={['notebook-card', className]}
+      data-corner-fold={cornerFold ? 'on' : 'off'}
+      data-tone={tone}
+      data-variant={variant}
+    >
+      {(title || kicker || icon) && (
+        <header class="notebook-card__header">
+          {kicker ? <p class="notebook-card__kicker">{kicker}</p> : null}
+          {(title || icon) && (
+            <div class="notebook-card__title-row">
+              {icon ? <DoodleIcon name={icon} size={20} /> : null}
+              {title ? <h3 class="notebook-card__title">{title}</h3> : null}
+            </div>
+          )}
+        </header>
+      )}
+      <div class="notebook-card__body"><slot /></div>
+      <div class="notebook-card__footer"><slot name="footer" /></div>
+    </article>
+  )}
+</Fragment>
+
+<style>
+  .notebook-card {
+    --card-tint: var(--site-surface);
+    --card-ink: var(--site-ink);
+    --card-accent: var(--site-ink-muted);
+    position: relative;
+    display: grid;
+    gap: 0.75rem;
+    padding: 1.25rem 1.35rem 1.35rem;
+    color: var(--card-ink);
+    background: var(--card-tint);
+    border: 1.5px solid color-mix(in srgb, var(--card-accent) 32%, transparent);
+    border-radius: 0.75rem 1rem 0.75rem 0.95rem;
+    text-decoration: none;
+    box-shadow: 0 0.4rem 0.9rem rgb(var(--notebook-shadow-rgb) / 0.08);
+    transition: transform 140ms var(--site-transition-smooth), box-shadow 140ms var(--site-transition-smooth);
+  }
+
+  .notebook-card[data-tone='accent'] {
+    --card-tint: color-mix(in srgb, var(--notebook-post-it-blue-bg) 22%, var(--site-surface));
+    --card-accent: var(--notebook-post-it-blue-ink);
+  }
+  .notebook-card[data-tone='coral'] {
+    --card-tint: color-mix(in srgb, var(--notebook-post-it-coral-bg) 22%, var(--site-surface));
+    --card-accent: var(--notebook-post-it-coral-ink);
+  }
+  .notebook-card[data-tone='mint'] {
+    --card-tint: color-mix(in srgb, var(--notebook-post-it-mint-bg) 22%, var(--site-surface));
+    --card-accent: var(--notebook-post-it-mint-ink);
+  }
+  .notebook-card[data-tone='lemon'] {
+    --card-tint: color-mix(in srgb, var(--notebook-post-it-lemon-bg) 26%, var(--site-surface));
+    --card-accent: var(--notebook-post-it-lemon-ink);
+  }
+  .notebook-card[data-tone='pink'] {
+    --card-tint: color-mix(in srgb, var(--notebook-post-it-pink-bg) 22%, var(--site-surface));
+    --card-accent: var(--notebook-post-it-pink-ink);
+  }
+  .notebook-card[data-tone='violet'] {
+    --card-tint: color-mix(in srgb, var(--notebook-sticker-violet-bg) 22%, var(--site-surface));
+    --card-accent: var(--notebook-sticker-violet-ink);
+  }
+
+  .notebook-card[data-variant='outlined'] {
+    background: transparent;
+    box-shadow: none;
+    border-style: dashed;
+    border-color: color-mix(in srgb, var(--card-accent) 45%, transparent);
+  }
+
+  a.notebook-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.7rem 1.4rem rgb(var(--notebook-shadow-rgb) / 0.12);
+  }
+
+  a.notebook-card:focus-visible {
+    outline: 2px dashed var(--card-accent);
+    outline-offset: 3px;
+  }
+
+  /* Esquina vincada — canto inferior direito */
+  .notebook-card[data-corner-fold='on']::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    bottom: -1px;
+    width: 1.15rem;
+    height: 1.15rem;
+    background:
+      linear-gradient(
+        135deg,
+        transparent 47%,
+        color-mix(in srgb, var(--card-accent) 20%, transparent) 48%,
+        color-mix(in srgb, var(--card-accent) 30%, transparent) 50%,
+        transparent 62%
+      ),
+      color-mix(in srgb, var(--site-bg) 78%, transparent);
+    border-bottom-right-radius: 0.35rem;
+    pointer-events: none;
+  }
+
+  .notebook-card__header {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .notebook-card__kicker {
+    margin: 0;
+    color: color-mix(in srgb, var(--card-accent) 82%, var(--site-ink));
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .notebook-card__title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--card-accent);
+  }
+
+  .notebook-card__title {
+    margin: 0;
+    color: var(--site-ink);
+    font-family: var(--notebook-font-book);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .notebook-card__body {
+    color: var(--site-ink);
+    font-family: var(--notebook-font-book);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .notebook-card__body :global(> :first-child) {
+    margin-top: 0;
+  }
+
+  .notebook-card__body :global(> :last-child) {
+    margin-bottom: 0;
+  }
+
+  .notebook-card__footer:empty {
+    display: none;
+  }
+
+  .notebook-card__footer {
+    padding-top: 0.4rem;
+    color: var(--site-ink-muted);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+    line-height: 1.4;
+  }
+</style>

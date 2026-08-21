@@ -1,0 +1,79 @@
+---
+import PreparationVolumePage from '@/components/PreparationVolumePage.astro'
+import { getNonDefaultLocales } from '@/lib/locale-config'
+import {
+  getLegacyPreparationRouteSegments,
+  getPreparationVolumeHref,
+} from '@/lib/preparation-links'
+import { getPageTypeRouteSegment } from '@/lib/section-manifest'
+import {
+  getPreparationCatalogCollection,
+  getVisibleChallengesByLocale,
+  getVisiblePreparationByLocale,
+} from '@/lib/site-content'
+
+export async function getStaticPaths() {
+  const catalogs = await getPreparationCatalogCollection()
+  const supportedLocales = new Set(getNonDefaultLocales())
+
+  return (await Promise.all(catalogs.flatMap(async (catalog) => {
+    const locale = catalog.data.locale
+    const section = getPageTypeRouteSegment('preparation', locale)
+
+    if (!supportedLocales.has(locale) || !section || catalog.data.status === 'archived') return []
+    if (catalog.data.status === 'draft' && !import.meta.env.DEV) return []
+
+    const [preparation, challenges] = await Promise.all([
+      getVisiblePreparationByLocale(locale),
+      getVisibleChallengesByLocale(locale),
+    ])
+
+    return catalog.data.volumes.flatMap((volume) => {
+      const props = {
+        catalog,
+        challenges,
+        locale,
+        preparation,
+        volumeId: volume.id,
+      }
+
+      return [
+        {
+          params: {
+            locale,
+            section,
+            volume: volume.id,
+          },
+          props,
+        },
+        ...getLegacyPreparationRouteSegments(locale).map((legacySection) => ({
+          params: {
+            locale,
+            section: legacySection,
+            volume: volume.id,
+          },
+          props: {
+            ...props,
+            redirectHref: getPreparationVolumeHref(volume.id, locale),
+          },
+        })),
+      ]
+    })
+  }))).flat()
+}
+
+const { catalog, challenges, locale, preparation, volumeId } = Astro.props
+const redirectHref = 'redirectHref' in Astro.props ? Astro.props.redirectHref : null
+
+if (redirectHref) {
+  return Astro.redirect(redirectHref, 301)
+}
+---
+
+<PreparationVolumePage
+  catalog={catalog}
+  challenges={challenges}
+  locale={locale}
+  preparation={preparation}
+  volumeId={volumeId}
+/>

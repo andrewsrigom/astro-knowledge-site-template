@@ -1,0 +1,134 @@
+---
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+
+type RailLink = {
+  description?: string
+  href: string
+  title: string
+}
+
+type SectionLink = {
+  href: string
+  title: string
+}
+
+type Props = {
+  glossary: RailLink[]
+  locale: string
+  practices: RailLink[]
+  sections: SectionLink[]
+}
+
+const { glossary, locale, practices, sections } = Astro.props
+const labels = locale === 'pt-br'
+  ? {
+      glossary: 'Conceitos relacionados',
+      practices: 'Prática relacionada',
+      sections: 'Neste capítulo',
+    }
+  : {
+      glossary: 'Related concepts',
+      practices: 'Related practice',
+      sections: 'In this chapter',
+    }
+---
+
+<div class="grid gap-4" data-pagefind-ignore>
+  {sections.length > 0 ? (
+    <wired-card class="book-rail-card" elevation="1">
+      <section class="p-4">
+        <p class="book-rail-heading m-0 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-site-ink-muted">
+          <DoodleIcon name="checklist" size={15} />
+          <span>{labels.sections}</span>
+        </p>
+        <wired-divider class="book-rail-divider" elevation="1" aria-hidden="true"></wired-divider>
+        <ul class="mb-0 mt-3 grid list-none gap-2 p-0 text-sm leading-5">
+          {sections.map((section) => (
+            <li>
+              <a class="text-site-link-hover hover:text-site-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover" href={section.href}>
+                {section.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </wired-card>
+  ) : null}
+
+  {practices.length > 0 ? (
+    <wired-card class="book-rail-card" elevation="1">
+      <section class="p-4">
+        <p class="book-rail-heading m-0 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-site-ink-muted">
+          <DoodleIcon name="target" size={15} />
+          <span>{labels.practices}</span>
+        </p>
+        <wired-divider class="book-rail-divider" elevation="1" aria-hidden="true"></wired-divider>
+        <ul class="mb-0 mt-3 grid list-none gap-2 p-0">
+          {practices.map((practice) => (
+            <li>
+              <a class="[font-family:var(--notebook-font-book)] text-sm font-semibold leading-5 text-site-link-hover hover:text-site-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover" href={practice.href}>
+                {practice.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </wired-card>
+  ) : null}
+
+  {glossary.length > 0 ? (
+    <wired-card class="book-rail-card" elevation="1">
+      <section class="p-4">
+        <p class="book-rail-heading m-0 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-site-ink-muted">
+          <DoodleIcon name="brackets" size={15} />
+          <span>{labels.glossary}</span>
+        </p>
+        <wired-divider class="book-rail-divider" elevation="1" aria-hidden="true"></wired-divider>
+        <ul class="mb-0 mt-3 grid list-none gap-2 p-0 text-sm leading-5">
+          {glossary.map((term) => (
+            <li>
+              <a class="text-site-link-hover hover:text-site-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover" href={term.href}>{term.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </wired-card>
+  ) : null}
+</div>
+
+<style>
+  .book-rail-card {
+    display: block;
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+    color: color-mix(in srgb, var(--site-accent) 72%, var(--site-line-strong));
+  }
+
+  .book-rail-card > section {
+    min-width: 0;
+    color: var(--site-ink);
+  }
+
+  .book-rail-card a {
+    overflow-wrap: anywhere;
+  }
+
+  .book-rail-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .book-rail-heading :global(.notebook-doodle-icon) {
+    color: var(--book-pencil);
+  }
+
+  .book-rail-divider {
+    display: block;
+    width: 4.5rem;
+    min-height: 0.35rem;
+    margin-top: 0.45rem;
+    color: var(--site-accent);
+  }
+</style>

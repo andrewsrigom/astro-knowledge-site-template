@@ -1,0 +1,127 @@
+---
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+import { siteStorageKeys } from '@/lib/site-config'
+
+type Props = {
+  className?: string
+  darkLabel?: string
+  label: string
+  lightLabel?: string
+}
+
+const {
+  className = '',
+  label,
+  darkLabel = label,
+  lightLabel = label,
+} = Astro.props
+---
+
+<button
+  aria-label={label}
+  class:list={[
+    'theme-toggle inline-flex min-h-10 min-w-10 items-center justify-center rounded-md border border-dashed border-site-line-strong bg-site-panel px-3 text-site-ink transition-colors hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover',
+    className,
+  ]}
+  data-label={label}
+  data-dark-label={darkLabel}
+  data-light-label={lightLabel}
+  data-storage-key={siteStorageKeys.themePreference}
+  data-theme-toggle
+  data-theme-toggle-button
+  title={label}
+  type="button"
+>
+  <span class="inline-flex items-center justify-center" aria-hidden="true">
+    <span class="theme-toggle-icon theme-toggle-icon-light">
+      <DoodleIcon name="lightbulb" size={18} />
+    </span>
+    <span class="theme-toggle-icon theme-toggle-icon-dark">
+      <DoodleIcon name="star" size={18} />
+    </span>
+  </span>
+  <span class="sr-only" data-theme-toggle-label>{label}</span>
+</button>
+
+<script is:inline>
+  try {
+    const currentScript = document.currentScript
+    const button =
+      currentScript instanceof HTMLScriptElement ? currentScript.previousElementSibling : null
+
+    if (!(button instanceof HTMLButtonElement)) {
+      throw new Error('Missing theme toggle button')
+    }
+
+    const root = document.documentElement
+    const storageKey = button.dataset.storageKey ?? ''
+    const label = button.dataset.label ?? 'Theme'
+    const darkLabel = button.dataset.darkLabel ?? label
+    const lightLabel = button.dataset.lightLabel ?? label
+    const labelNode = button.querySelector('[data-theme-toggle-label]')
+
+    const readTheme = () => (root.dataset.theme === 'light' ? 'light' : 'dark')
+
+    const writeTheme = (theme) => {
+      root.dataset.theme = theme
+      root.style.colorScheme = theme
+
+      try {
+        if (storageKey) {
+          window.localStorage.setItem(storageKey, theme)
+        }
+      } catch {}
+
+      window.dispatchEvent(new CustomEvent('site-theme-change', { detail: { theme } }))
+    }
+
+    const syncButton = () => {
+      const currentTheme = readTheme()
+      const nextLabel = currentTheme === 'dark' ? lightLabel : darkLabel
+
+      button.dataset.currentTheme = currentTheme
+      button.removeAttribute('aria-pressed')
+      button.setAttribute('aria-label', nextLabel)
+      button.setAttribute('title', nextLabel)
+
+      if (labelNode instanceof HTMLElement) {
+        labelNode.textContent = nextLabel
+      }
+    }
+
+    button.addEventListener('click', () => {
+      writeTheme(readTheme() === 'dark' ? 'light' : 'dark')
+      syncButton()
+    })
+
+    window.addEventListener('site-theme-change', syncButton)
+    document.addEventListener('astro:after-swap', syncButton)
+    document.addEventListener('astro:page-load', syncButton)
+
+    syncButton()
+  } catch {}
+</script>
+
+<style>
+  .theme-toggle {
+    gap: 0;
+  }
+
+  .theme-toggle-icon {
+    display: none;
+    transition:
+      opacity 160ms ease,
+      transform 160ms ease;
+  }
+
+  [data-current-theme='dark'] .theme-toggle-icon-dark,
+  [data-current-theme='light'] .theme-toggle-icon-light {
+    display: inline-flex;
+  }
+
+  [data-current-theme='dark'] .theme-toggle-icon-dark,
+  [data-current-theme='light'] .theme-toggle-icon-light {
+    transform: scale(1);
+    opacity: 1;
+  }
+</style>

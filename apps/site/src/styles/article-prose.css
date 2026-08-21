@@ -7,6 +7,7 @@
     font-size: 1.06rem;
     letter-spacing: 0.004em;
     line-height: 1.78;
+    font-family: var(--notebook-font-book);
   }
 
   .article-prose > :first-child {
@@ -14,9 +15,12 @@
   }
 
   .article-prose h2 {
+    position: relative;
     margin-top: 3rem;
     margin-bottom: 0.9rem;
-    color: #7aa2f7;
+    padding-top: 0.65rem;
+    color: var(--site-ink);
+    font-family: var(--notebook-font-book);
     font-size: 1.65rem;
     font-weight: 600;
     line-height: 1.28;
@@ -24,10 +28,23 @@
     scroll-margin-top: 7rem;
   }
 
+  .article-prose h2::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3.6rem;
+    height: 0.28rem;
+    background: color-mix(in srgb, var(--notebook-post-it-blue-bg) 72%, var(--site-link-hover));
+    border-radius: 999px;
+    clip-path: polygon(0 28%, 100% 0, 96% 100%, 4% 76%);
+  }
+
   .article-prose h3 {
     margin-top: 2.4rem;
     margin-bottom: 0.8rem;
-    color: #7aa2f7;
+    color: var(--site-ink);
+    font-family: var(--notebook-font-book);
     font-size: 1.3rem;
     font-weight: 600;
     line-height: 1.35;
@@ -75,11 +92,25 @@
   }
 
   .article-prose blockquote {
+    position: relative;
     margin-block: 1.75rem;
-    padding-left: 1rem;
-    border-left: 3px solid var(--article-rule);
+    padding: 1.2rem 1.3rem 1.2rem 3.1rem;
+    border-left: 0.28rem solid var(--site-link-hover);
+    background: color-mix(in srgb, var(--notebook-post-it-blue-bg) 20%, var(--site-surface));
     color: var(--article-heading-color);
-    font-style: italic;
+    font-style: normal;
+  }
+
+  .article-prose blockquote::before {
+    content: '“';
+    position: absolute;
+    top: 0.5rem;
+    left: 0.8rem;
+    color: var(--site-link-hover);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-xl);
+    font-weight: var(--notebook-hand-weight-strong);
+    line-height: 1;
   }
 
   .article-prose strong {
@@ -87,12 +118,14 @@
   }
 
   .article-prose pre {
+    margin-block: 1.75rem 2rem;
     overflow-x: auto;
     padding: 1rem;
-    border: 1px solid var(--article-rule);
-    border-radius: var(--radius-xs);
+    border: 1px dashed var(--article-rule);
+    border-radius: 0.55rem;
     background: var(--article-surface);
     color: var(--article-heading-color);
+    font-family: var(--notebook-font-mono);
   }
 
   .article-prose code {
@@ -122,6 +155,62 @@
     padding: 0;
   }
 
+  .article-prose table {
+    display: block;
+    width: 100%;
+    margin-block: 1.75rem 2rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    border: 1px dashed var(--article-rule);
+    border-radius: 0.55rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--article-surface);
+  }
+
+  .article-prose table :where(th, td) {
+    padding: 0.8rem 1rem;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .article-prose table th {
+    background: color-mix(in srgb, var(--article-surface) 70%, var(--site-surface-strong));
+    color: var(--article-heading-color);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+    font-weight: var(--notebook-hand-weight-strong);
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  .article-prose table td {
+    line-height: 1.55;
+  }
+
+  .article-prose table tbody tr:first-child td {
+    border-top: 1px dashed var(--article-rule);
+  }
+
+  .article-prose table tbody tr + tr td {
+    border-top: 1px dashed var(--article-rule);
+  }
+
+  .article-prose mark {
+    padding-inline: 0.12rem;
+    color: inherit;
+    background: linear-gradient(
+      transparent 45%,
+      var(--notebook-highlight-yellow) 46% 88%,
+      transparent 89%
+    );
+  }
+
+  .article-prose table :not(pre) > code {
+    overflow-wrap: normal;
+    white-space: nowrap;
+  }
+
   .article-prose a {
     color: var(--article-link);
     text-decoration-line: underline;
@@ -133,6 +222,12 @@
   .article-prose a:hover,
   .article-prose a:focus-visible {
     color: var(--article-link-hover);
+  }
+
+  .article-prose a:focus-visible {
+    border-radius: 0.2rem;
+    outline: 2px dashed var(--site-link-hover);
+    outline-offset: 3px;
   }
 }
 

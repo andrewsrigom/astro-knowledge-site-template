@@ -1,0 +1,86 @@
+.notebook-post-it {
+  --post-it-bg: var(--notebook-post-it-lemon-bg);
+  --post-it-ink: var(--notebook-post-it-lemon-ink);
+  position: relative;
+  box-sizing: border-box;
+  width: min(100%, 18rem);
+  min-height: 9rem;
+  padding: 1.4rem 1.25rem 1.2rem;
+  color: var(--post-it-ink);
+  background: var(--post-it-bg);
+  font-family: var(--notebook-font-ui);
+  box-shadow:
+    0 0.7rem 1.4rem rgb(var(--notebook-shadow-rgb) / 0.14),
+    inset 0 -0.35rem 0.7rem color-mix(in srgb, var(--post-it-ink) 8%, transparent);
+}
+
+.notebook-post-it[data-tone='pink'] {
+  --post-it-bg: var(--notebook-post-it-pink-bg);
+  --post-it-ink: var(--notebook-post-it-pink-ink);
+}
+
+.notebook-post-it[data-tone='mint'] {
+  --post-it-bg: var(--notebook-post-it-mint-bg);
+  --post-it-ink: var(--notebook-post-it-mint-ink);
+}
+
+.notebook-post-it[data-tone='blue'] {
+  --post-it-bg: var(--notebook-post-it-blue-bg);
+  --post-it-ink: var(--notebook-post-it-blue-ink);
+}
+
+.notebook-post-it[data-tone='coral'] {
+  --post-it-bg: var(--notebook-post-it-coral-bg);
+  --post-it-ink: var(--notebook-post-it-coral-ink);
+}
+
+.notebook-post-it[data-tilt='left'],
+.notebook-post-it:not([data-tilt]) {
+  transform: rotate(-0.35deg);
+}
+
+.notebook-post-it[data-tilt='right'] {
+  transform: rotate(0.4deg);
+}
+
+.notebook-post-it__tape,
+.notebook-post-it:not(:has(> .notebook-post-it__tape))::before {
+  position: absolute;
+  top: -0.55rem;
+  left: 50%;
+  width: 4.6rem;
+  height: 1.05rem;
+  background: var(--notebook-tape-paper-bg);
+  content: '';
+  transform: translateX(-50%);
+}
+
+.notebook-post-it__label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0 0.55rem;
+  color: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.notebook-post-it__content,
+.notebook-post-it > p:not(.notebook-post-it__label) {
+  color: inherit;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.notebook-post-it__content > :first-child,
+.notebook-post-it > p:first-of-type:not(.notebook-post-it__label) {
+  margin-top: 0;
+}
+
+.notebook-post-it__content > :last-child,
+.notebook-post-it > p:last-child {
+  margin-bottom: 0;
+}

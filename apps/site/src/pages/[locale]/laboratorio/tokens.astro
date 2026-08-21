@@ -1,0 +1,96 @@
+---
+import NotebookLink from '@/components/ui/notebook/NotebookLink.astro'
+import NotebookTokensReference from '@/components/ui/notebook/NotebookTokensReference.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import {
+  getSupportedLocales,
+  type SiteLocale,
+} from '@/lib/locale-config'
+
+export function getStaticPaths() {
+  return getSupportedLocales().map((locale) => ({
+    params: { locale },
+    props: { locale },
+  }))
+}
+
+type Props = {
+  locale: SiteLocale
+}
+
+const { locale } = Astro.props
+const isPortuguese = locale === 'pt-br'
+const title = isPortuguese ? 'Tokens do Caderno UI' : 'Notebook UI tokens'
+const description = isPortuguese
+  ? 'Referência única das fontes, escalas, cores e regras de composição do Caderno UI.'
+  : 'Single reference for Notebook UI typography, scales, colors, and composition rules.'
+const localeHrefs = Object.fromEntries(
+  getSupportedLocales().map((supportedLocale) => [
+    supportedLocale,
+    `/${supportedLocale}/laboratorio/tokens`,
+  ]),
+)
+---
+
+<BaseLayout
+  contentWidth="wide"
+  description={description}
+  localeHrefs={localeHrefs}
+  noindex={true}
+  pagefind={false}
+  title={title}
+>
+  <div class="notebook-token-page mx-auto w-full max-w-6xl px-5 py-12 sm:px-7 lg:px-9">
+    <header class="notebook-token-page__header">
+      <p>SeniorPath · {isPortuguese ? 'referência visual' : 'visual reference'}</p>
+      <h1>{title}</h1>
+      <span>{description}</span>
+      <NotebookLink href={`/${locale}/laboratorio/caderno-ui`} variant="underline">
+        {isPortuguese ? 'Voltar ao catálogo de componentes' : 'Back to the component catalog'}
+      </NotebookLink>
+    </header>
+
+    <NotebookTokensReference locale={locale} />
+  </div>
+</BaseLayout>
+
+<style>
+  .notebook-token-page {
+    display: grid;
+    gap: 4rem;
+  }
+
+  .notebook-token-page__header {
+    display: grid;
+    gap: 0.8rem;
+    max-width: 46rem;
+  }
+
+  .notebook-token-page__header p,
+  .notebook-token-page__header h1,
+  .notebook-token-page__header span {
+    margin: 0;
+  }
+
+  .notebook-token-page__header p {
+    color: var(--site-link-hover);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+    font-weight: var(--notebook-hand-weight-strong);
+  }
+
+  .notebook-token-page__header h1 {
+    color: var(--site-ink);
+    font-family: var(--notebook-font-book);
+    font-size: clamp(2.5rem, 7vw, 4.8rem);
+    font-weight: 600;
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+  }
+
+  .notebook-token-page__header > span {
+    color: var(--site-ink-soft);
+    font-size: 1.08rem;
+    line-height: 1.7;
+  }
+</style>

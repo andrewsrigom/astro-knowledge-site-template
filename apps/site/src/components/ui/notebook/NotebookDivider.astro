@@ -1,0 +1,128 @@
+---
+type Props = {
+  class?: string
+  density?: 'dense' | 'loose' | 'regular'
+  orientation?: 'horizontal' | 'vertical'
+  tone?: 'accent' | 'ink' | 'muted' | 'strong'
+  variant?: 'dashed' | 'dotted' | 'wavy'
+}
+
+const {
+  class: className,
+  density = 'regular',
+  orientation = 'horizontal',
+  tone = 'muted',
+  variant = 'dashed',
+} = Astro.props
+---
+
+<hr
+  aria-hidden="true"
+  class:list={['notebook-divider', className]}
+  data-density={density}
+  data-orientation={orientation}
+  data-tone={tone}
+  data-variant={variant}
+/>
+
+<style>
+  .notebook-divider {
+    --divider-color: var(--site-ink-muted);
+    --divider-dash-on: 4px;
+    --divider-dash-off: 5px;
+    --divider-thickness: 1.5px;
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: transparent;
+  }
+
+  .notebook-divider[data-tone='ink'] {
+    --divider-color: var(--site-ink);
+  }
+
+  .notebook-divider[data-tone='strong'] {
+    --divider-color: var(--site-ink-soft);
+  }
+
+  .notebook-divider[data-tone='accent'] {
+    --divider-color: color-mix(in srgb, var(--notebook-post-it-coral-ink) 68%, transparent);
+  }
+
+  .notebook-divider[data-density='dense'] {
+    --divider-dash-on: 3px;
+    --divider-dash-off: 3px;
+  }
+
+  .notebook-divider[data-density='loose'] {
+    --divider-dash-on: 6px;
+    --divider-dash-off: 9px;
+  }
+
+  /* HORIZONTAL */
+  .notebook-divider[data-orientation='horizontal'] {
+    width: 100%;
+    height: var(--divider-thickness);
+  }
+
+  .notebook-divider[data-orientation='horizontal'][data-variant='dashed'] {
+    background: repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--divider-color) 60%, transparent) 0,
+      color-mix(in srgb, var(--divider-color) 60%, transparent) var(--divider-dash-on),
+      transparent var(--divider-dash-on),
+      transparent calc(var(--divider-dash-on) + var(--divider-dash-off))
+    );
+  }
+
+  .notebook-divider[data-orientation='horizontal'][data-variant='dotted'] {
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--divider-color) 68%, transparent) 40%,
+      transparent 45%
+    );
+    background-size: calc(var(--divider-dash-on) + var(--divider-dash-off)) 100%;
+    background-repeat: repeat-x;
+  }
+
+  .notebook-divider[data-orientation='horizontal'][data-variant='wavy'] {
+    height: 6px;
+    background: none;
+    color: var(--divider-color);
+    mask:
+      radial-gradient(circle at 50% 0, transparent 3px, black 3.5px) 0 100% / 12px 6px repeat-x;
+    -webkit-mask:
+      radial-gradient(circle at 50% 0, transparent 3px, black 3.5px) 0 100% / 12px 6px repeat-x;
+    background-color: color-mix(in srgb, var(--divider-color) 62%, transparent);
+  }
+
+  /* VERTICAL */
+  .notebook-divider[data-orientation='vertical'] {
+    display: inline-block;
+    width: var(--divider-thickness);
+    height: 100%;
+    min-height: 1rem;
+  }
+
+  .notebook-divider[data-orientation='vertical'][data-variant='dashed'] {
+    background: repeating-linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--divider-color) 60%, transparent) 0,
+      color-mix(in srgb, var(--divider-color) 60%, transparent) var(--divider-dash-on),
+      transparent var(--divider-dash-on),
+      transparent calc(var(--divider-dash-on) + var(--divider-dash-off))
+    );
+  }
+
+  .notebook-divider[data-orientation='vertical'][data-variant='dotted'] {
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--divider-color) 68%, transparent) 40%,
+      transparent 45%
+    );
+    background-size: 100% calc(var(--divider-dash-on) + var(--divider-dash-off));
+    background-repeat: repeat-y;
+  }
+</style>

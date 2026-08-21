@@ -1,0 +1,243 @@
+---
+import NotebookAlert from '@/components/ui/notebook/NotebookAlert.astro'
+import NotebookButton from '@/components/ui/notebook/NotebookButton.astro'
+import NotebookEmpty from '@/components/ui/notebook/NotebookEmpty.astro'
+import NotebookModal from '@/components/ui/notebook/NotebookModal.astro'
+import NotebookSpinner from '@/components/ui/notebook/NotebookSpinner.astro'
+import NotebookToast from '@/components/ui/notebook/NotebookToast.astro'
+import NotebookToastHost from '@/components/ui/notebook/NotebookToastHost.astro'
+import NotebookTooltip from '@/components/ui/notebook/NotebookTooltip.astro'
+---
+
+<div class="notebook-feedback-showcase">
+  <section class="notebook-feedback-section" aria-labelledby="feedback-alerts-title">
+    <header>
+      <p>Feedback</p>
+      <h2 id="feedback-alerts-title">Alertas fixos</h2>
+      <span>Informação que precisa permanecer junto do conteúdo.</span>
+    </header>
+    <div class="notebook-feedback-stack">
+      <NotebookAlert title="Contexto importante" variant="info">
+        <p>Este exemplo usa uma entrada simplificada para manter o foco no mecanismo.</p>
+      </NotebookAlert>
+      <NotebookAlert title="Revisão concluída" variant="success">
+        <p>Os casos de borda foram conferidos e a explicação está consistente com o código.</p>
+      </NotebookAlert>
+      <NotebookAlert title="Atenção ao custo" variant="warning">
+        <p>A solução é quadrática e pode ficar lenta quando a entrada cresce.</p>
+      </NotebookAlert>
+      <NotebookAlert dismissible title="Contrato quebrado" variant="danger">
+        <p>A implementação aceita valores que o contrato público declara como inválidos.</p>
+      </NotebookAlert>
+    </div>
+  </section>
+
+  <section class="notebook-feedback-section" aria-labelledby="feedback-transient-title">
+    <header>
+      <p>Feedback transitório</p>
+      <h2 id="feedback-transient-title">Toast, carregamento e tooltip</h2>
+      <span>Respostas curtas sem interromper a leitura.</span>
+    </header>
+
+    <div class="notebook-feedback-grid">
+      <div class="notebook-feedback-demo">
+        <h3>Notificações</h3>
+        <div class="notebook-feedback-toast-preview">
+          <NotebookToast title="Rascunho salvo" variant="success">
+            <p>Você pode continuar de onde parou.</p>
+          </NotebookToast>
+          <NotebookToast title="Falha ao sincronizar" variant="error">
+            <p>As alterações continuam guardadas neste dispositivo.</p>
+          </NotebookToast>
+        </div>
+        <span data-demo-toast-trigger>
+          <NotebookButton icon="spark" size="sm" tone="lemon">Disparar toast</NotebookButton>
+        </span>
+      </div>
+
+      <div class="notebook-feedback-demo">
+        <h3>Carregamento</h3>
+        <div class="notebook-feedback-spinner-row">
+          <NotebookSpinner label="Carregando exemplo pequeno" size="sm" />
+          <NotebookSpinner label="Carregando exemplo" tone="mint" />
+          <NotebookSpinner label="Carregando exemplo grande" size="lg" tone="violet" />
+        </div>
+      </div>
+
+      <div class="notebook-feedback-demo">
+        <h3>Ajuda contextual</h3>
+        <div class="notebook-feedback-tooltip-row">
+          <NotebookTooltip id="complexity-tooltip" text="Custo de tempo ou espaço conforme a entrada cresce.">
+            <NotebookButton size="sm" variant="secondary">Complexidade</NotebookButton>
+          </NotebookTooltip>
+          <NotebookTooltip id="invariant-tooltip" position="bottom" text="Condição que precisa continuar verdadeira durante a execução.">
+            <NotebookButton size="sm" tone="mint" variant="secondary">Invariante</NotebookButton>
+          </NotebookTooltip>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="notebook-feedback-section" aria-labelledby="feedback-empty-title">
+    <header>
+      <p>Ausência e interrupção</p>
+      <h2 id="feedback-empty-title">Estado vazio e modal</h2>
+      <span>Uma ausência explica o próximo passo; o modal reserva atenção para uma decisão.</span>
+    </header>
+
+    <div class="notebook-feedback-grid notebook-feedback-grid--wide">
+      <NotebookEmpty
+        description="Tente um termo mais amplo ou remova um dos filtros aplicados."
+        title="Nenhum resultado encontrado"
+        variant="no-results"
+      >
+        <NotebookButton icon="reset" size="sm" tone="lemon" variant="secondary">Limpar filtros</NotebookButton>
+      </NotebookEmpty>
+
+      <div class="notebook-feedback-demo notebook-feedback-demo--centered">
+        <h3>Nota modal</h3>
+        <p>Usada quando a leitura precisa pausar para uma confirmação ou decisão curta.</p>
+        <NotebookModal id="review-notebook-modal" title="Antes de continuar">
+          <NotebookButton icon="note" slot="trigger">Abrir nota</NotebookButton>
+          <p>
+            A solução muda o array original. Confirme se essa mutação faz parte do contrato antes de
+            usá-la em outro trecho do sistema.
+          </p>
+          <form method="dialog" slot="footer">
+            <NotebookButton tone="mint" type="submit">Entendi</NotebookButton>
+          </form>
+        </NotebookModal>
+      </div>
+    </div>
+  </section>
+</div>
+
+<NotebookToastHost />
+
+<script>
+  function setupFeedbackDemo() {
+    const trigger = document.querySelector<HTMLElement>('[data-demo-toast-trigger]')
+    if (!trigger || trigger.dataset.demoReady === 'true') return
+    trigger.addEventListener('click', () => {
+      document.dispatchEvent(new CustomEvent('notebook:toast', {
+        detail: {
+          duration: 5000,
+          message: 'O progresso desta seção foi guardado.',
+          title: 'Anotação salva',
+          variant: 'success',
+        },
+      }))
+    })
+    trigger.dataset.demoReady = 'true'
+  }
+
+  setupFeedbackDemo()
+  document.addEventListener('astro:page-load', setupFeedbackDemo)
+</script>
+
+<style>
+  .notebook-feedback-showcase {
+    display: grid;
+    gap: 4rem;
+    margin-bottom: 4rem;
+  }
+
+  .notebook-feedback-section {
+    display: grid;
+    gap: 1.4rem;
+  }
+
+  .notebook-feedback-section > header {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .notebook-feedback-section > header p,
+  .notebook-feedback-section > header h2,
+  .notebook-feedback-section > header span,
+  .notebook-feedback-demo h3,
+  .notebook-feedback-demo p {
+    margin: 0;
+  }
+
+  .notebook-feedback-section > header p {
+    color: var(--site-link-hover);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+    font-weight: var(--notebook-hand-weight-strong);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .notebook-feedback-section > header h2 {
+    color: var(--site-ink);
+    font-family: var(--notebook-font-book);
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    line-height: 1.05;
+  }
+
+  .notebook-feedback-section > header span {
+    color: var(--site-ink-muted);
+  }
+
+  .notebook-feedback-stack {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .notebook-feedback-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    gap: 1rem;
+  }
+
+  .notebook-feedback-grid--wide {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+    align-items: stretch;
+  }
+
+  .notebook-feedback-demo {
+    display: grid;
+    align-content: start;
+    gap: 1rem;
+    min-width: 0;
+    padding: 1.25rem;
+    background: color-mix(in srgb, var(--site-surface) 90%, transparent);
+    border: 1px solid var(--site-line);
+    border-radius: 0.8rem 1rem 0.75rem 0.95rem;
+  }
+
+  .notebook-feedback-demo--centered {
+    align-content: center;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .notebook-feedback-demo h3 {
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-lg);
+    font-weight: var(--notebook-hand-weight-strong);
+  }
+
+  .notebook-feedback-demo p {
+    color: var(--site-ink-soft);
+    line-height: 1.55;
+  }
+
+  .notebook-feedback-toast-preview {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .notebook-feedback-toast-preview :global(.notebook-toast) {
+    width: 100%;
+  }
+
+  .notebook-feedback-spinner-row,
+  .notebook-feedback-tooltip-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+  }
+</style>

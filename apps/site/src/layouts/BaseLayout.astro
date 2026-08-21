@@ -1,18 +1,13 @@
 ---
 import '@/styles/global.css'
 
-import BookTextIcon from '@lucide/astro/icons/book-text'
-import BrainIcon from '@lucide/astro/icons/brain'
-import NewspaperIcon from '@lucide/astro/icons/newspaper'
-import PuzzleIcon from '@lucide/astro/icons/puzzle'
-import RouteIcon from '@lucide/astro/icons/route'
-import TagsIcon from '@lucide/astro/icons/tags'
 import LayoutClientScripts from '@/components/layout/LayoutClientScripts.astro'
 import LayoutHead from '@/components/layout/LayoutHead.astro'
 import LocalePreferenceScript from '@/components/layout/LocalePreferenceScript.astro'
 import NewsletterSection from '@/components/layout/NewsletterSection.astro'
 import SiteFooter from '@/components/layout/SiteFooter.astro'
 import SiteHeader from '@/components/layout/SiteHeader.astro'
+import ThemePreferenceScript from '@/components/layout/ThemePreferenceScript.astro'
 import { resolveLayoutHeadContext } from '@/lib/layout-head'
 import {
   getDefaultLocale,
@@ -43,7 +38,8 @@ import type { SiteLocale } from '@/lib/site-copy'
 
 type Props = {
   alternateLocaleHrefs?: Record<string, string | null>
-  contentWidth?: 'default' | 'wide'
+  chrome?: 'book' | 'site'
+  contentWidth?: 'book' | 'default' | 'wide'
   description: string
   localeHrefs?: Record<string, string | null>
   noindex?: boolean
@@ -55,7 +51,6 @@ type Props = {
 
 type ExploreLink = {
   href: string
-  icon: typeof NewspaperIcon
   id: string
   isActive: boolean
   label: string
@@ -64,6 +59,7 @@ type ExploreLink = {
 
 const {
   alternateLocaleHrefs = {},
+  chrome = 'site',
   contentWidth = 'default',
   description,
   localeHrefs = {},
@@ -73,6 +69,8 @@ const {
   structuredData = [],
   title,
 } = Astro.props
+
+const usesBookChrome = chrome === 'book'
 
 const pageTitle = getSitePageTitle(title)
 const pathname = Astro.url.pathname
@@ -92,14 +90,6 @@ const hasSearch = isFeatureEnabled('search')
 const hasLocaleSwitcher = isFeatureEnabled('localeSwitcher')
 const newsletterFormAction = getNewsletterActionUrl()
 const hasNewsletter = newsletterFormAction !== null
-const sectionIconByPageType = {
-  articles: NewspaperIcon,
-  challenges: PuzzleIcon,
-  concepts: BrainIcon,
-  glossary: BookTextIcon,
-  topics: TagsIcon,
-  tracks: RouteIcon,
-} as const
 const exploreLinks: ExploreLink[] = getEnabledSections().flatMap((section) => {
   const href = getSectionHref(section.id, currentLocale)
 
@@ -107,14 +97,11 @@ const exploreLinks: ExploreLink[] = getEnabledSections().flatMap((section) => {
     return []
   }
 
-  const icon =
-    sectionIconByPageType[section.pageType as keyof typeof sectionIconByPageType] ?? NewspaperIcon
   const isHomeSection = defaultHomeSection === section.id && pathname === homeHref
 
   return [
     {
       href,
-      icon,
       id: section.id,
       isActive: isHomeSection || pathname === href || pathname.startsWith(`${href}/`),
       label: getSectionLabel(section.id, currentLocale),
@@ -122,10 +109,13 @@ const exploreLinks: ExploreLink[] = getEnabledSections().flatMap((section) => {
     },
   ]
 })
-const pageShellClass =
-  contentWidth === 'wide'
-    ? ui.pageShellWide
-    : ui.pageShell
+const pageShellClass = usesBookChrome
+  ? 'min-h-screen'
+  : contentWidth === 'book'
+    ? ui.pageShellBook
+    : contentWidth === 'wide'
+      ? ui.pageShellWide
+      : ui.pageShell
 const mainClass = `${pageShellClass} site-transition-content`
 const searchableSections = getEnabledSections()
   .map((section) => ({
@@ -166,8 +156,9 @@ const robotsContent = getSiteRobotsMetaContent(noindex)
 ---
 
 <!doctype html>
-<html class="dark" data-js="false" lang={getLocaleHtmlLang(currentLocale)}>
+<html data-js="false" data-theme="light" lang={getLocaleHtmlLang(currentLocale)}>
   <head>
+    <ThemePreferenceScript />
     <LayoutHead
       canonicalUrl={canonicalUrl}
       defaultAlternateHref={defaultAlternateHref}
@@ -189,30 +180,38 @@ const robotsContent = getSiteRobotsMetaContent(noindex)
     />
     <slot name="head" />
   </head>
-  <body>
+  <body data-ui="notebook">
     <a
-      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-xs focus:border focus:border-site-line-strong focus:bg-site-panel focus:px-4 focus:py-3 focus:text-sm focus:font-semibold focus:text-site-link-hover focus:outline-none"
-      data-astro-reload
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:border focus:border-dashed focus:border-site-line-strong focus:bg-site-panel focus:px-4 focus:py-3 focus:[font-family:var(--notebook-font-hand)] focus:text-(--notebook-hand-sm) focus:font-semibold focus:text-site-link-hover focus:outline-2 focus:outline-offset-3 focus:outline-dashed focus:outline-site-link-hover"
+      data-skip-link
       href="#main-content"
     >
       {copy.header.skipToContent}
     </a>
-    <SiteHeader
-      copy={copy}
-      currentLocaleCode={currentLocaleCode}
-      emptyState={emptyState}
-      exploreLinks={exploreLinks}
-      hasLocaleSwitcher={hasLocaleSwitcher}
-      hasSearch={hasSearch}
-      homeHref={homeHref}
-      isDev={import.meta.env.DEV}
-      localeSwitchLinks={localeSwitchLinks}
-      searchableSections={searchableSections}
-    />
-    <main class={mainClass} data-pagefind-body={pagefind ? true : undefined} id="main-content" tabindex="-1">
-      <slot />
-    </main>
-    {hasNewsletter ? (
+    {!usesBookChrome ? (
+      <SiteHeader
+        copy={copy}
+        currentLocaleCode={currentLocaleCode}
+        emptyState={emptyState}
+        exploreLinks={exploreLinks}
+        hasLocaleSwitcher={hasLocaleSwitcher}
+        hasSearch={hasSearch}
+        homeHref={homeHref}
+        isDev={import.meta.env.DEV}
+        localeSwitchLinks={localeSwitchLinks}
+        searchableSections={searchableSections}
+      />
+    ) : null}
+    {usesBookChrome ? (
+      <div class={mainClass}>
+        <slot />
+      </div>
+    ) : (
+      <main class={mainClass} data-pagefind-body={pagefind ? true : undefined} id="main-content" tabindex="-1">
+        <slot />
+      </main>
+    )}
+    {!usesBookChrome && hasNewsletter ? (
       <NewsletterSection
         copy={copy}
         newsletterFormAction={newsletterFormAction!}
@@ -220,15 +219,28 @@ const robotsContent = getSiteRobotsMetaContent(noindex)
         termsHref={termsHref}
       />
     ) : null}
-    <SiteFooter
-      copy={copy}
-      currentYear={currentYear}
-      exploreLinks={exploreLinks}
-      homeHref={homeHref}
-      privacyHref={privacyHref}
-      rssHref={rssHrefForShell}
-      termsHref={termsHref}
-    />
+    {!usesBookChrome ? (
+      <SiteFooter
+        copy={copy}
+        currentYear={currentYear}
+        exploreLinks={exploreLinks}
+        homeHref={homeHref}
+        privacyHref={privacyHref}
+        rssHref={rssHrefForShell}
+        termsHref={termsHref}
+      />
+    ) : null}
     <LayoutClientScripts />
+    <script is:inline>
+      document.querySelector('[data-skip-link]')?.addEventListener('click', (event) => {
+        const target = document.getElementById('main-content')
+
+        if (!target) return
+
+        event.preventDefault()
+        target.focus()
+        target.scrollIntoView({ block: 'start' })
+      })
+    </script>
   </body>
 </html>

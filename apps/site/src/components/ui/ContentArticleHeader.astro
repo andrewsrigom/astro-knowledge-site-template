@@ -1,5 +1,6 @@
 ---
 import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
 import { cn } from '@/lib/cn'
 import { ui } from '@/lib/ui'
 import { marked } from 'marked'
@@ -33,7 +34,10 @@ const titleHtml = await marked.parseInline(title)
 const descriptionHtml = await marked.parseInline(description)
 ---
 
-<header class={cn(ui.articleHeader, className)}>
+<header class={cn(ui.articleHeader, className, 'site-notebook-article-header')}>
+  <span aria-hidden="true" class="site-notebook-article-header__mark">
+    <DoodleIcon name="bookmark" size={22} />
+  </span>
   {breadcrumbs.length > 0 ? <Breadcrumbs items={breadcrumbs} /> : null}
   {createdMeta ? <p class={cn(ui.articleKicker, createdMetaClassName)}>{createdMeta}</p> : null}
   <h1
@@ -55,3 +59,24 @@ const descriptionHtml = await marked.parseInline(description)
   <slot />
   {meta ? <p class={ui.articleMeta}>{meta}</p> : null}
 </header>
+
+<style>
+  .site-notebook-article-header {
+    position: relative;
+  }
+
+  .site-notebook-article-header__mark {
+    position: absolute;
+    top: 1.1rem;
+    right: 0;
+    display: inline-grid;
+    color: var(--site-link-hover);
+    transform: rotate(-3deg);
+  }
+
+  @media (max-width: 40rem) {
+    .site-notebook-article-header__mark {
+      display: none;
+    }
+  }
+</style>

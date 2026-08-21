@@ -1,0 +1,179 @@
+---
+type TimeBlock = {
+  column: number
+  end: string
+  label: string
+  start: string
+  tone?: 'blue' | 'coral' | 'lemon' | 'mint' | 'pink'
+}
+
+type Props = {
+  blocks: TimeBlock[]
+  class?: string
+  columns: string[]
+  endHour?: number
+  startHour?: number
+}
+
+const {
+  blocks,
+  class: className,
+  columns,
+  endHour = 18,
+  startHour = 8,
+}: Props = Astro.props
+
+const hourRows = Math.max(1, endHour - startHour)
+const toMinutes = (value: string) => {
+  const [hour = 0, minute = 0] = value.split(':').map(Number)
+  return hour * 60 + minute
+}
+const startMinutes = startHour * 60
+const totalMinutes = hourRows * 60
+---
+
+<div class:list={['notebook-time-block', className]} style={`--time-columns: ${Math.max(1, columns.length)}; --time-rows: ${hourRows}`}>
+  <div aria-hidden="true" class="notebook-time-block__corner"></div>
+  <div class="notebook-time-block__column-labels">
+    {columns.map((column) => <div class="notebook-time-block__column-label">{column}</div>)}
+  </div>
+  <div class="notebook-time-block__times">
+    {Array.from({ length: hourRows + 1 }, (_, index) => (
+      <span style={`--time-position: ${(index / hourRows) * 100}%`}>
+        {String(startHour + index).padStart(2, '0')}:00
+      </span>
+    ))}
+  </div>
+  <div class="notebook-time-block__grid">
+    {blocks.map((block) => {
+      const top = ((toMinutes(block.start) - startMinutes) / totalMinutes) * 100
+      const height = ((toMinutes(block.end) - toMinutes(block.start)) / totalMinutes) * 100
+      return (
+        <article
+          class="notebook-time-block__event"
+          data-tone={block.tone ?? 'blue'}
+          style={`--event-column: ${Math.max(1, block.column)}; --event-top: ${top}%; --event-height: ${height}%`}
+        >
+          <strong>{block.label}</strong>
+          <span>{block.start}–{block.end}</span>
+        </article>
+      )
+    })}
+  </div>
+</div>
+
+<style>
+  .notebook-time-block {
+    display: grid;
+    grid-template-columns: 4rem minmax(34rem, 1fr);
+    grid-template-rows: auto minmax(28rem, 1fr);
+    max-width: 100%;
+    overflow-x: auto;
+    color: var(--site-ink);
+  }
+
+  .notebook-time-block__corner {
+    border-right: 1px dashed var(--site-line-strong);
+    border-bottom: 1px dashed var(--site-line-strong);
+  }
+
+  .notebook-time-block__column-labels {
+    grid-column: 2;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: repeat(var(--time-columns), minmax(0, 1fr));
+    min-width: 34rem;
+    height: 2.5rem;
+    border-bottom: 1px dashed var(--site-line-strong);
+  }
+
+  .notebook-time-block__column-label {
+    display: grid;
+    place-items: center;
+    padding: 0.35rem;
+    color: var(--site-ink-muted);
+    border-right: 1px dashed var(--site-line-strong);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-sm);
+    font-weight: var(--notebook-hand-weight-strong);
+  }
+
+  .notebook-time-block__times {
+    position: relative;
+    grid-column: 1;
+    grid-row: 2;
+    min-height: 28rem;
+    border-right: 1px dashed var(--site-line-strong);
+  }
+
+  .notebook-time-block__times span {
+    position: absolute;
+    top: var(--time-position);
+    right: 0.55rem;
+    transform: translateY(-50%);
+    color: var(--site-ink-muted);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-xs);
+  }
+
+  .notebook-time-block__grid {
+    position: relative;
+    grid-column: 2;
+    grid-row: 2;
+    min-width: 34rem;
+    min-height: 28rem;
+    background-image:
+      repeating-linear-gradient(
+        to bottom,
+        var(--site-line-strong) 0,
+        var(--site-line-strong) 1px,
+        transparent 1px,
+        transparent calc(100% / var(--time-rows))
+      ),
+      repeating-linear-gradient(
+        to right,
+        transparent 0,
+        transparent calc((100% / var(--time-columns)) - 1px),
+        var(--site-line-strong) calc((100% / var(--time-columns)) - 1px),
+        var(--site-line-strong) calc(100% / var(--time-columns))
+      );
+  }
+
+  .notebook-time-block__event {
+    --event-bg: var(--notebook-post-it-blue-bg);
+    --event-ink: var(--notebook-post-it-blue-ink);
+    position: absolute;
+    top: var(--event-top);
+    left: calc((var(--event-column) - 1) * (100% / var(--time-columns)) + 0.25rem);
+    width: calc((100% / var(--time-columns)) - 0.5rem);
+    height: max(var(--event-height), 2.5rem);
+    padding: 0.5rem 0.55rem;
+    overflow: hidden;
+    color: var(--event-ink);
+    background: var(--event-bg);
+    border-radius: 0.35rem 0.5rem 0.35rem 0.45rem;
+    box-shadow: 0 0.25rem 0.5rem rgb(var(--notebook-shadow-rgb) / 0.1);
+  }
+
+  .notebook-time-block__event[data-tone='coral'] { --event-bg: var(--notebook-post-it-coral-bg); --event-ink: var(--notebook-post-it-coral-ink); }
+  .notebook-time-block__event[data-tone='lemon'] { --event-bg: var(--notebook-post-it-lemon-bg); --event-ink: var(--notebook-post-it-lemon-ink); }
+  .notebook-time-block__event[data-tone='mint'] { --event-bg: var(--notebook-post-it-mint-bg); --event-ink: var(--notebook-post-it-mint-ink); }
+  .notebook-time-block__event[data-tone='pink'] { --event-bg: var(--notebook-post-it-pink-bg); --event-ink: var(--notebook-post-it-pink-ink); }
+
+  .notebook-time-block__event strong,
+  .notebook-time-block__event span {
+    display: block;
+    font-family: var(--notebook-font-hand);
+    line-height: 1.05;
+  }
+
+  .notebook-time-block__event strong {
+    font-size: var(--notebook-hand-sm);
+    font-weight: var(--notebook-hand-weight-strong);
+  }
+
+  .notebook-time-block__event span {
+    margin-top: 0.2rem;
+    font-size: var(--notebook-hand-xs);
+  }
+</style>

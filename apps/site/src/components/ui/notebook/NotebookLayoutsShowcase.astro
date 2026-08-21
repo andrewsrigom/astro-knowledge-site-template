@@ -1,0 +1,389 @@
+---
+import NotebookBenefitGrid from '@/components/ui/notebook/NotebookBenefitGrid.astro'
+import NotebookChecklist from '@/components/ui/notebook/NotebookChecklist.astro'
+import NotebookColorKey from '@/components/ui/notebook/NotebookColorKey.astro'
+import NotebookCompareCard from '@/components/ui/notebook/NotebookCompareCard.astro'
+import NotebookCornellPage from '@/components/ui/notebook/NotebookCornellPage.astro'
+import NotebookLetterBlocks from '@/components/ui/notebook/NotebookLetterBlocks.astro'
+import NotebookMatrix from '@/components/ui/notebook/NotebookMatrix.astro'
+import NotebookMethodChain from '@/components/ui/notebook/NotebookMethodChain.astro'
+import NotebookNumberedCard from '@/components/ui/notebook/NotebookNumberedCard.astro'
+import NotebookPyramid from '@/components/ui/notebook/NotebookPyramid.astro'
+import NotebookTapeHeader from '@/components/ui/notebook/NotebookTapeHeader.astro'
+---
+
+<div class="notebook-layouts">
+  <section class="notebook-layout" aria-labelledby="notebook-tape-headers-title">
+    <header>
+      <h2 id="notebook-tape-headers-title">Cabeçalhos com fita</h2>
+      <p>Títulos de seção com fita washi rasgada. Substituem <code>&lt;h2&gt;</code> em páginas de guia.</p>
+    </header>
+    <div class="tape-header-stack">
+      <NotebookTapeHeader
+        icon="target"
+        kicker="passo 1"
+        title="Transformando o enunciado em contrato"
+        tone="lemon"
+      >
+        <p>Como converter uma pergunta ambígua em entradas, saídas e invariantes.</p>
+      </NotebookTapeHeader>
+
+      <NotebookTapeHeader
+        icon="brain"
+        kicker="passo 2"
+        title="Escolhendo a estrutura de dados"
+        tone="mint"
+      >
+        <p>O contrato define o custo; o custo define a estrutura.</p>
+      </NotebookTapeHeader>
+
+      <NotebookTapeHeader
+        icon="checklist"
+        kicker="consulta rápida"
+        title="Cinco passos para explicar a solução"
+        tone="coral"
+      />
+    </div>
+  </section>
+
+  <section class="notebook-layout" aria-labelledby="notebook-numbered-cards-title">
+    <header>
+      <h2 id="notebook-numbered-cards-title">Cartões numerados</h2>
+      <p>Para listas de regras, etapas ou princípios. Substituem listas <code>1..n</code> quando cada item merece destaque.</p>
+    </header>
+    <div class="numbered-grid">
+      <NotebookNumberedCard icon="lightbulb" number="1" title="Problema" tone="lemon">
+        <p>Entradas, saídas, restrições, invariantes e casos-limite.</p>
+      </NotebookNumberedCard>
+      <NotebookNumberedCard icon="brain" number="2" title="Contrato" tone="mint">
+        <p>Assinatura, pré-condição, pós-condição e complexidade-alvo.</p>
+      </NotebookNumberedCard>
+      <NotebookNumberedCard icon="target" number="3" title="Referência" tone="blue">
+        <p>Uma solução conhecida que resolve caso semelhante.</p>
+      </NotebookNumberedCard>
+      <NotebookNumberedCard icon="check" number="4" title="Prova" tone="coral">
+        <p>Argumento de correção antes de escrever a implementação.</p>
+      </NotebookNumberedCard>
+    </div>
+  </section>
+
+  <section class="notebook-layout" aria-labelledby="notebook-checklists-title">
+    <header>
+      <h2 id="notebook-checklists-title">Checklists à mão</h2>
+      <p>Pares <em>faça / não faça</em> com marcas rabiscadas.</p>
+    </header>
+    <div class="checklist-pair">
+      <NotebookChecklist
+        title="Faça"
+        tone="mint"
+        variant="do"
+        items={[
+          { label: 'Escreva o contrato antes da estrutura de dados.' },
+          { label: 'Enumere bordas e invariantes explicitamente.' },
+          { label: 'Prove correção em papel antes de codar.' },
+          { label: 'Escolha nomes que descrevam intenção.' },
+        ]}
+      />
+      <NotebookChecklist
+        title="Não faça"
+        tone="coral"
+        variant="dont"
+        items={[
+          { label: 'Otimizar antes de medir o gargalo real.' },
+          { label: 'Aceitar entrada ambígua sem esclarecer.' },
+          { label: 'Escrever antes de entender o custo esperado.' },
+          { label: 'Confiar em intuição sem testar bordas.' },
+        ]}
+      />
+    </div>
+  </section>
+
+  <section class="notebook-layout" aria-labelledby="notebook-color-keys-title">
+    <header>
+      <h2 id="notebook-color-keys-title">Legenda de cores</h2>
+      <p>Chave visual para tabelas, diagramas e código anotado.</p>
+    </header>
+    <div class="color-key-row">
+      <NotebookColorKey
+        title="Cores do guia"
+        columns={2}
+        items={[
+          { label: 'Definição', tone: 'blue' },
+          { label: 'Exemplo', tone: 'mint' },
+          { label: 'Cuidado', tone: 'coral' },
+          { label: 'Custo escondido', tone: 'violet' },
+          { label: 'Consulta rápida', tone: 'lemon' },
+          { label: 'Revisar depois', tone: 'pink' },
+        ]}
+      />
+      <NotebookColorKey
+        title="Complexidade"
+        columns={1}
+        items={[
+          { label: 'O(1) — imediato', tone: 'mint' },
+          { label: 'O(log n) — barato', tone: 'blue' },
+          { label: 'O(n) — linear', tone: 'lemon' },
+          { label: 'O(n log n) — atenção', tone: 'orange' },
+          { label: 'O(n²) ou pior — evitar', tone: 'coral' },
+        ]}
+      />
+    </div>
+  </section>
+
+  <section class="notebook-layout" aria-labelledby="notebook-compare-title">
+    <header>
+      <h2 id="notebook-compare-title">Comparação lado a lado</h2>
+      <p>Duas colunas com um selo <em>VS</em> no meio.</p>
+    </header>
+    <div class="compare-frame">
+      <NotebookCompareCard
+        left={{ title: 'Shallow work', icon: 'exclamation', tone: 'coral' }}
+        right={{ title: 'Deep work', icon: 'star', tone: 'mint' }}
+      >
+        <div slot="left">
+          <p>Logística leve, fácil de reproduzir, cria pouco valor único.</p>
+          <p>Ex.: emails, reuniões curtas, admin.</p>
+        </div>
+        <div slot="right">
+          <p>Cognitivo, difícil de reproduzir, cria novo valor.</p>
+          <p>Ex.: escrita, prova, design de algoritmo.</p>
+        </div>
+      </NotebookCompareCard>
+    </div>
+  </section>
+
+  <section class="notebook-layout" aria-labelledby="notebook-matrix-title">
+    <header>
+      <h2 id="notebook-matrix-title">Matriz 2×2</h2>
+      <p>Eixos com rótulos e quatro quadrantes coloridos. Boa para triagem tipo Eisenhower.</p>
+    </header>
+    <div class="matrix-frame">
+      <NotebookMatrix
+        xAxis={{ label: 'Urgência', low: 'Não urgente', high: 'Urgente' }}
+        yAxis={{ label: 'Importância', low: 'Não importante', high: 'Importante' }}
+        quadrants={[
+          { position: 'top-right', title: 'Faça agora', description: 'Importante e urgente', icon: 'exclamation', tone: 'coral' },
+          { position: 'top-left', title: 'Decida quando', description: 'Importante, não urgente', icon: 'target', tone: 'mint' },
+          { position: 'bottom-right', title: 'Delegue', description: 'Urgente mas não importante', icon: 'arrow-right', tone: 'lemon' },
+          { position: 'bottom-left', title: 'Delete', description: 'Nem importante nem urgente', icon: 'cross', tone: 'blue' },
+        ]}
+      />
+    </div>
+  </section>
+
+  <section class="notebook-layout" aria-labelledby="notebook-pyramid-title">
+    <header>
+      <h2 id="notebook-pyramid-title">Pirâmide em camadas</h2>
+      <p>Para hierarquias visuais: base larga, topo estreito.</p>
+    </header>
+    <div class="pyramid-frame">
+      <NotebookPyramid
+        caption="Do topo (mais escasso) para a base (fundacional)."
+        layers={[
+          { label: 'Deep work', description: 'Topo — alto valor', tone: 'coral' },
+          { label: 'Shallow work', description: 'Meio — necessário', tone: 'lemon' },
+          { label: 'Distrações', description: 'Reduzir', tone: 'blue' },
+          { label: 'Descanso', description: 'Fundação', tone: 'mint' },
+        ]}
+      />
+    </div>
+  </section>
+
+  <section class="notebook-layout" aria-labelledby="notebook-method-chain-title">
+    <header>
+      <h2 id="notebook-method-chain-title">Sequência de método</h2>
+      <p>Etapas encadeadas com seta rabiscada entre elas.</p>
+    </header>
+    <div class="method-chain-frame">
+      <NotebookMethodChain
+        steps={[
+          { label: 'Problema', hint: 'entradas, saídas, restrições', icon: 'question', tone: 'coral' },
+          { label: 'Contrato', hint: 'assinatura + custo-alvo', icon: 'brackets', tone: 'lemon' },
+          { label: 'Referência', hint: 'solução vizinha conhecida', icon: 'book', tone: 'blue' },
+          { label: 'Prova', hint: 'argumento antes de codar', icon: 'check', tone: 'mint' },
+        ]}
+      />
+    </div>
+  </section>
+
+  <section class="notebook-layout" aria-labelledby="notebook-letter-blocks-title">
+    <header>
+      <h2 id="notebook-letter-blocks-title">Bloquinhos de letras</h2>
+      <p>Acrônimos memorizáveis (S.M.A.R.T., C.R.U.D.…) com legenda.</p>
+    </header>
+    <div class="letter-blocks-frame">
+      <NotebookLetterBlocks
+        blocks={[
+          { letter: 'S', meaning: 'Específico', description: 'Diga exatamente o que será feito.', tone: 'coral' },
+          { letter: 'M', meaning: 'Mensurável', description: 'Como você sabe que está feito?', tone: 'lemon' },
+          { letter: 'A', meaning: 'Alcançável', description: 'Dá pra fazer com o que você tem?', tone: 'mint' },
+          { letter: 'R', meaning: 'Relevante', description: 'Isso vale o esforço agora?', tone: 'blue' },
+          { letter: 'T', meaning: 'Temporal', description: 'Até quando precisa estar pronto?', tone: 'violet' },
+        ]}
+      />
+    </div>
+  </section>
+
+  <section class="notebook-layout" aria-labelledby="notebook-cornell-title">
+    <header>
+      <h2 id="notebook-cornell-title">Página Cornell</h2>
+      <p>Layout clássico em três zonas: pistas, notas e resumo.</p>
+    </header>
+    <div class="cornell-frame">
+      <NotebookCornellPage
+        cueTitle="Pistas"
+        notesTitle="Notas"
+        summaryTitle="Resumo"
+      >
+        <div slot="cue">
+          <p>O que é contrato?</p>
+          <p>Por que antes da estrutura?</p>
+          <p>Como valido bordas?</p>
+        </div>
+        <div slot="notes">
+          <p>Contrato = entrada, saída, invariante, custo-alvo.</p>
+          <p>A estrutura de dados depende do custo. O custo depende do contrato. Escrever contrato primeiro evita voltar 3x.</p>
+          <p>Bordas típicas: vazio, um elemento, máximo, tipos mágicos (0, -1, NaN).</p>
+        </div>
+        <div slot="summary">
+          <p>Antes de codar: escreva contrato, enumere bordas, escolha estrutura.</p>
+        </div>
+      </NotebookCornellPage>
+    </div>
+  </section>
+
+  <section class="notebook-layout" aria-labelledby="notebook-benefit-grid-title">
+    <header>
+      <h2 id="notebook-benefit-grid-title">Grade de benefícios</h2>
+      <p>Tiles pequenos com ícone e rótulo. Bom para features, resultados ou capacidades.</p>
+    </header>
+    <div class="benefit-grid-frame">
+      <NotebookBenefitGrid
+        columns={4}
+        items={[
+          { icon: 'brain', label: 'Memória', hint: 'retenção a longo prazo', tone: 'coral' },
+          { icon: 'search', label: 'Revisão', hint: 'encontra ideias rapidamente', tone: 'lemon' },
+          { icon: 'target', label: 'Foco', hint: 'menos distração', tone: 'mint' },
+          { icon: 'clock', label: 'Tempo', hint: 'menos horas de estudo', tone: 'blue' },
+        ]}
+      />
+    </div>
+  </section>
+</div>
+
+<style>
+  .notebook-layouts {
+    display: grid;
+    gap: 3.5rem;
+    margin-bottom: 4rem;
+  }
+
+  .notebook-layout {
+    display: grid;
+    gap: 1.3rem;
+  }
+
+  .notebook-layout > header {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .notebook-layout h2,
+  .notebook-layout > header p {
+    margin: 0;
+  }
+
+  .notebook-layout h2 {
+    font-family: var(--notebook-font-book);
+    font-size: 1.55rem;
+    color: var(--site-ink);
+  }
+
+  .notebook-layout > header p {
+    color: var(--site-ink-muted);
+    font-size: 0.9rem;
+  }
+
+  .notebook-layout > header code {
+    padding: 0.05rem 0.35rem;
+    background: color-mix(in srgb, var(--site-surface-strong) 60%, transparent);
+    border-radius: 0.3rem;
+    font-size: 0.82rem;
+  }
+
+  .tape-header-stack {
+    display: grid;
+    gap: 2.2rem;
+    padding: 1.75rem 1.5rem 1.4rem;
+    border: 1px solid var(--site-line);
+    border-radius: 0.65rem;
+    background: color-mix(in srgb, var(--site-surface) 88%, transparent);
+  }
+
+  .tape-header-stack :global(.notebook-tape-header p) {
+    margin: 0;
+    color: var(--site-ink-soft);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .numbered-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1.2rem;
+    padding: 1.5rem;
+    border: 1px solid var(--site-line);
+    border-radius: 0.65rem;
+    background: color-mix(in srgb, var(--site-surface) 88%, transparent);
+  }
+
+  .checklist-pair {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 1.4rem;
+    padding: 1.5rem;
+    border: 1px solid var(--site-line);
+    border-radius: 0.65rem;
+    background: color-mix(in srgb, var(--site-surface) 88%, transparent);
+  }
+
+  .color-key-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1.4rem;
+    padding: 1.5rem;
+    border: 1px solid var(--site-line);
+    border-radius: 0.65rem;
+    background: color-mix(in srgb, var(--site-surface) 88%, transparent);
+  }
+
+  .compare-frame,
+  .matrix-frame,
+  .pyramid-frame,
+  .method-chain-frame,
+  .letter-blocks-frame,
+  .cornell-frame,
+  .benefit-grid-frame {
+    padding: 1.5rem;
+    border: 1px solid var(--site-line);
+    border-radius: 0.65rem;
+    background: color-mix(in srgb, var(--site-surface) 88%, transparent);
+  }
+
+  .letter-blocks-frame,
+  .cornell-frame {
+    padding: 1.5rem;
+  }
+
+  .cornell-frame {
+    background: color-mix(in srgb, var(--site-surface) 78%, transparent);
+  }
+
+  .compare-frame :global(p) {
+    margin: 0 0 0.55rem;
+  }
+
+  .compare-frame :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>

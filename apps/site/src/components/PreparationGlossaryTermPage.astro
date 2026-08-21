@@ -1,0 +1,267 @@
+---
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+import NotebookBreadcrumb from '@/components/ui/notebook/NotebookBreadcrumb.astro'
+import PreparationBookShell from '@/components/PreparationBookShell.astro'
+import HeaderTagMeta from '@/components/ui/HeaderTagMeta.astro'
+import ReferenceExploreSection from '@/components/ui/ReferenceExploreSection.astro'
+import { cn } from '@/lib/cn'
+import {
+  getPreparationIndexHref,
+  getPreparationVolumeHref,
+} from '@/lib/preparation-links'
+import type {
+  PreparationGlossaryReference,
+  ResolvedPreparationBook,
+} from '@/lib/preparation-book'
+import { getPreparationCopy } from '@/lib/preparation-copy'
+import type { SiteLocale } from '@/lib/site-copy'
+import { getSiteCopy } from '@/lib/site-copy'
+import { ui } from '@/lib/ui'
+import '@/styles/article-prose.css'
+
+type TocHeading = {
+  depth: number
+  slug: string
+  text: string
+}
+
+type HeaderTagMetaItem = {
+  href?: string | null
+  label: string
+}
+
+type ExploreLink = {
+  description?: string
+  href: string
+  title: string
+}
+
+type Props = {
+  alternateLocaleHrefs?: Record<string, string | null>
+  book: ResolvedPreparationBook
+  chapterReferences: PreparationGlossaryReference[]
+  description: string
+  headerTagItems: HeaderTagMetaItem[]
+  headings?: TocHeading[]
+  locale: SiteLocale
+  localeHrefs?: Record<string, string | null>
+  noindex?: boolean
+  recommendedTerms: ExploreLink[]
+  socialImage?: string
+  structuredData?: Record<string, unknown> | Record<string, unknown>[]
+  title: string
+  updatedMeta?: string | null
+}
+
+const {
+  alternateLocaleHrefs = {},
+  book,
+  chapterReferences,
+  description,
+  headerTagItems,
+  headings = [],
+  locale,
+  localeHrefs = {},
+  noindex = false,
+  recommendedTerms,
+  socialImage,
+  structuredData = [],
+  title,
+  updatedMeta = null,
+} = Astro.props
+
+const siteCopy = getSiteCopy(locale)
+const preparationCopy = getPreparationCopy(locale)
+const primaryReference = chapterReferences[0]
+
+const labels = locale === 'pt-br'
+  ? {
+      backToChapter: 'Voltar para o capítulo',
+      contents: 'Nesta página',
+      glossaryTerm: 'Termo do glossário',
+      location: 'Localização no guia',
+      referencedInBook: 'Onde este termo aparece no livro',
+      returnToBookOnly: 'Voltar para o Guia de Engenharia de Software',
+      returnToBook: 'Voltar para o livro',
+      usedInChapter: 'Capítulo que usa este termo',
+      usedInChapters: 'Capítulos que usam este termo',
+    }
+  : {
+      backToChapter: 'Back to chapter',
+      contents: 'On this page',
+      glossaryTerm: 'Glossary term',
+      location: 'Guide location',
+      referencedInBook: 'Where this term appears in the guide',
+      returnToBookOnly: 'Back to the Software Engineering Guide',
+      returnToBook: 'Back to guide',
+      usedInChapter: 'Chapter using this term',
+      usedInChapters: 'Chapters using this term',
+    }
+
+const preparationHomeHref = getPreparationIndexHref(locale)
+const volumeHref = primaryReference ? getPreparationVolumeHref(primaryReference.volume.id, locale) : null
+const breadcrumbItems = [
+  { href: preparationHomeHref, label: book.catalog.title },
+  ...(primaryReference && volumeHref
+    ? [
+        { href: volumeHref, label: primaryReference.volume.title },
+        { href: primaryReference.chapter.href, label: primaryReference.chapter.guide.data.title },
+      ]
+    : []),
+  { label: title },
+]
+const chapterReferenceLinks = chapterReferences
+  .map((reference) => ({
+    context: `${reference.volume.title} · ${reference.part.title}`,
+    href: reference.chapter.href,
+    title: reference.chapter.guide.data.title,
+  }))
+  .filter((item, index, items) => items.findIndex((candidate) => candidate.href === item.href) === index)
+const bookHeaderTagItems = headerTagItems.map((item) => ({ label: item.label }))
+const railHeadings = headings
+  .filter((heading) => heading.depth === 2)
+  .map((heading) => ({
+    href: `#${heading.slug}`,
+    title: heading.text.replace(/^\d+(?:\.\d+)*\.?\s+/, ''),
+  }))
+---
+
+<PreparationBookShell
+  alternateLocaleHrefs={alternateLocaleHrefs}
+  book={book}
+  currentVolumeId={primaryReference?.volume.id}
+  description={description}
+  locale={locale}
+  localeHrefs={localeHrefs}
+  noindex={noindex}
+  pagefind={!noindex}
+  socialImage={socialImage}
+  structuredData={structuredData}
+  title={title}
+>
+  <div class="mx-auto w-full max-w-352 px-5 pb-14 pt-8 sm:px-7 lg:px-9 xl:px-10 xl:pt-10" data-book-reading-frame>
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,48rem)_16rem] lg:items-start lg:justify-center xl:grid-cols-[minmax(0,50rem)_17rem] xl:gap-12" data-book-reading-layout>
+      <article class="min-w-0">
+        <header class="border-b border-dashed border-site-line-strong pb-7">
+          <NotebookBreadcrumb
+            ariaLabel={labels.location}
+            class="book-glossary-breadcrumb"
+            items={breadcrumbItems}
+          />
+
+          <p class={cn(ui.eyebrow, 'mb-0 mt-7')}>{labels.glossaryTerm}</p>
+          <h1 class="preparation-glossary-title mb-0 mt-3 text-[clamp(2.35rem,5vw,3.9rem)] font-semibold leading-[1.01] tracking-[-0.04em] text-site-ink">
+            {title}
+          </h1>
+          <div class="mt-5 h-0.5 w-14 bg-site-accent"></div>
+          <p class="mb-0 mt-6 max-w-[65ch] text-[1.05rem] leading-8 text-site-ink-soft">
+            {description}
+          </p>
+          {updatedMeta ? (
+            <p class={cn(ui.metaQuiet, 'mt-4')}>
+              {siteCopy.article.updatedPrefix} {updatedMeta}
+            </p>
+          ) : null}
+          <HeaderTagMeta items={bookHeaderTagItems} />
+
+          {chapterReferenceLinks.length > 0 ? (
+            <section class="mt-6 grid gap-3 rounded-md border border-dashed border-site-line-strong bg-site-panel-muted px-4 py-4" data-pagefind-ignore>
+              <p class="m-0 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
+                {labels.referencedInBook}
+              </p>
+              <ul class="m-0 grid list-none gap-3 p-0">
+                {chapterReferenceLinks.map((reference, index) => (
+                  <li class="grid gap-1">
+                    <a class="text-sm font-semibold leading-5 text-site-link-hover hover:text-site-ink" href={reference.href}>
+                      {reference.title}
+                    </a>
+                    <p class="m-0 text-xs text-site-ink-muted">
+                      {reference.context}
+                      {index === 0 ? ` · ${labels.backToChapter}` : ''}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+        </header>
+
+        <div class="article-prose preparation-glossary-prose mt-9 min-w-0">
+          <slot />
+        </div>
+
+        <div class="mt-10 border-t border-dashed border-site-line-strong pt-7" data-pagefind-ignore>
+          <a
+            class="inline-flex items-center gap-2 text-sm font-semibold text-site-link-hover hover:text-site-ink"
+            href={primaryReference?.chapter.href ?? preparationHomeHref}
+          >
+            <DoodleIcon name="arrow-left" size={17} />
+            {primaryReference
+              ? `${labels.backToChapter}: ${primaryReference.chapter.guide.data.title}`
+              : labels.returnToBookOnly}
+          </a>
+        </div>
+
+        <ReferenceExploreSection
+          badgeLinks={[
+            { href: preparationHomeHref, label: labels.returnToBook },
+          ]}
+          cards={recommendedTerms}
+          title={preparationCopy.relatedGlossary}
+        />
+      </article>
+
+      <aside class="hidden max-h-[calc(100vh-4rem)] overflow-y-auto lg:sticky lg:top-8 lg:grid lg:gap-4" data-book-secondary-ui data-pagefind-ignore>
+        {railHeadings.length > 0 ? (
+          <section class="rounded-md border border-dashed border-site-line-strong bg-site-panel p-4">
+            <p class="m-0 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
+              {labels.contents}
+            </p>
+            <ul class="mb-0 mt-3 grid list-none gap-2 p-0 text-sm leading-5">
+              {railHeadings.map((heading) => (
+                <li>
+                  <a class="text-site-link-hover hover:text-site-ink" href={heading.href}>
+                    {heading.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
+        {chapterReferenceLinks.length > 0 ? (
+          <section class="rounded-md border border-dashed border-site-line-strong bg-site-panel p-4">
+            <p class="m-0 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
+              {chapterReferenceLinks.length > 1 ? labels.usedInChapters : labels.usedInChapter}
+            </p>
+            <ul class="mb-0 mt-3 grid list-none gap-3 p-0 text-sm leading-5">
+              {chapterReferenceLinks.map((reference) => (
+                <li class="grid gap-1">
+                  <a class="font-semibold text-site-link-hover hover:text-site-ink" href={reference.href}>
+                    {reference.title}
+                  </a>
+                  <span class="text-xs text-site-ink-muted">{reference.context}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+      </aside>
+    </div>
+  </div>
+</PreparationBookShell>
+
+<style>
+  .preparation-glossary-title {
+    font-family: var(--notebook-font-book);
+  }
+
+  .preparation-glossary-prose {
+    margin-inline: 0;
+    max-width: none;
+  }
+
+  :global(.preparation-glossary-prose > :first-child) {
+    margin-top: 0;
+  }
+</style>

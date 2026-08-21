@@ -18,7 +18,9 @@ describe('buildOperationalPrivacySnapshot', () => {
         challengeCodePrefix: 'site-template.challenge-code',
         challengeSolvedPrefix: 'site-template.challenge-solved',
         completedArticles: 'site-template.completed-articles.v1',
+        focusModePreference: 'site-template.guide-focus-mode.v1',
         localePreference: 'site-template.locale-preference.v1',
+        themePreference: 'site-template.theme-preference.v1',
       },
     })
 
@@ -30,6 +32,8 @@ describe('buildOperationalPrivacySnapshot', () => {
     expect(snapshot.publishWarnings).toEqual([])
     expect(snapshot.browserStorage.map((item) => item.key)).toEqual([
       'site-template.locale-preference.v1',
+      'site-template.theme-preference.v1',
+      'site-template.guide-focus-mode.v1',
       'site-template.completed-articles.v1',
       'site-template.challenge-code.*',
       'site-template.challenge-solved.*',
@@ -51,7 +55,9 @@ describe('buildOperationalPrivacySnapshot', () => {
         challengeCodePrefix: 'site-template.challenge-code',
         challengeSolvedPrefix: 'site-template.challenge-solved',
         completedArticles: 'site-template.completed-articles.v1',
+        focusModePreference: 'site-template.guide-focus-mode.v1',
         localePreference: 'site-template.locale-preference.v1',
+        themePreference: 'site-template.theme-preference.v1',
       },
     })
 
@@ -81,7 +87,9 @@ describe('buildOperationalPrivacySnapshot', () => {
         challengeCodePrefix: 'site-template.challenge-code',
         challengeSolvedPrefix: 'site-template.challenge-solved',
         completedArticles: 'site-template.completed-articles.v1',
+        focusModePreference: 'site-template.guide-focus-mode.v1',
         localePreference: 'site-template.locale-preference.v1',
+        themePreference: 'site-template.theme-preference.v1',
       },
     })
 

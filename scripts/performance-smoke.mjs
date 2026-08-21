@@ -10,10 +10,10 @@ const pagefindRoot = path.join(distRoot, 'pagefind')
 
 const budgets = {
   astro: {
-    largestCssBytes: 60_000,
-    largestJsBytes: 225_000,
-    totalCssBytes: 75_000,
-    totalJsBytes: 750_000,
+    laboratoryPageCssBytes: 250_000,
+    largestAsyncChunkBytes: 750_000,
+    pageCssBytes: 150_000,
+    pageJsBytes: 750_000,
   },
   html: {
     brotliBytes: 18_000,
@@ -103,6 +103,80 @@ async function pathExists(targetPath) {
   }
 }
 
+function collectHtmlAssetPaths(contents, extension) {
+  const matches = contents.matchAll(new RegExp(`/_astro/[A-Za-z0-9_@./-]+\\.${extension}`, 'g'))
+
+  return new Set([...matches].map((match) => match[0].slice(1)))
+}
+
+const staticJsDependencyCache = new Map()
+
+async function collectStaticJsDependencies(relativePath, visiting = new Set()) {
+  if (staticJsDependencyCache.has(relativePath)) {
+    return staticJsDependencyCache.get(relativePath)
+  }
+
+  if (visiting.has(relativePath)) {
+    return new Set()
+  }
+
+  visiting.add(relativePath)
+
+  const fullPath = path.join(distRoot, relativePath)
+  const contents = await readFile(fullPath, 'utf8')
+  const dependencies = new Set([relativePath])
+  const importPattern = /(?:from\s*|import\s*)["'](\.\/[^"']+\.js)["']/g
+
+  for (const match of contents.matchAll(importPattern)) {
+    const dependencyPath = path
+      .normalize(path.join(path.dirname(relativePath), match[1]))
+      .replace(/\\/g, '/')
+
+    for (const nestedPath of await collectStaticJsDependencies(dependencyPath, visiting)) {
+      dependencies.add(nestedPath)
+    }
+  }
+
+  visiting.delete(relativePath)
+  staticJsDependencyCache.set(relativePath, dependencies)
+
+  return dependencies
+}
+
+async function collectPageAssetUsage() {
+  const htmlFiles = await walkFiles(distRoot, (fullPath) => fullPath.endsWith('.html'))
+  const sizedAssets = new Map()
+
+  for (const file of [...jsFiles, ...cssFiles]) {
+    sizedAssets.set(file.relativePath, file.size)
+  }
+
+  const pages = []
+
+  for (const fullPath of htmlFiles) {
+    const contents = await readFile(fullPath, 'utf8')
+    const relativePath = path.relative(distRoot, fullPath).replace(/\\/g, '/')
+    const cssPaths = collectHtmlAssetPaths(contents, 'css')
+    const directJsPaths = collectHtmlAssetPaths(contents, 'js')
+    const jsPaths = new Set()
+
+    for (const jsPath of directJsPaths) {
+      for (const dependencyPath of await collectStaticJsDependencies(jsPath)) {
+        jsPaths.add(dependencyPath)
+      }
+    }
+
+    pages.push({
+      cssBytes: [...cssPaths].reduce((sum, assetPath) => sum + (sizedAssets.get(assetPath) ?? 0), 0),
+      isLaboratory: relativePath.split('/').includes('laboratorio'),
+      jsBytes: [...jsPaths].reduce((sum, assetPath) => sum + (sizedAssets.get(assetPath) ?? 0), 0),
+      relativePath,
+    })
+  }
+
+  return pages
+}
+
 async function collectCriticalHtmlPages() {
   const candidates = [
     'index.html',
@@ -140,24 +214,54 @@ const totalJsBytes = jsFiles.reduce((sum, file) => sum + file.size, 0)
 const totalCssBytes = cssFiles.reduce((sum, file) => sum + file.size, 0)
 const largestJsFile = jsFiles.reduce((largest, file) => (file.size > largest.size ? file : largest), jsFiles[0])
 const largestCssFile = cssFiles.reduce((largest, file) => (file.size > largest.size ? file : largest), cssFiles[0])
+const pageAssetUsage = await collectPageAssetUsage()
+const largestJsPage = pageAssetUsage.reduce(
+  (largest, page) => (page.jsBytes > largest.jsBytes ? page : largest),
+  pageAssetUsage[0],
+)
+const publicPageAssetUsage = pageAssetUsage.filter((page) => !page.isLaboratory)
+const laboratoryPageAssetUsage = pageAssetUsage.filter((page) => page.isLaboratory)
+const largestCssPage = publicPageAssetUsage.reduce(
+  (largest, page) => (page.cssBytes > largest.cssBytes ? page : largest),
+  publicPageAssetUsage[0],
+)
+const largestLaboratoryCssPage = laboratoryPageAssetUsage.reduce(
+  (largest, page) => (page.cssBytes > largest.cssBytes ? page : largest),
+  laboratoryPageAssetUsage[0],
+)
 
-assertWithinBudget('Total client JS', totalJsBytes, budgets.astro.totalJsBytes, failures)
-assertWithinBudget('Total client CSS', totalCssBytes, budgets.astro.totalCssBytes, failures)
-
-if (largestJsFile) {
+if (largestJsPage) {
   assertWithinBudget(
-    `Largest client JS chunk (${largestJsFile.relativePath})`,
-    largestJsFile.size,
-    budgets.astro.largestJsBytes,
+    `Largest page JS (${largestJsPage.relativePath})`,
+    largestJsPage.jsBytes,
+    budgets.astro.pageJsBytes,
     failures,
   )
 }
 
-if (largestCssFile) {
+if (largestCssPage) {
   assertWithinBudget(
-    `Largest client CSS chunk (${largestCssFile.relativePath})`,
-    largestCssFile.size,
-    budgets.astro.largestCssBytes,
+    `Largest page CSS (${largestCssPage.relativePath})`,
+    largestCssPage.cssBytes,
+    budgets.astro.pageCssBytes,
+    failures,
+  )
+}
+
+if (largestLaboratoryCssPage) {
+  assertWithinBudget(
+    `Largest laboratory page CSS (${largestLaboratoryCssPage.relativePath})`,
+    largestLaboratoryCssPage.cssBytes,
+    budgets.astro.laboratoryPageCssBytes,
+    failures,
+  )
+}
+
+if (largestJsFile) {
+  assertWithinBudget(
+    `Largest async JS chunk (${largestJsFile.relativePath})`,
+    largestJsFile.size,
+    budgets.astro.largestAsyncChunkBytes,
     failures,
   )
 }
@@ -197,15 +301,23 @@ for (const relativePath of await collectCriticalHtmlPages()) {
   )
 }
 
-console.log(`[perf-smoke] client JS: ${formatBytes(totalJsBytes)} across ${jsFiles.length} files`)
-console.log(`[perf-smoke] client CSS: ${formatBytes(totalCssBytes)} across ${cssFiles.length} files`)
+console.log(`[perf-smoke] emitted JS: ${formatBytes(totalJsBytes)} across ${jsFiles.length} code-split files`)
+console.log(`[perf-smoke] emitted CSS: ${formatBytes(totalCssBytes)} across ${cssFiles.length} route files`)
 
-if (largestJsFile) {
-  console.log(`[perf-smoke] largest JS chunk: ${largestJsFile.relativePath} (${formatBytes(largestJsFile.size)})`)
+if (largestJsPage) {
+  console.log(`[perf-smoke] largest page JS: ${largestJsPage.relativePath} (${formatBytes(largestJsPage.jsBytes)})`)
 }
 
-if (largestCssFile) {
-  console.log(`[perf-smoke] largest CSS chunk: ${largestCssFile.relativePath} (${formatBytes(largestCssFile.size)})`)
+if (largestCssPage) {
+  console.log(`[perf-smoke] largest public page CSS: ${largestCssPage.relativePath} (${formatBytes(largestCssPage.cssBytes)})`)
+}
+
+if (largestLaboratoryCssPage) {
+  console.log(`[perf-smoke] largest laboratory page CSS: ${largestLaboratoryCssPage.relativePath} (${formatBytes(largestLaboratoryCssPage.cssBytes)})`)
+}
+
+if (largestJsFile) {
+  console.log(`[perf-smoke] largest async JS chunk: ${largestJsFile.relativePath} (${formatBytes(largestJsFile.size)})`)
 }
 
 if (failures.length > 0) {

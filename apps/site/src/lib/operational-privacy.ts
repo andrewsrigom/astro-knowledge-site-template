@@ -23,7 +23,9 @@ type OperationalPrivacyInput = {
     challengeCodePrefix: string
     challengeSolvedPrefix: string
     completedArticles: string
+    focusModePreference: string
     localePreference: string
+    themePreference: string
   }
 }
 
@@ -52,7 +54,9 @@ type OperationalPrivacyCopy = {
   storageArticleProgress: string
   storageChallengeCode: string
   storageChallengeSolved: string
+  storageFocusMode: string
   storageLocale: string
+  storageTheme: string
   summaryNoThirdParty: string
   summaryThirdParty: (count: number) => string
   title: string
@@ -122,7 +126,9 @@ const operationalPrivacyCopy: Record<string, OperationalPrivacyCopy> = {
       'Challenge playground drafts saved locally with a namespaced challenge-code key. ',
     storageChallengeSolved:
       'Solved challenge flags saved locally with a namespaced challenge-solved key. ',
+    storageFocusMode: 'Focus mode preference used by the engineering guide.',
     storageLocale: 'Locale preference used for the shell language switcher.',
+    storageTheme: 'Theme preference used for the light and dark appearance toggle.',
     summaryNoThirdParty:
       'This deployment currently uses only first-party browser storage for preferences and progress. No third-party comments, newsletter delivery, or observability scripts are active.',
     summaryThirdParty: (count) =>
@@ -167,7 +173,9 @@ const operationalPrivacyCopy: Record<string, OperationalPrivacyCopy> = {
       'Rascunhos do playground salvos localmente com chave namespaced de challenge-code. ',
     storageChallengeSolved:
       'Flags de desafios resolvidos salvas localmente com chave namespaced de challenge-solved. ',
+    storageFocusMode: 'Preferencia do modo foco usada no guia de engenharia.',
     storageLocale: 'Preferencia de locale usada no seletor de idioma da shell.',
+    storageTheme: 'Preferencia de tema usada no alternador de aparencia clara e escura.',
     summaryNoThirdParty:
       'Esta instalacao usa apenas armazenamento local de primeira parte para preferencias e progresso. Nenhum comentario de terceiros, entrega de newsletter ou script externo de observabilidade esta ativo.',
     summaryThirdParty: (count) =>
@@ -267,6 +275,14 @@ export function buildOperationalPrivacySnapshot(
       {
         key: input.storageKeys.localePreference,
         value: `${copy.storageLocale} ${copy.firstPartyStorageSuffix}`,
+      },
+      {
+        key: input.storageKeys.themePreference,
+        value: `${copy.storageTheme} ${copy.firstPartyStorageSuffix}`,
+      },
+      {
+        key: input.storageKeys.focusModePreference,
+        value: `${copy.storageFocusMode} ${copy.firstPartyStorageSuffix}`,
       },
       {
         key: input.storageKeys.completedArticles,

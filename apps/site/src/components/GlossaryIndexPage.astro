@@ -1,6 +1,5 @@
 ---
 import type { CollectionEntry } from 'astro:content'
-import BookTextIcon from '@lucide/astro/icons/book-text'
 
 import DirectoryList from '@/components/ui/DirectoryList.astro'
 import DirectoryPagination from '@/components/ui/DirectoryPagination.astro'
@@ -111,7 +110,7 @@ const breadcrumbs = selectedTag
 <DirectoryIndexShell
   breadcrumbs={breadcrumbs}
   description={baseDescription}
-  icon={BookTextIcon}
+  doodle="book"
   iconLabel={baseTitle}
   localeHrefs={localeHrefs}
   noindex={isPaginatedArchivePage}

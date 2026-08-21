@@ -1,0 +1,164 @@
+---
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+import type { NotebookDoodleName } from '@/lib/notebook-doodles'
+
+type Step = {
+  hint?: string
+  icon?: NotebookDoodleName
+  label: string
+  tone?: 'blue' | 'coral' | 'lemon' | 'mint' | 'pink' | 'violet'
+}
+
+type Props = {
+  class?: string
+  direction?: 'horizontal' | 'vertical'
+  steps: Step[]
+}
+
+const {
+  class: className,
+  direction = 'horizontal',
+  steps,
+} = Astro.props
+---
+
+<ol class:list={['notebook-method-chain', className]} data-direction={direction}>
+  {steps.map((step, index) => (
+    <li class="notebook-method-chain__slot">
+      <article class="notebook-method-chain__step" data-tone={step.tone ?? 'blue'}>
+        <span class="notebook-method-chain__index">{index + 1}</span>
+        <div class="notebook-method-chain__body">
+          <p class="notebook-method-chain__label">
+            {step.icon ? <DoodleIcon name={step.icon} size={16} /> : null}
+            <span>{step.label}</span>
+          </p>
+          {step.hint ? <p class="notebook-method-chain__hint">{step.hint}</p> : null}
+        </div>
+      </article>
+      {index < steps.length - 1 ? (
+        <span aria-hidden="true" class="notebook-method-chain__arrow">
+          <DoodleIcon
+            name={direction === 'vertical' ? 'arrow-right' : 'arrow-right'}
+            size={28}
+          />
+        </span>
+      ) : null}
+    </li>
+  ))}
+</ol>
+
+<style>
+  .notebook-method-chain {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 0.35rem 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .notebook-method-chain[data-direction='vertical'] {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .notebook-method-chain__slot {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .notebook-method-chain[data-direction='vertical'] .notebook-method-chain__slot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+  }
+
+  .notebook-method-chain__step {
+    --step-bg: var(--notebook-post-it-blue-bg);
+    --step-ink: var(--notebook-post-it-blue-ink);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.65rem 0.9rem 0.7rem 0.7rem;
+    color: var(--site-ink);
+    background: color-mix(in srgb, var(--step-bg) 46%, var(--site-surface));
+    border: 1.5px solid color-mix(in srgb, var(--step-ink) 32%, transparent);
+    border-radius: 0.7rem 0.95rem 0.7rem 0.9rem;
+  }
+
+  .notebook-method-chain__step[data-tone='coral'] {
+    --step-bg: var(--notebook-post-it-coral-bg);
+    --step-ink: var(--notebook-post-it-coral-ink);
+  }
+  .notebook-method-chain__step[data-tone='mint'] {
+    --step-bg: var(--notebook-post-it-mint-bg);
+    --step-ink: var(--notebook-post-it-mint-ink);
+  }
+  .notebook-method-chain__step[data-tone='lemon'] {
+    --step-bg: var(--notebook-post-it-lemon-bg);
+    --step-ink: var(--notebook-post-it-lemon-ink);
+  }
+  .notebook-method-chain__step[data-tone='pink'] {
+    --step-bg: var(--notebook-post-it-pink-bg);
+    --step-ink: var(--notebook-post-it-pink-ink);
+  }
+  .notebook-method-chain__step[data-tone='violet'] {
+    --step-bg: var(--notebook-sticker-violet-bg);
+    --step-ink: var(--notebook-sticker-violet-ink);
+  }
+
+  .notebook-method-chain__index {
+    display: inline-grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    color: var(--step-ink);
+    background: var(--step-bg);
+    border-radius: 52% 48% 55% 45%;
+    font-family: var(--notebook-font-hand);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+    transform: rotate(-3deg);
+    box-shadow: inset 0 -0.12rem 0.24rem color-mix(in srgb, var(--step-ink) 22%, transparent);
+  }
+
+  .notebook-method-chain__body {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .notebook-method-chain__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+    color: var(--step-ink);
+    font-family: var(--notebook-font-hand);
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  .notebook-method-chain__hint {
+    margin: 0;
+    color: var(--site-ink-muted);
+    font-size: 0.76rem;
+    line-height: 1.35;
+  }
+
+  .notebook-method-chain__arrow {
+    display: inline-grid;
+    place-items: center;
+    color: var(--site-ink-muted);
+    transform: rotate(-2deg);
+  }
+
+  .notebook-method-chain[data-direction='vertical'] .notebook-method-chain__arrow {
+    transform: rotate(88deg);
+    padding-inline: 0.6rem;
+  }
+</style>

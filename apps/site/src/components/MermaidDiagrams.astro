@@ -1,0 +1,309 @@
+---
+import type { SiteLocale } from '@/lib/site-copy'
+
+type Props = {
+  locale: SiteLocale
+}
+
+const { locale } = Astro.props
+const copy = locale === 'pt-br'
+  ? {
+      caption: 'Diagrama conceitual',
+      error: 'Não foi possível renderizar este diagrama.',
+    }
+  : {
+      caption: 'Concept diagram',
+      error: 'This diagram could not be rendered.',
+    }
+---
+
+<div
+  data-mermaid-runtime
+  data-caption={copy.caption}
+  data-error={copy.error}
+  hidden
+></div>
+
+<script>
+  type MermaidModule = typeof import('mermaid')
+  type MotionModule = typeof import('motion')
+
+  type AnimationParts = {
+    edgeLabels: SVGGraphicsElement[]
+    edges: SVGPathElement[]
+    nodes: SVGGraphicsElement[]
+  }
+
+  let mermaidModule: MermaidModule | null = null
+  let motionModule: MotionModule | null = null
+  let renderSequence = 0
+  let rerenderTimer: number | undefined
+
+  function getThemeVariables() {
+    const styles = getComputedStyle(document.documentElement)
+    const read = (name: string, fallback: string) => styles.getPropertyValue(name).trim() || fallback
+    const colorCanvas = document.createElement('canvas')
+    colorCanvas.width = 1
+    colorCanvas.height = 1
+    const colorContext = colorCanvas.getContext('2d', { willReadFrequently: true })
+    const color = (name: string, fallback: string) => {
+      if (!colorContext) return fallback
+
+      colorContext.clearRect(0, 0, 1, 1)
+      colorContext.fillStyle = fallback
+      colorContext.fillStyle = read(name, fallback)
+      colorContext.fillRect(0, 0, 1, 1)
+      const [red, green, blue, alpha] = colorContext.getImageData(0, 0, 1, 1).data
+      return `rgba(${red}, ${green}, ${blue}, ${alpha / 255})`
+    }
+
+    return {
+      background: color('--article-surface', 'rgb(23, 24, 34)'),
+      edgeLabelBackground: color('--site-bg', 'rgb(17, 18, 26)'),
+      fontFamily: read('--notebook-font-book', 'Georgia, serif'),
+      lineColor: color('--article-rule', 'rgb(76, 79, 105)'),
+      primaryBorderColor: color('--article-link', 'rgb(139, 140, 248)'),
+      primaryColor: color('--site-bg', 'rgb(17, 18, 26)'),
+      primaryTextColor: color('--article-heading-color', 'rgb(242, 243, 255)'),
+      secondaryBorderColor: color('--article-rule', 'rgb(76, 79, 105)'),
+      secondaryColor: color('--article-surface', 'rgb(23, 24, 34)'),
+      secondaryTextColor: color('--article-body-color', 'rgb(211, 213, 227)'),
+      tertiaryBorderColor: color('--article-rule', 'rgb(76, 79, 105)'),
+      tertiaryColor: color('--site-bg', 'rgb(17, 18, 26)'),
+      tertiaryTextColor: color('--article-body-color', 'rgb(211, 213, 227)'),
+    }
+  }
+
+  async function getMermaid() {
+    if (!mermaidModule) mermaidModule = await import('mermaid')
+
+    const mermaid = mermaidModule.default
+    mermaid.initialize({
+      flowchart: { curve: 'basis', htmlLabels: false, useMaxWidth: true },
+      securityLevel: 'strict',
+      startOnLoad: false,
+      theme: 'base',
+      themeVariables: getThemeVariables(),
+    })
+    return mermaid
+  }
+
+  async function getMotion() {
+    if (!motionModule) motionModule = await import('motion')
+    return motionModule
+  }
+
+  function getAnimationParts(figure: HTMLElement): AnimationParts {
+    const svg = figure.querySelector<SVGSVGElement>('[data-mermaid-canvas] svg')
+
+    return {
+      edgeLabels: svg ? [...svg.querySelectorAll<SVGGraphicsElement>('.edgeLabels .edgeLabel')] : [],
+      edges: svg ? [...svg.querySelectorAll<SVGPathElement>('.edgePaths .flowchart-link')] : [],
+      nodes: svg ? [...svg.querySelectorAll<SVGGraphicsElement>('.nodes > g')] : [],
+    }
+  }
+
+  function primeAnimation(parts: AnimationParts) {
+    for (const node of parts.nodes) node.style.opacity = '0'
+    for (const edge of parts.edges) {
+      const markerEnd = edge.getAttribute('marker-end')
+      if (markerEnd && !edge.dataset.animationMarkerEnd) edge.dataset.animationMarkerEnd = markerEnd
+      edge.setAttribute('marker-end', 'none')
+      edge.style.opacity = '0'
+    }
+    for (const label of parts.edgeLabels) label.style.opacity = '0'
+  }
+
+  function revealAnimation(parts: AnimationParts) {
+    for (const node of parts.nodes) node.style.opacity = '1'
+    for (const edge of parts.edges) {
+      if (edge.dataset.animationMarkerEnd) edge.setAttribute('marker-end', edge.dataset.animationMarkerEnd)
+      edge.style.opacity = '1'
+    }
+    for (const label of parts.edgeLabels) label.style.opacity = '1'
+  }
+
+  async function playAnimation(figure: HTMLElement, parts: AnimationParts) {
+    if (figure.dataset.animationState === 'running') return
+
+    const { animate } = await getMotion()
+    figure.dataset.animationState = 'running'
+    primeAnimation(parts)
+
+    if (parts.nodes[0]) {
+      await animate(parts.nodes[0], { opacity: [0, 1] }, { duration: 0.24, ease: 'easeOut' })
+    }
+
+    const transitions = Math.max(parts.edges.length, parts.nodes.length - 1)
+    for (let index = 0; index < transitions; index += 1) {
+      const edge = parts.edges[index]
+      const edgeLabel = parts.edgeLabels[index]
+      const nextNode = parts.nodes[index + 1]
+
+      if (edge) {
+        await animate(
+          edge,
+          { opacity: [0, 1], pathLength: [0, 1] },
+          { duration: 0.42, ease: 'easeInOut' },
+        )
+        if (edge.dataset.animationMarkerEnd) edge.setAttribute('marker-end', edge.dataset.animationMarkerEnd)
+      }
+      if (edgeLabel) {
+        await animate(edgeLabel, { opacity: [0, 1] }, { duration: 0.16, ease: 'easeOut' })
+      }
+      if (nextNode) {
+        await animate(nextNode, { opacity: [0, 1] }, { duration: 0.24, ease: 'easeOut' })
+      }
+    }
+
+    revealAnimation(parts)
+    figure.dataset.animationState = 'complete'
+  }
+
+  async function configureAnimation(figure: HTMLElement) {
+    if (figure.dataset.mermaidAnimation !== 'sequence' || figure.dataset.animationReady === 'true') return
+
+    const parts = getAnimationParts(figure)
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    figure.dataset.animationReady = 'true'
+
+    if (parts.nodes.length === 0 || reduceMotion) {
+      revealAnimation(parts)
+      return
+    }
+
+    primeAnimation(parts)
+    const { inView } = await getMotion()
+    let hasPlayed = false
+    inView(
+      figure,
+      () => {
+        if (hasPlayed) return
+        hasPlayed = true
+        void playAnimation(figure, parts)
+      },
+      { amount: 0.35 },
+    )
+  }
+
+  async function renderDiagrams() {
+    const runtime = document.querySelector<HTMLElement>('[data-mermaid-runtime]')
+    const figures = [...document.querySelectorAll<HTMLElement>('[data-mermaid-diagram]:not([data-rendered])')]
+    if (!runtime || figures.length === 0) return
+
+    const mermaid = await getMermaid()
+    const defaultCaption = runtime.dataset.caption || 'Concept diagram'
+
+    for (const figure of figures) {
+      const sourceElement = figure.querySelector<HTMLElement>('[data-mermaid-source]')
+      const source = sourceElement?.querySelector('code')?.textContent?.trim()
+      const canvas = figure.querySelector<HTMLElement>('[data-mermaid-canvas]')
+      const captionElement = figure.querySelector<HTMLElement>('.architecture-diagram__caption')
+      const sourceTitle = source?.match(/^\s*accTitle:\s*(.+)$/m)?.[1]?.trim()
+
+      if (captionElement) captionElement.textContent = sourceTitle || defaultCaption
+      if (!source || !canvas) {
+        figure.dataset.rendered = 'error'
+        continue
+      }
+
+      try {
+        renderSequence += 1
+        const renderSource = figure.dataset.mermaidResponsive === 'stack'
+          && window.matchMedia('(max-width: 48rem)').matches
+          ? source.replace(/^([\t ]*)flowchart\s+(?:LR|RL)\b/m, '$1flowchart TB')
+          : source
+        const { svg, bindFunctions } = await mermaid.render(`seniorpath-diagram-${renderSequence}`, renderSource)
+        canvas.innerHTML = svg
+        bindFunctions?.(canvas)
+        figure.dataset.rendered = 'true'
+        void configureAnimation(figure).catch((error) => {
+          revealAnimation(getAnimationParts(figure))
+          console.error('[mermaid] Failed to animate diagram', error)
+        })
+      } catch (error) {
+        canvas.textContent = runtime.dataset.error || 'Diagram rendering failed.'
+        canvas.classList.add('architecture-diagram__error')
+        figure.dataset.rendered = 'error'
+        console.error('[mermaid] Failed to render diagram', error)
+      }
+    }
+  }
+
+  function resetAndRenderDiagrams() {
+    for (const figure of document.querySelectorAll<HTMLElement>('[data-mermaid-diagram]')) {
+      delete figure.dataset.animationReady
+      delete figure.dataset.animationState
+      delete figure.dataset.rendered
+      figure.querySelector<HTMLElement>('[data-mermaid-canvas]')?.replaceChildren()
+    }
+
+    void renderDiagrams()
+  }
+
+  function scheduleDiagramRender() {
+    window.clearTimeout(rerenderTimer)
+    rerenderTimer = window.setTimeout(resetAndRenderDiagrams, 140)
+  }
+
+  document.addEventListener('astro:page-load', renderDiagrams)
+  window.addEventListener('site-theme-change', scheduleDiagramRender)
+  window.matchMedia('(max-width: 48rem)').addEventListener('change', scheduleDiagramRender)
+  void renderDiagrams()
+</script>
+
+<style>
+  :global(.architecture-diagram) {
+    margin-block: 2rem 2.5rem;
+  }
+
+  :global(.architecture-diagram__canvas) {
+    overflow-x: auto;
+    padding-block: 0.35rem;
+  }
+
+  :global(.architecture-diagram[data-mermaid-animation='sequence'] .architecture-diagram__canvas) {
+    display: grid;
+    min-height: 8rem;
+    align-items: center;
+  }
+
+  :global(.architecture-diagram .flowchart-link) {
+    stroke: color-mix(in srgb, var(--article-link) 68%, var(--article-rule)) !important;
+  }
+
+  :global(.architecture-diagram marker path) {
+    fill: var(--article-link) !important;
+    stroke: var(--article-link) !important;
+  }
+
+  :global(.architecture-diagram__canvas svg) {
+    display: block;
+    min-width: 42rem;
+    max-width: none;
+    height: auto;
+    margin-inline: auto;
+  }
+
+  :global(.architecture-diagram[data-mermaid-responsive='stack'] .architecture-diagram__canvas svg) {
+    width: 100% !important;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  :global(.architecture-diagram__error) {
+    min-height: 0;
+    color: var(--site-highlight-badge-ink);
+    font-size: 0.92rem;
+  }
+
+  @media (max-width: 48rem) {
+    :global(.architecture-diagram__canvas) {
+      padding-block: 0.25rem;
+    }
+
+    :global(.architecture-diagram[data-mermaid-responsive='stack'] .architecture-diagram__canvas svg) {
+      width: min(100%, 22rem) !important;
+    }
+  }
+</style>

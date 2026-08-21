@@ -2,9 +2,11 @@
   import { install as installHotkey } from '@github/hotkey'
   import { Command, Dialog } from 'bits-ui'
   import { onMount } from 'svelte'
+  import DoodleIcon from '@/components/ui/notebook/DoodleIcon.svelte'
   import { getDataHookAttributes, searchLauncherDomHooks } from '@/lib/dom-hooks'
 
   import {
+    filterSiteSearchResultsByPrefixes,
     getSearchResultGroupLabel,
     runSiteSearch,
     shouldOpenSearchWithShortcut,
@@ -36,6 +38,7 @@
     mobileTriggerClass?: string
     noJsHref?: string
     noJsLabel?: string
+    resultUrlPrefixes?: string[]
     searchableSections?: SiteSearchSection[]
     searchResultLinkClass?: string
   }
@@ -51,6 +54,7 @@
     mobileTriggerClass = '',
     noJsHref = '/',
     noJsLabel = '',
+    resultUrlPrefixes = [],
     searchableSections = [],
     searchResultLinkClass = '',
   }: Props = $props()
@@ -122,7 +126,11 @@
     searchStatus = copy.loading
 
     try {
-      const searchResults = await runSiteSearch(query, 8)
+      const searchLimit = resultUrlPrefixes.length > 0 ? 40 : 8
+      const searchResults = filterSiteSearchResultsByPrefixes(
+        await runSiteSearch(query, searchLimit),
+        resultUrlPrefixes,
+      )
 
       if (currentRunId !== searchRunId) {
         return
@@ -205,13 +213,10 @@
       type="button"
     >
       <span class="inline-flex items-center gap-2">
-        <svg aria-hidden="true" class="size-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <circle cx="11" cy="11" r="7" />
-          <path d="m20 20-3.5-3.5" />
-        </svg>
+        <DoodleIcon name="search" size={17} />
         <span>{copy.placeholder}</span>
       </span>
-      <span class="rounded-xs border border-site-line bg-site-surface px-1.5 py-0.5 text-[0.68rem] uppercase tracking-[0.08em] text-site-ink-muted lg:px-2 lg:py-[0.35rem] lg:text-[0.76rem]">
+      <span class="rounded-md border border-dashed border-site-line-strong bg-site-surface px-1.5 py-0.5 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.08em] text-site-ink-muted lg:px-2 lg:py-[0.35rem]">
         {copy.shortcut}
       </span>
     </button>
@@ -225,10 +230,7 @@
       {...getDataHookAttributes(searchLauncherDomHooks.mobileTrigger)}
       type="button"
     >
-      <svg aria-hidden="true" class="size-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="7" />
-        <path d="m20 20-3.5-3.5" />
-      </svg>
+      <DoodleIcon name="search" size={17} />
       <span class="sr-only">{copy.title}</span>
     </button>
 
@@ -249,15 +251,12 @@
         label={copy.title}
         shouldFilter={false}
       >
-        <div class="flex items-center gap-3 border-b border-site-line px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] lg:gap-3.5 lg:px-5 lg:py-3.5">
-          <svg aria-hidden="true" class="size-4 shrink-0 text-site-ink-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <circle cx="11" cy="11" r="7" />
-            <path d="m20 20-3.5-3.5" />
-          </svg>
+        <div class="flex items-center gap-3 border-b border-dashed border-site-line-strong px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] lg:gap-3.5 lg:px-5 lg:py-3.5">
+          <DoodleIcon className="shrink-0 text-site-ink-muted" name="search" size={17} />
           <Command.Input
             bind:ref={inputEl}
             bind:value={searchTerm}
-            class="min-w-0 flex-1 bg-transparent text-[1rem] text-site-ink outline-none placeholder:text-site-ink-muted lg:text-[1.08rem]"
+            class="min-w-0 flex-1 bg-transparent [font-family:var(--notebook-font-book)] text-[1rem] text-site-ink outline-none placeholder:text-site-ink-muted lg:text-[1.08rem]"
             placeholder={copy.placeholder}
             {...getDataHookAttributes(searchLauncherDomHooks.input)}
           />
@@ -265,10 +264,7 @@
             class={`${mobileTriggerClass} nav:inline-flex`}
             type="button"
           >
-            <svg aria-hidden="true" class="size-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="m18 6-12 12" />
-              <path d="m6 6 12 12" />
-            </svg>
+            <DoodleIcon name="cross" size={17} />
             <span class="sr-only">{copy.close}</span>
           </Dialog.Close>
         </div>
@@ -290,10 +286,10 @@
                     value={result.url}
                     {...getDataHookAttributes(searchLauncherDomHooks.resultLink)}
                   >
-                    <span class="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-site-ink-muted lg:text-[0.76rem]">{getGroupLabel(result.url)}</span>
-                    <span class="text-base font-semibold leading-[1.3] text-site-ink lg:text-[1.08rem]">{result.meta?.title ?? result.url}</span>
+                    <span class="[font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">{getGroupLabel(result.url)}</span>
+                    <span class="[font-family:var(--notebook-font-book)] text-base font-semibold leading-[1.3] text-site-ink lg:text-[1.08rem]">{result.meta?.title ?? result.url}</span>
                     {#if result.excerpt}
-                      <span class="text-sm leading-6 text-site-ink-soft lg:text-[0.98rem] [&_mark]:bg-transparent [&_mark]:font-semibold [&_mark]:text-site-link-hover">
+                      <span class="[font-family:var(--notebook-font-book)] text-sm leading-6 text-site-ink-soft lg:text-[0.98rem] [&_mark]:bg-[linear-gradient(transparent_58%,var(--notebook-highlight-yellow)_59%_92%,transparent_93%)] [&_mark]:font-semibold [&_mark]:text-site-ink">
                         {@html result.excerpt}
                       </span>
                     {/if}
@@ -320,10 +316,7 @@
     {...getDataHookAttributes(searchLauncherDomHooks.noJsFallback)}
   >
     <span class="inline-flex items-center gap-2">
-      <svg aria-hidden="true" class="size-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="7" />
-        <path d="m20 20-3.5-3.5" />
-      </svg>
+      <DoodleIcon name="search" size={17} />
       <span>{noJsLabel}</span>
     </span>
   </a>
@@ -332,10 +325,7 @@
     class={mobileTriggerClass}
     href={noJsHref}
   >
-    <svg aria-hidden="true" class="size-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <circle cx="11" cy="11" r="7" />
-      <path d="m20 20-3.5-3.5" />
-    </svg>
+    <DoodleIcon name="search" size={17} />
     <span class="sr-only">{noJsLabel}</span>
   </a>
 </div>

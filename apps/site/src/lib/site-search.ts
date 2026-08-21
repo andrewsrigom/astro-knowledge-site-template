@@ -52,6 +52,28 @@ export function getSearchResultGroupLabel(
   return match?.label ?? fallbackGroupLabel
 }
 
+export function filterSiteSearchResultsByPrefixes(
+  results: SiteSearchResult[],
+  prefixes: string[],
+  limit = 8,
+) {
+  const normalizedPrefixes = prefixes
+    .map((prefix) => prefix.trim().replace(/\/+$/, '') || '/')
+    .filter((prefix, index, items) => items.indexOf(prefix) === index)
+
+  return results
+    .filter((result) =>
+      normalizedPrefixes.length === 0
+      || normalizedPrefixes.some((prefix) =>
+        result.url === prefix
+        || result.url.startsWith(`${prefix}/`)
+        || result.url.startsWith(`${prefix}?`)
+        || result.url.startsWith(`${prefix}#`),
+      ),
+    )
+    .slice(0, limit)
+}
+
 export function shouldOpenSearchWithShortcut(event: KeyboardEvent) {
   return !isEditableKeyboardTarget(event.target) && event.key === '/'
 }

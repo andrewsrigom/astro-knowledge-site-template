@@ -1,5 +1,5 @@
 ---
-import ArrowRightIcon from '@/components/ui/icons/ArrowRightIcon.astro'
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
 import { cn } from '@/lib/cn'
 import { ui } from '@/lib/ui'
 import { linkCardHeaderVariants, linkCardVariants } from '@/lib/ui-variants'
@@ -36,7 +36,7 @@ const HeadingTag = titleTag
     <div class={linkCardHeaderVariants({ showArrow })}>
       <HeadingTag class={cn(ui.linkCardTitle, titleClass)}>{title}</HeadingTag>
       {showArrow ? (
-        <ArrowRightIcon className="size-4 shrink-0 text-site-ink-muted transition-colors duration-150 group-hover:text-site-link-hover group-focus-within:text-site-link-hover" />
+        <DoodleIcon class="shrink-0 text-site-ink-muted transition-colors duration-150 group-hover:text-site-link-hover group-focus-within:text-site-link-hover" name="arrow-right" size={19} />
       ) : null}
     </div>
     {description ? <p class={ui.cardDescription}>{description}</p> : null}

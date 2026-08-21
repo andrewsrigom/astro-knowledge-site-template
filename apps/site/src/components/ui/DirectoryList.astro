@@ -1,5 +1,5 @@
 ---
-import ArrowRightIcon from '@/components/ui/icons/ArrowRightIcon.astro'
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
 import { cn } from '@/lib/cn'
 import { completionDomHooks, getDataHookAttributes } from '@/lib/dom-hooks'
 import { type DirectoryItem } from '@/lib/directory'
@@ -9,9 +9,11 @@ import { ui } from '@/lib/ui'
 type Props = {
   items: DirectoryItem[]
   layout?: 'cards' | 'rows'
+  headingLevel?: 'h2' | 'h3'
 }
 
-const { items, layout = 'cards' } = Astro.props
+const { items, layout = 'cards', headingLevel = 'h2' } = Astro.props
+const Heading = headingLevel
 const listClass = directoryListVariants({ layout })
 const itemLinkClass = directoryLinkVariants({ layout })
 const rowItemClass = ui.linearRow
@@ -29,7 +31,7 @@ const rowItemClass = ui.linearRow
                 class={cn('content-directory-complete-badge', ui.completionBadgeLinear)}
                 {...getDataHookAttributes(completionDomHooks.completeBadge)}
               >
-                ✓
+                <DoodleIcon name="check" size={16} />
               </span>
             ) : null}
             {item.eyebrow || item.badgeLabel ? (
@@ -44,9 +46,9 @@ const rowItemClass = ui.linearRow
               </div>
             ) : null}
             <div class="grid min-w-0 gap-2">
-              <h2 class={cn('content-directory-title', ui.linearItemTitle, 'transition-colors duration-150')} {...getDataHookAttributes(completionDomHooks.title)}>
+              <Heading class={cn('content-directory-title', ui.linearItemTitle, 'transition-colors duration-150')} {...getDataHookAttributes(completionDomHooks.title)}>
                 {item.title}
-              </h2>
+              </Heading>
             </div>
             {item.description ? <p class={ui.cardDescription}>{item.description}</p> : null}
             {item.ctaLabel ? (
@@ -59,7 +61,7 @@ const rowItemClass = ui.linearRow
                       {...getDataHookAttributes(completionDomHooks.mobileDefaultText)}
                     >
                       <span>{item.ctaLabel}</span>
-                      <ArrowRightIcon className="size-[0.88rem]" />
+                      <DoodleIcon name="arrow-right" size={15} />
                     </span>
                     <span
                       aria-hidden="true"
@@ -67,13 +69,13 @@ const rowItemClass = ui.linearRow
                       {...getDataHookAttributes(completionDomHooks.mobileCompleteText)}
                     >
                       <span>{item.completedCtaLabel ?? item.ctaLabel}</span>
-                      <ArrowRightIcon className="size-[0.88rem]" />
+                      <DoodleIcon name="arrow-right" size={15} />
                     </span>
                   </>
                 ) : (
                   <span aria-hidden="true" class={cn(ui.inlineCta, 'md:hidden')}>
                     <span>{item.ctaLabel}</span>
-                    <ArrowRightIcon className="size-[0.88rem]" />
+                    <DoodleIcon name="arrow-right" size={15} />
                   </span>
                 )}
                 <span class={ui.completionRailInlineMd}>
@@ -83,7 +85,7 @@ const rowItemClass = ui.linearRow
                     {...getDataHookAttributes(completionDomHooks.completeText)}
                   >
                     <span>{item.completedCtaLabel ?? item.ctaLabel}</span>
-                    <ArrowRightIcon className="size-[0.88rem]" />
+                    <DoodleIcon name="arrow-right" size={15} />
                   </span>
                   <span
                     aria-hidden="true"
@@ -91,7 +93,7 @@ const rowItemClass = ui.linearRow
                     {...getDataHookAttributes(completionDomHooks.defaultText)}
                   >
                     <span>{item.ctaLabel}</span>
-                    <ArrowRightIcon className="size-[0.88rem]" />
+                    <DoodleIcon name="arrow-right" size={15} />
                   </span>
                 </span>
               </>
@@ -111,9 +113,9 @@ const rowItemClass = ui.linearRow
               </div>
             ) : null}
             <div class="grid min-w-0 gap-2">
-              <h2 class={cn('content-directory-title', ui.linearItemTitle)} {...getDataHookAttributes(completionDomHooks.title)}>
+              <Heading class={cn('content-directory-title', ui.linearItemTitle)} {...getDataHookAttributes(completionDomHooks.title)}>
                 {item.title}
-              </h2>
+              </Heading>
             </div>
             {item.description ? <p class={ui.cardDescription}>{item.description}</p> : null}
             {item.meta ? <p class={ui.cardMeta}>{item.meta}</p> : null}
@@ -129,14 +131,14 @@ const rowItemClass = ui.linearRow
               class={cn('content-directory-complete-badge', ui.completionBadgeCard)}
               {...getDataHookAttributes(completionDomHooks.completeBadge)}
             >
-              ✓
+              <DoodleIcon name="check" size={16} />
             </span>
           ) : null}
           <div class="grid gap-2">
             <div class="flex items-center justify-between gap-4">
-              <h2 class={cn('content-directory-title', ui.linkCardTitle)} {...getDataHookAttributes(completionDomHooks.title)}>{item.title}</h2>
+              <Heading class={cn('content-directory-title', ui.linkCardTitle)} {...getDataHookAttributes(completionDomHooks.title)}>{item.title}</Heading>
               {!item.completionId ? (
-                <ArrowRightIcon className="size-4 shrink-0 text-site-ink-muted transition-colors duration-150 group-hover:text-site-link-hover group-focus-within:text-site-link-hover" />
+                <DoodleIcon class="shrink-0 text-site-ink-muted transition-colors duration-150 group-hover:text-site-link-hover group-focus-within:text-site-link-hover" name="arrow-right" size={19} />
               ) : null}
             </div>
             {item.description ? <p class={ui.cardDescription}>{item.description}</p> : null}
@@ -147,7 +149,7 @@ const rowItemClass = ui.linearRow
         <div class={cn('content-directory-item', itemLinkClass, 'relative')} {...getDataHookAttributes(completionDomHooks.item, item.completionId)}>
           <div class="grid gap-2">
             <div class="flex items-center justify-between gap-4">
-              <h2 class={cn('content-directory-title', ui.linkCardTitle)} {...getDataHookAttributes(completionDomHooks.title)}>{item.title}</h2>
+              <Heading class={cn('content-directory-title', ui.linkCardTitle)} {...getDataHookAttributes(completionDomHooks.title)}>{item.title}</Heading>
             </div>
             {item.description ? <p class={ui.cardDescription}>{item.description}</p> : null}
             {item.meta ? <p class={ui.cardMeta}>{item.meta}</p> : null}

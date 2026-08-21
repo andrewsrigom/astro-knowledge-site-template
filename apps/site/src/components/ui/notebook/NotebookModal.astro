@@ -1,0 +1,192 @@
+---
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+
+type Props = {
+  class?: string
+  closeLabel?: string
+  id: string
+  size?: 'lg' | 'md' | 'sm'
+  title: string
+}
+
+const {
+  class: className,
+  closeLabel = 'Fechar janela',
+  id,
+  size = 'md',
+  title,
+}: Props = Astro.props
+---
+
+<span class="notebook-modal__trigger" data-notebook-modal-trigger={id}>
+  <slot name="trigger" />
+</span>
+
+<dialog class:list={['notebook-modal', className]} data-size={size} id={id}>
+  <div class="notebook-modal__paper">
+    <span aria-hidden="true" class="notebook-modal__tape"></span>
+    <header class="notebook-modal__header">
+      <h2>{title}</h2>
+      <button aria-label={closeLabel} class="notebook-modal__close" type="button">
+        <DoodleIcon name="cross" size={20} />
+      </button>
+    </header>
+    <div class="notebook-modal__body"><slot /></div>
+    <footer class="notebook-modal__footer"><slot name="footer" /></footer>
+  </div>
+</dialog>
+
+<script>
+  function setupNotebookModals() {
+    const dialogs = document.querySelectorAll<HTMLDialogElement>('dialog.notebook-modal')
+
+    for (const dialog of dialogs) {
+      if (dialog.dataset.modalReady === 'true') continue
+      const id = dialog.id
+      const trigger = document.querySelector<HTMLElement>(`[data-notebook-modal-trigger="${CSS.escape(id)}"]`)
+      const close = dialog.querySelector<HTMLButtonElement>('.notebook-modal__close')
+      let returnFocus: HTMLElement | null = null
+
+      trigger?.addEventListener('click', () => {
+        returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
+        dialog.showModal()
+      })
+
+      close?.addEventListener('click', () => dialog.close())
+      dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) dialog.close()
+      })
+      dialog.addEventListener('close', () => returnFocus?.focus())
+      dialog.dataset.modalReady = 'true'
+    }
+  }
+
+  setupNotebookModals()
+  document.addEventListener('astro:page-load', setupNotebookModals)
+</script>
+
+<style>
+  .notebook-modal__trigger {
+    display: inline-flex;
+  }
+
+  .notebook-modal {
+    width: min(calc(100% - 2rem), 36rem);
+    max-height: min(82vh, 46rem);
+    padding: 0;
+    overflow: visible;
+    color: var(--site-ink);
+    background: transparent;
+    border: 0;
+  }
+
+  .notebook-modal[data-size='sm'] {
+    width: min(calc(100% - 2rem), 26rem);
+  }
+
+  .notebook-modal[data-size='lg'] {
+    width: min(calc(100% - 2rem), 52rem);
+  }
+
+  .notebook-modal::backdrop {
+    background: var(--site-overlay-backdrop);
+    backdrop-filter: blur(3px);
+  }
+
+  .notebook-modal__paper {
+    position: relative;
+    display: grid;
+    max-height: min(82vh, 46rem);
+    overflow: hidden;
+    background: var(--site-surface);
+    border: 1.5px solid var(--site-line-strong);
+    border-radius: 0.9rem 1.15rem 0.85rem 1rem;
+    box-shadow: var(--site-shadow-overlay);
+    transform: rotate(-0.25deg);
+  }
+
+  .notebook-modal__tape {
+    position: absolute;
+    z-index: 1;
+    top: -0.2rem;
+    left: 50%;
+    width: 5.4rem;
+    height: 1rem;
+    background: color-mix(in srgb, var(--notebook-tape-paper-bg) 72%, transparent);
+    transform: translateX(-50%) rotate(0.25deg);
+  }
+
+  .notebook-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.45rem 1.5rem 0.85rem;
+    border-bottom: 1px dashed var(--site-line-strong);
+  }
+
+  .notebook-modal__header h2 {
+    margin: 0;
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-xl);
+    font-weight: var(--notebook-hand-weight-strong);
+    line-height: 1;
+  }
+
+  .notebook-modal__close {
+    display: inline-grid;
+    place-items: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    padding: 0;
+    color: var(--site-ink);
+    background: transparent;
+    border: 0;
+    border-radius: 50%;
+  }
+
+  .notebook-modal__close:hover {
+    background: var(--site-control-hover);
+  }
+
+  .notebook-modal__close:focus-visible {
+    outline: 2px dashed var(--site-link-hover);
+    outline-offset: 3px;
+  }
+
+  .notebook-modal__body {
+    padding: 1.25rem 1.5rem;
+    overflow: auto;
+    font-family: var(--notebook-font-book);
+    line-height: 1.65;
+  }
+
+  .notebook-modal__body :global(> :first-child) {
+    margin-top: 0;
+  }
+
+  .notebook-modal__body :global(> :last-child) {
+    margin-bottom: 0;
+  }
+
+  .notebook-modal__footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.7rem;
+    padding: 0.9rem 1.5rem 1.25rem;
+    border-top: 1px dashed var(--site-line-strong);
+  }
+
+  .notebook-modal__footer:empty {
+    display: none;
+  }
+
+  @media (max-width: 36rem) {
+    .notebook-modal__header,
+    .notebook-modal__body,
+    .notebook-modal__footer {
+      padding-inline: 1rem;
+    }
+  }
+</style>

@@ -1,5 +1,5 @@
 ---
-import ArrowRightIcon from '@/components/ui/icons/ArrowRightIcon.astro'
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
 import { cn } from '@/lib/cn'
 import { ui } from '@/lib/ui'
 
@@ -18,5 +18,5 @@ const {
 
 <span class={cn(ui.inlineCta, className)}>
   <span>{label}</span>
-  <ArrowRightIcon className={iconClassName} />
+  <DoodleIcon class={iconClassName} name="arrow-right" size={15} />
 </span>

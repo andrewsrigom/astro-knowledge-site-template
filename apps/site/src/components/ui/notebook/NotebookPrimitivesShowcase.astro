@@ -1,0 +1,170 @@
+---
+import NotebookHighlight from '@/components/ui/notebook/NotebookHighlight.astro'
+import NotebookPostIt from '@/components/ui/notebook/NotebookPostIt.astro'
+import NotebookSticker from '@/components/ui/notebook/NotebookSticker.astro'
+import NotebookTape from '@/components/ui/notebook/NotebookTape.astro'
+---
+
+<div class="notebook-primitives">
+  <section class="notebook-primitive" aria-labelledby="notebook-stickers-title">
+    <header>
+      <h2 id="notebook-stickers-title">Adesivos</h2>
+      <p>Cinco silhuetas para rótulos curtos: <code>label</code>, <code>burst</code>, <code>round</code>, <code>banner</code> e <code>bubble</code>.</p>
+    </header>
+    <div class="sticker-row">
+      <NotebookSticker icon="spark" label="ideia central" tone="blue" />
+      <NotebookSticker icon="exclamation" label="importante" shape="burst" tone="coral" />
+      <NotebookSticker icon="check" label="entendi" shape="round" tone="mint" />
+      <NotebookSticker icon="target" label="objetivo" shape="banner" tone="lemon" />
+      <NotebookSticker icon="question" label="revisar" shape="bubble" tone="violet" />
+    </div>
+  </section>
+
+  <section class="notebook-primitive" aria-labelledby="notebook-tapes-title">
+    <header>
+      <h2 id="notebook-tapes-title">Fitas washi</h2>
+      <p>Tiras rasgadas para colar títulos, post-its e recortes. Componente <code>NotebookTape</code>.</p>
+    </header>
+    <div class="tape-row">
+      <NotebookTape tone="lemon" width="sm" tilt={-1.6} />
+      <NotebookTape tone="mint" width="md" tilt={-2.4} />
+      <NotebookTape tone="coral" width="md" tilt={1.2} />
+      <NotebookTape tone="blue" width="lg" tilt={-1.8} />
+      <NotebookTape tone="pink" width="md" tilt={2.6} />
+      <NotebookTape tone="violet" width="sm" tilt={-3.2} />
+      <NotebookTape tone="paper" width="md" tilt={-1.2} />
+    </div>
+  </section>
+
+  <section class="notebook-primitive" aria-labelledby="notebook-post-its-title">
+    <header>
+      <h2 id="notebook-post-its-title">Post-its</h2>
+      <p>Notas independentes para decisões, lembretes e modelos mentais. Uma tira de fita e pronto.</p>
+    </header>
+    <div class="post-it-grid">
+      <NotebookPostIt icon="lightbulb" label="Dica" tone="lemon">
+        <p>Defina o contrato antes de escolher a estrutura de dados.</p>
+      </NotebookPostIt>
+      <NotebookPostIt icon="question" label="Revisar" tilt="right" tone="pink">
+        <p>O que pode falhar quando duas operações chegam juntas?</p>
+      </NotebookPostIt>
+      <NotebookPostIt icon="checklist" label="Checklist" tone="mint">
+        <p>Entrada, saída, bordas, custo e validação.</p>
+      </NotebookPostIt>
+      <NotebookPostIt icon="target" label="Decisão" tilt="right" tone="blue">
+        <p>Otimize somente depois de localizar o trabalho repetido.</p>
+      </NotebookPostIt>
+    </div>
+  </section>
+
+  <section class="notebook-primitive" aria-labelledby="notebook-highlights-title">
+    <header>
+      <h2 id="notebook-highlights-title">Marca-textos</h2>
+      <p>Seis cores vibrantes e três formas de marcar sem perder a leitura.</p>
+    </header>
+    <div class="highlight-sheet">
+      <p>
+        <NotebookHighlight tone="yellow">Amarelo para definições centrais.</NotebookHighlight>
+      </p>
+      <p>
+        <NotebookHighlight tone="pink">Rosa para algo que merece voltar depois.</NotebookHighlight>
+      </p>
+      <p>
+        <NotebookHighlight tone="green">Verde para evidência ou confirmação.</NotebookHighlight>
+      </p>
+      <p>
+        <NotebookHighlight tone="blue">Azul para mecanismo e explicação.</NotebookHighlight>
+      </p>
+      <p>
+        <NotebookHighlight tone="orange" variant="underline">Laranja como sublinhado de atenção.</NotebookHighlight>
+      </p>
+      <p>
+        <NotebookHighlight tone="violet" variant="double">Violeta com duas passagens de marcador.</NotebookHighlight>
+      </p>
+    </div>
+  </section>
+</div>
+
+<style>
+  .notebook-primitives {
+    display: grid;
+    gap: 3.5rem;
+    margin-bottom: 4rem;
+  }
+
+  .notebook-primitive {
+    display: grid;
+    gap: 1.3rem;
+  }
+
+  .notebook-primitive > header {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .notebook-primitive h2,
+  .notebook-primitive p {
+    margin: 0;
+  }
+
+  .notebook-primitive h2 {
+    font-family: var(--notebook-font-book);
+    font-size: 1.55rem;
+    color: var(--site-ink);
+  }
+
+  .notebook-primitive > header p {
+    color: var(--site-ink-muted);
+    font-size: 0.9rem;
+  }
+
+  .notebook-primitive > header code {
+    padding: 0.05rem 0.35rem;
+    background: color-mix(in srgb, var(--site-surface-strong) 60%, transparent);
+    border-radius: 0.3rem;
+    font-size: 0.82rem;
+  }
+
+  .sticker-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.4rem;
+    min-height: 7rem;
+    padding: 1.75rem 1.5rem;
+    border: 1px solid var(--site-line);
+    border-radius: 0.65rem;
+    background: color-mix(in srgb, var(--site-surface) 88%, transparent);
+  }
+
+  .tape-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem 1.75rem;
+    padding: 1.75rem 1.5rem;
+    border: 1px solid var(--site-line);
+    border-radius: 0.65rem;
+    background: color-mix(in srgb, var(--site-surface) 88%, transparent);
+  }
+
+  .post-it-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 1.4rem;
+    align-items: start;
+    padding-block: 0.5rem;
+  }
+
+  .highlight-sheet {
+    display: grid;
+    gap: 1rem;
+    padding: 1.5rem;
+    border: 1px solid var(--site-line);
+    border-radius: 0.65rem;
+    color: var(--site-ink);
+    background: color-mix(in srgb, var(--site-surface) 88%, transparent);
+    font-size: 1.02rem;
+    line-height: 1.75;
+  }
+</style>

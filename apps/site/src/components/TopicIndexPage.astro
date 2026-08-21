@@ -1,6 +1,5 @@
 ---
 import type { CollectionEntry } from 'astro:content'
-import TagsIcon from '@lucide/astro/icons/tags'
 
 import DirectoryList from '@/components/ui/DirectoryList.astro'
 import DirectoryPagination from '@/components/ui/DirectoryPagination.astro'
@@ -47,7 +46,7 @@ const isPaginatedArchivePage = !isPreview && paginatedItems.currentPage > 1
 
 <DirectoryIndexShell
   description={description}
-  icon={TagsIcon}
+  doodle="layers"
   iconLabel={title}
   localeHrefs={localeHrefs}
   noindex={isPaginatedArchivePage}
@@ -64,7 +63,7 @@ const isPaginatedArchivePage = !isPreview && paginatedItems.currentPage > 1
 
   {isPreview ? (
     <div class="mt-6 flex flex-wrap justify-center gap-3">
-      <a class="inline-flex min-h-11 items-center justify-center rounded-xs border border-site-line bg-site-panel px-4 text-sm font-semibold text-site-ink transition-colors duration-150 hover:bg-site-hover hover:text-site-link-hover focus-visible:bg-site-hover focus-visible:text-site-link-hover focus-visible:outline-none" href={getTopicIndexHref(locale)}>
+      <a class={`${ui.controlButton} min-h-11 px-4 text-(--notebook-hand-sm) font-semibold`} href={getTopicIndexHref(locale)}>
         {copy.topicIndex.viewAllLabel}
       </a>
     </div>

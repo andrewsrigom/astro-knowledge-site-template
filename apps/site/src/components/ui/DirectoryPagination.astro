@@ -1,10 +1,8 @@
 ---
-import ChevronLeft from '@lucide/astro/icons/chevron-left'
-import ChevronRight from '@lucide/astro/icons/chevron-right'
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
 import { getPaginationSlots } from '@/lib/directory'
 import { directoryPaginationDomHooks, getDataHookAttributes } from '@/lib/dom-hooks'
 import { cn } from '@/lib/cn'
-import { ui } from '@/lib/ui'
 
 type Props = {
   currentPage: number
@@ -22,25 +20,25 @@ const slots = getPaginationSlots(currentPage, pageCount)
 {pageCount > 1 ? (
   <nav
     aria-label={`${pageLabel} navigation`}
-    class="mt-6 flex flex-wrap items-center justify-center gap-2"
+    class="notebook-directory-pagination mt-7 flex flex-wrap items-center justify-center gap-2"
     {...getDataHookAttributes(directoryPaginationDomHooks.root)}
   >
     {currentPage > 1 ? (
       <a
         aria-label={previousLabel}
-        class={cn(ui.controlButton, 'min-h-10 min-w-10 px-0')}
+        class="notebook-directory-pagination__direction"
         href={getHref(currentPage - 1)}
         {...getDataHookAttributes(directoryPaginationDomHooks.previousLink)}
       >
         <span class="sr-only">{previousLabel}</span>
-        <ChevronLeft aria-hidden="true" class="size-4 shrink-0" />
+        <DoodleIcon name="arrow-left" size={18} />
       </a>
     ) : null}
     {slots.map((slot) =>
       slot.type === 'ellipsis' ? (
         <span
           aria-hidden="true"
-          class="inline-flex min-h-10 min-w-8 items-center justify-center px-1 text-sm font-semibold text-site-ink-muted"
+          class="notebook-directory-pagination__ellipsis"
         >
           ...
         </span>
@@ -48,9 +46,8 @@ const slots = getPaginationSlots(currentPage, pageCount)
         <a
           aria-current={slot.value === currentPage ? 'page' : undefined}
           class={cn(
-            ui.controlButton,
-            'min-h-10 min-w-10 px-3 text-sm font-semibold',
-            slot.value === currentPage && 'border-site-line-strong bg-site-hover text-site-link-hover',
+            'notebook-directory-pagination__page',
+            slot.value === currentPage && 'is-current',
           )}
           href={getHref(slot.value)}
           {...getDataHookAttributes(directoryPaginationDomHooks.pageLink, String(slot.value))}
@@ -63,13 +60,57 @@ const slots = getPaginationSlots(currentPage, pageCount)
     {currentPage < pageCount ? (
       <a
         aria-label={nextLabel}
-        class={cn(ui.controlButton, 'min-h-10 min-w-10 px-0')}
+        class="notebook-directory-pagination__direction"
         href={getHref(currentPage + 1)}
         {...getDataHookAttributes(directoryPaginationDomHooks.nextLink)}
       >
         <span class="sr-only">{nextLabel}</span>
-        <ChevronRight aria-hidden="true" class="size-4 shrink-0" />
+        <DoodleIcon name="arrow-right" size={18} />
       </a>
     ) : null}
   </nav>
 ) : null}
+
+<style>
+  .notebook-directory-pagination__direction,
+  .notebook-directory-pagination__page,
+  .notebook-directory-pagination__ellipsis {
+    display: inline-grid;
+    place-items: center;
+    min-width: 2.35rem;
+    min-height: 2.35rem;
+    padding: 0 0.4rem;
+    color: var(--site-ink-muted);
+    font-family: var(--notebook-font-hand);
+    font-size: var(--notebook-hand-md);
+    font-weight: var(--notebook-hand-weight-strong);
+  }
+
+  .notebook-directory-pagination__direction {
+    border: 1px dashed var(--site-line-strong);
+    border-radius: 0.45rem 0.65rem 0.5rem 0.6rem;
+  }
+
+  .notebook-directory-pagination__page {
+    border-radius: 50% 47% 53% 48%;
+  }
+
+  .notebook-directory-pagination__page.is-current {
+    color: var(--notebook-post-it-blue-ink);
+    background: var(--notebook-post-it-blue-bg);
+    border: 1.5px solid color-mix(in srgb, var(--notebook-post-it-blue-ink) 44%, transparent);
+    transform: rotate(-1deg);
+  }
+
+  .notebook-directory-pagination__direction:hover,
+  .notebook-directory-pagination__page:hover {
+    color: var(--site-link-hover);
+    background: var(--site-control-hover);
+  }
+
+  .notebook-directory-pagination__direction:focus-visible,
+  .notebook-directory-pagination__page:focus-visible {
+    outline: 2px dashed var(--site-link-hover);
+    outline-offset: 3px;
+  }
+</style>

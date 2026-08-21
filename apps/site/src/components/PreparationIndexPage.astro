@@ -1,0 +1,145 @@
+---
+import type { CollectionEntry } from 'astro:content'
+
+import PreparationBookShell from '@/components/PreparationBookShell.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getLocalePath, resolveLocaleHrefMap } from '@/lib/locale-config'
+import { resolvePreparationBook } from '@/lib/preparation-book'
+import { getPreparationCopy } from '@/lib/preparation-copy'
+import { getPreparationIndexHref, getPreparationVolumeHref } from '@/lib/preparation-links'
+import { getPageTypeDescription, getPageTypeLabel } from '@/lib/section-manifest'
+import {
+  getPreparationCatalogCollection,
+  getVisibleChallengesByLocale,
+} from '@/lib/site-content'
+import type { SiteLocale } from '@/lib/site-copy'
+import { cn } from '@/lib/cn'
+import { ui } from '@/lib/ui'
+
+type Props = {
+  isSiteHome?: boolean
+  locale: SiteLocale
+  preparation: CollectionEntry<'preparation'>[]
+}
+
+const { isSiteHome = false, locale, preparation } = Astro.props
+const copy = getPreparationCopy(locale)
+const labels = locale === 'pt-br'
+  ? {
+      chapters: 'capítulos',
+      contents: 'Sumário',
+      openVolume: 'Abrir volume',
+      parts: 'Partes',
+      volume: 'Volume',
+    }
+  : {
+      chapters: 'chapters',
+      contents: 'Contents',
+      openVolume: 'Open volume',
+      parts: 'Parts',
+      volume: 'Volume',
+    }
+const fallbackTitle = getPageTypeLabel('preparation', locale)
+const fallbackDescription = getPageTypeDescription('preparation', locale)
+const localeHrefs = resolveLocaleHrefMap((supportedLocale) =>
+  isSiteHome ? getLocalePath(supportedLocale) : getPreparationIndexHref(supportedLocale),
+)
+const [catalogs, challenges] = await Promise.all([
+  getPreparationCatalogCollection(),
+  getVisibleChallengesByLocale(locale),
+])
+const catalog = catalogs.find((entry) =>
+  entry.data.locale === locale
+  && entry.data.status !== 'archived'
+  && (entry.data.status === 'active' || import.meta.env.DEV),
+)
+const book = catalog ? resolvePreparationBook(catalog.data, preparation, challenges) : null
+const title = catalog?.data.title ?? fallbackTitle
+const description = catalog?.data.description ?? fallbackDescription
+const volumes = book?.volumes ?? []
+const isDraft = catalog?.data.status === 'draft'
+---
+
+{book && volumes.length > 0 ? (
+  <PreparationBookShell
+    book={book}
+    description={description}
+    isHome
+    locale={locale}
+    localeHrefs={localeHrefs}
+    noindex={isDraft}
+    pagefind={!isDraft}
+    title={title}
+  >
+    <article class="mx-auto w-full max-w-6xl px-5 pb-16 pt-10 sm:px-8 lg:px-12 xl:px-14 xl:pt-16">
+      <header class="max-w-4xl border-b border-dashed border-site-line-strong pb-10">
+        <p class={cn(ui.eyebrow, 'mb-4')}>{labels.contents}</p>
+        <h1 class="preparation-home-title m-0 text-[clamp(2.8rem,7vw,5.6rem)] font-semibold leading-[0.98] tracking-[-0.045em] text-site-ink">
+          {title}
+        </h1>
+        <div class="mt-6 h-0.5 w-14 bg-site-accent"></div>
+        <p class="mb-0 mt-7 max-w-[65ch] text-[1.08rem] leading-8 text-site-ink-soft">
+          {description}
+        </p>
+        {isDraft ? <p class={cn(ui.badge, 'mt-5')}>{copy.draft}</p> : null}
+      </header>
+
+      <nav aria-label={title} class="mt-12 grid gap-0" data-pagefind-ignore>
+        {volumes.map((volume, volumeIndex) => {
+          const chapterCount = volume.parts.reduce((total, part) => total + part.chapters.length, 0)
+
+          return (
+            <a
+              class="group grid gap-4 border-t border-dashed border-site-line-strong py-7 text-inherit transition-colors first:border-t-0 hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover sm:grid-cols-[7rem_minmax(0,1fr)_auto] sm:items-start sm:gap-6"
+              href={getPreparationVolumeHref(volume.id, locale)}
+            >
+              <span class={cn(ui.eyebrow, 'mb-0 pt-1')}>
+                {`${labels.volume} ${String(volumeIndex + 1).padStart(2, '0')}`}
+              </span>
+              <span class="grid gap-2">
+                <strong class="[font-family:var(--notebook-font-book)] text-[1.35rem] leading-7 tracking-[-0.02em] text-site-link-hover group-hover:text-site-ink">
+                  {volume.title}
+                </strong>
+                <span class="max-w-2xl [font-family:var(--notebook-font-book)] text-sm leading-6 text-site-ink-soft sm:text-[0.97rem]">
+                  {volume.description}
+                </span>
+                <span class="[font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) leading-5 text-site-ink-muted">
+                  {volume.parts.map((part) => part.title).join(' · ')}
+                </span>
+              </span>
+              <span class="pt-1 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold text-site-ink-muted group-hover:text-site-link-hover">
+                {`${chapterCount} ${labels.chapters}`}
+              </span>
+            </a>
+          )
+        })}
+      </nav>
+    </article>
+  </PreparationBookShell>
+) : (
+  <BaseLayout
+    description={description}
+    localeHrefs={localeHrefs}
+    noindex
+    pagefind={false}
+    title={title}
+  >
+    <section class="mx-auto min-h-screen max-w-3xl px-5 py-16 sm:px-8">
+      <h1 class="[font-family:var(--notebook-font-book)] text-4xl font-semibold text-site-ink">{title}</h1>
+      {locale === 'pt-br' ? (
+        <p class={ui.bodyCopy}>{copy.draftsPending}</p>
+      ) : (
+        <>
+          <p class={ui.bodyCopy}>{copy.availableInPortuguese}</p>
+          <a class={ui.cardButton} href={getPreparationIndexHref('pt-br')}>{copy.emptyCta}</a>
+        </>
+      )}
+    </section>
+  </BaseLayout>
+)}
+
+<style>
+  .preparation-home-title {
+    font-family: var(--notebook-font-book);
+  }
+</style>

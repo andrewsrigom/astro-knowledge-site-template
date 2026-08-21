@@ -1,5 +1,6 @@
 ---
 import type { ArticleBreadcrumbItem } from '@/lib/article-taxonomy'
+import NotebookBreadcrumb from '@/components/ui/notebook/NotebookBreadcrumb.astro'
 
 type Props = {
   items: ArticleBreadcrumbItem[]
@@ -9,18 +10,12 @@ const { items } = Astro.props
 ---
 
 {items.length > 0 ? (
-  <nav aria-label="Breadcrumb">
-    <ol class="m-0 mt-1 flex flex-wrap gap-[0.35rem] p-0 text-[0.92rem] leading-[1.55] text-article-body lg:text-[1rem]">
-      {items.map((item, index) => (
-        <li class="inline-flex items-center gap-[0.35rem]">
-          {item.href ? (
-            <a class="transition-colors duration-150 hover:text-site-link-hover" href={item.href}>{item.label}</a>
-          ) : (
-            <span aria-current={index === items.length - 1 ? 'page' : undefined}>{item.label}</span>
-          )}
-          {index < items.length - 1 ? <span class="text-site-line-strong">/</span> : null}
-        </li>
-      ))}
-    </ol>
-  </nav>
+  <NotebookBreadcrumb
+    ariaLabel="Breadcrumb"
+    class="site-notebook-breadcrumb"
+    items={items.map((item) => ({
+      href: item.href ?? undefined,
+      label: item.label,
+    }))}
+  />
 ) : null}

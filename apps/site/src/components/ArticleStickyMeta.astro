@@ -67,7 +67,7 @@ const controllerId = randomUUID()
     class={cn(
       ui.panel,
       ui.spotlightPanel,
-      'gap-3 border-0 bg-transparent px-0 py-0 lg:px-0 lg:py-0 xl:px-4 xl:py-4 xl:max-h-[calc(100vh-8.5rem)] xl:overflow-y-auto',
+      'gap-3 border-0 bg-transparent px-0 py-0 lg:px-0 lg:py-0 xl:max-h-[calc(100vh-8.5rem)] xl:overflow-y-auto xl:border xl:border-dashed xl:border-site-line-strong xl:bg-site-panel xl:px-4 xl:py-4',
     )}
     {...getDataHookAttributes(sharedDomHooks.controllerId, controllerId)}
     {...getDataHookAttributes(articleCompletionPanelDomHooks.completionId, completionId ?? '')}
@@ -100,7 +100,7 @@ const controllerId = randomUUID()
                 <a
                   class={cn(
                     'article-toc-link',
-                    'px-0 py-0.5 text-[0.9rem] leading-[1.45] text-site-link-hover transition-colors duration-150 hover:text-site-link-hover focus-visible:text-site-link-hover focus-visible:outline-none xl:text-site-line-strong lg:text-[0.94rem]',
+                    'px-1 py-0.5 [font-family:var(--notebook-font-book)] text-[0.9rem] leading-[1.45] text-site-link-hover transition-colors duration-150 hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover xl:text-site-line-strong lg:text-[0.94rem]',
                     heading.depth > 2 && 'ml-2 text-[0.82rem] lg:text-[0.88rem]',
                   )}
                   {...getDataHookAttributes(articleStickyMetaDomHooks.tocLink)}
@@ -117,7 +117,7 @@ const controllerId = randomUUID()
       </div>
     ) : null}
 
-    <div class="article-reading-progress hidden gap-2 border-t border-site-line pt-4 xl:grid" data-js-only="true" {...getDataHookAttributes(articleStickyMetaDomHooks.readingProgress)}>
+    <div class="article-reading-progress hidden gap-2 border-t border-dashed border-site-line-strong pt-4 xl:grid" data-js-only="true" {...getDataHookAttributes(articleStickyMetaDomHooks.readingProgress)}>
       <div class="flex items-center gap-3">
         <div class={cn('min-w-0 flex-1', ui.progressTrack)}>
           <div
@@ -133,7 +133,7 @@ const controllerId = randomUUID()
 
     {showCompletionInPlace ? (
       <div
-        class="grid gap-3 overflow-hidden border-t border-site-line"
+        class="grid gap-3 overflow-hidden border-t border-dashed border-site-line-strong"
         {...getDataHookAttributes(articleStickyMetaDomHooks.stickyDirection)}
         style="max-height: 0; opacity: 0; transform: translateY(0.5rem); padding-top: 0; border-top-color: transparent; pointer-events: none; transition: max-height 300ms ease, opacity 220ms ease, transform 300ms ease, padding-top 300ms ease, border-top-color 220ms ease;"
       >
@@ -150,7 +150,7 @@ const controllerId = randomUUID()
 
     <div
       aria-hidden="true"
-      class="article-reading-progress article-reading-progress-mobile pointer-events-none fixed inset-x-0 bottom-0 z-40 border-t border-site-line bg-site-panel px-3 pt-0 pb-0 shadow-(--site-shadow-mobile-progress) xl:hidden"
+      class="article-reading-progress article-reading-progress-mobile pointer-events-none fixed inset-x-0 bottom-0 z-40 border-t border-dashed border-site-line-strong bg-site-panel px-3 pt-0 pb-0 shadow-(--site-shadow-mobile-progress) xl:hidden"
       data-js-only="true"
       {...getDataHookAttributes(articleStickyMetaDomHooks.mobileReadingProgress)}
     >
