@@ -1,5 +1,11 @@
 ---
+import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+import '@/styles/notebook-accordion.css'
+import '@/styles/notebook-blockquote.css'
+import '@/styles/notebook-code-block.css'
+import '@/styles/notebook-highlight.css'
 import '@/styles/notebook-post-it.css'
+import '@/styles/notebook-table.css'
 
 type Props = {
   class?: string
@@ -11,6 +17,132 @@ const { class: className }: Props = Astro.props
 <div class:list={['article-prose', 'notebook-manual-prose', className]}>
   <slot />
 </div>
+
+<template data-notebook-accordion-indicator-template>
+  <span aria-hidden="true" class="notebook-accordion-item__indicator">
+    <DoodleIcon name="arrow-right" size={17} />
+  </span>
+</template>
+
+<script>
+  function setupNotebookManualAccordions() {
+    const template = document.querySelector<HTMLTemplateElement>('[data-notebook-accordion-indicator-template]')
+    const questions = document.querySelectorAll<HTMLDetailsElement>('.notebook-manual-prose .interview-question')
+
+    questions.forEach((question) => {
+      if (question.dataset.notebookAccordionItem === 'true') return
+
+      question.classList.add('notebook-accordion-item')
+      question.dataset.notebookAccordionItem = 'true'
+      question.dataset.tone = 'accent'
+
+      const summary = question.querySelector<HTMLElement>(':scope > summary')
+      if (summary && !summary.querySelector('.notebook-accordion-item__tape')) {
+        const title = document.createElement('span')
+        title.append(...Array.from(summary.childNodes))
+
+        const tape = document.createElement('span')
+        tape.className = 'notebook-accordion-item__tape'
+        tape.setAttribute('aria-hidden', 'true')
+
+        summary.append(tape, title)
+        if (template) summary.append(template.content.cloneNode(true))
+      }
+
+      let answer = question.querySelector<HTMLElement>(':scope > .interview-answer')
+      if (!answer && summary) {
+        answer = document.createElement('div')
+        answer.className = 'interview-answer'
+        const answerNodes = Array.from(question.childNodes).filter((node) => node !== summary)
+        answer.append(...answerNodes)
+        question.append(answer)
+      }
+      answer?.classList.add('notebook-accordion-item__content')
+    })
+  }
+
+  function setupNotebookManualBlockquotes() {
+    const quotes = document.querySelectorAll<HTMLQuoteElement>('.notebook-manual-prose blockquote')
+
+    quotes.forEach((quote) => {
+      if (quote.closest('.notebook-blockquote')) return
+
+      const figure = document.createElement('figure')
+      figure.className = 'notebook-blockquote'
+      figure.dataset.tone = 'accent'
+
+      const mark = document.createElement('span')
+      mark.className = 'notebook-blockquote__mark'
+      mark.setAttribute('aria-hidden', 'true')
+      mark.textContent = '“'
+
+      const body = document.createElement('div')
+      body.append(...Array.from(quote.childNodes))
+      quote.append(mark, body)
+      quote.before(figure)
+      figure.append(quote)
+    })
+  }
+
+  function setupNotebookManualCodeBlocks() {
+    const blocks = document.querySelectorAll<HTMLPreElement>('.notebook-manual-prose pre:not([data-mermaid-source]):not(.notebook-code-block__pre)')
+
+    blocks.forEach((block) => {
+      const figure = document.createElement('figure')
+      figure.className = 'notebook-code-block'
+      figure.dataset.tone = 'accent'
+
+      block.classList.add('notebook-code-block__pre')
+      block.dataset.lineNumbers = 'off'
+      block.style.removeProperty('background-color')
+
+      const code = block.querySelector<HTMLElement>(':scope > code')
+      code?.classList.add('notebook-code-block__code')
+      code?.querySelectorAll<HTMLElement>(':scope > .line').forEach((line) => {
+        line.classList.add('notebook-code-block__line')
+      })
+
+      block.before(figure)
+      figure.append(block)
+    })
+  }
+
+  function setupNotebookManualHighlights() {
+    const highlights = document.querySelectorAll<HTMLElement>('.notebook-manual-prose mark, .notebook-manual-prose .book-marker')
+
+    highlights.forEach((highlight) => {
+      highlight.classList.add('notebook-highlight')
+      highlight.dataset.tone = highlight.dataset.tone ?? 'yellow'
+      highlight.dataset.variant = highlight.dataset.variant ?? 'marker'
+    })
+  }
+
+  function setupNotebookManualTables() {
+    const tables = document.querySelectorAll<HTMLTableElement>('.notebook-manual-prose table')
+
+    tables.forEach((table) => {
+      if (table.closest('.notebook-table-wrap')) return
+
+      const wrapper = document.createElement('div')
+      wrapper.className = 'notebook-table-wrap'
+      wrapper.dataset.zebra = 'false'
+      table.classList.add('notebook-table')
+      table.before(wrapper)
+      wrapper.append(table)
+    })
+  }
+
+  setupNotebookManualBlockquotes()
+  setupNotebookManualCodeBlocks()
+  setupNotebookManualHighlights()
+  setupNotebookManualAccordions()
+  setupNotebookManualTables()
+  document.addEventListener('astro:page-load', setupNotebookManualBlockquotes)
+  document.addEventListener('astro:page-load', setupNotebookManualCodeBlocks)
+  document.addEventListener('astro:page-load', setupNotebookManualHighlights)
+  document.addEventListener('astro:page-load', setupNotebookManualAccordions)
+  document.addEventListener('astro:page-load', setupNotebookManualTables)
+</script>
 
 <style>
   .notebook-manual-prose {
@@ -53,143 +185,14 @@ const { class: className }: Props = Astro.props
     letter-spacing: -0.01em;
   }
 
-  :global(.notebook-manual-prose .interview-question) {
-    --accordion-bg: var(--notebook-post-it-blue-bg);
-    --accordion-ink: var(--notebook-post-it-blue-ink);
+  :global(.notebook-manual-prose .notebook-accordion-item) {
     margin-block: 0.75rem;
-    overflow: hidden;
-    background: color-mix(in srgb, var(--accordion-bg) 18%, var(--site-surface));
-    border: 1px solid color-mix(in srgb, var(--accordion-ink) 30%, transparent);
-    border-radius: 0.65rem 0.85rem 0.6rem 0.8rem;
-    interpolate-size: allow-keywords;
   }
 
-  :global(.notebook-manual-prose .interview-question summary) {
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 0.75rem;
-    align-items: center;
-    padding: 0.95rem 3rem 0.9rem 1rem;
-    color: var(--accordion-ink);
-    font-family: var(--notebook-font-hand);
-    font-size: var(--notebook-hand-md);
-    font-weight: var(--notebook-hand-weight-strong);
-    line-height: 1.15;
-    list-style: none;
-  }
-
-  :global(.notebook-manual-prose .interview-question summary::before) {
-    position: absolute;
-    top: -0.1rem;
-    left: 1.1rem;
-    width: 3.2rem;
-    height: 0.45rem;
-    background: color-mix(in srgb, var(--accordion-bg) 72%, transparent);
-    content: '';
-    transform: rotate(-0.25deg);
-  }
-
-  :global(.notebook-manual-prose .interview-question summary::-webkit-details-marker) {
-    display: none;
-  }
-
-  :global(.notebook-manual-prose .interview-question summary::after) {
-    position: absolute;
-    top: 50%;
-    right: 1rem;
-    color: var(--accordion-ink);
-    content: '→';
-    font-family: var(--notebook-font-hand);
-    font-size: var(--notebook-hand-lg);
-    font-weight: var(--notebook-hand-weight-strong);
-    line-height: 1;
-    transform: translateY(-50%) rotate(0deg);
-    transition: transform 150ms var(--site-transition-smooth);
-  }
-
-  :global(.notebook-manual-prose .interview-question[open] summary::after) {
-    transform: translateY(-50%) rotate(90deg);
-  }
-
-  :global(.notebook-manual-prose .interview-question summary:focus-visible) {
-    outline: 2px dashed var(--accordion-ink);
-    outline-offset: -4px;
-  }
-
-  :global(.notebook-manual-prose .interview-answer) {
-    padding: 0.15rem 1rem 1rem;
-    color: var(--site-ink);
-    border-top: 1px dashed color-mix(in srgb, var(--accordion-ink) 24%, transparent);
-    font-family: var(--notebook-font-book);
-    line-height: 1.65;
-  }
-
-  :global(.notebook-manual-prose .interview-answer p) {
-    margin: 0.9rem 0 0;
-  }
-
-  :global(.notebook-manual-prose blockquote:not(.interview-answer)) {
-    position: relative;
-    margin-block: 2rem;
-    padding: 1.25rem 1.35rem 1.15rem 3.25rem;
-    color: var(--site-ink);
-    background: color-mix(in srgb, var(--notebook-post-it-blue-bg) 12%, var(--site-surface));
-    border: 0;
-    border-left: 0.35rem solid color-mix(in srgb, var(--notebook-post-it-blue-ink) 55%, transparent);
-    border-radius: 0.35rem 0.85rem 0.7rem 0.35rem;
-    font-family: var(--notebook-font-book);
-    font-style: italic;
-  }
-
-  :global(.notebook-manual-prose blockquote:not(.interview-answer)::before) {
-    position: absolute;
-    top: 0.7rem;
-    left: 0.85rem;
-    color: var(--notebook-post-it-blue-ink);
-    content: '“';
-    font-family: var(--notebook-font-hand);
-    font-size: var(--notebook-hand-2xl);
-    font-weight: var(--notebook-hand-weight-strong);
-    line-height: 0.72;
-    transform: rotate(-2deg);
-  }
-
-  :global(.notebook-manual-prose table) {
-    border: 1px solid var(--site-line);
-    border-radius: 0.7rem 0.9rem 0.65rem 0.85rem;
-    background: transparent;
-  }
-
-  :global(.notebook-manual-prose table th) {
-    color: var(--site-ink);
-    background: color-mix(in srgb, var(--notebook-post-it-blue-bg) 24%, var(--site-surface));
-    font-family: var(--notebook-font-hand);
-    font-size: var(--notebook-hand-sm);
-    font-weight: var(--notebook-hand-weight-strong);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  :global(.notebook-manual-prose table tbody tr:first-child td),
-  :global(.notebook-manual-prose table tbody tr + tr td) {
-    border-top: 1px dashed var(--site-line-strong);
-  }
-
-  :global(.notebook-manual-prose mark),
-  :global(.notebook-manual-prose .book-marker) {
-    padding-inline: 0.08em;
-    color: inherit;
-    background-color: transparent;
-    background-image: linear-gradient(
-      177deg,
-      transparent 15%,
-      var(--notebook-highlight-yellow) 16%,
-      var(--notebook-highlight-yellow) 88%,
-      transparent 89%
-    );
-    box-decoration-break: clone;
-    -webkit-box-decoration-break: clone;
+  :global(.notebook-manual-prose .notebook-blockquote),
+  :global(.notebook-manual-prose .notebook-code-block),
+  :global(.notebook-manual-prose .notebook-table-wrap) {
+    margin-block: 1.75rem 2rem;
   }
 
   :global(.notebook-manual-prose .book-sketch-note) {
@@ -277,9 +280,4 @@ const { class: className }: Props = Astro.props
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    :global(.notebook-manual-prose .interview-question summary::after) {
-      transition: none;
-    }
-  }
 </style>

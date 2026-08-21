@@ -1,5 +1,6 @@
 ---
-import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+import NotebookCard from '@/components/ui/notebook/NotebookCard.astro'
+import NotebookDivider from '@/components/ui/notebook/NotebookDivider.astro'
 
 type ChapterLink = {
   context: string
@@ -30,40 +31,38 @@ const labels = locale === 'pt-br'
 {previous || next ? (
   <nav
     aria-label={labels.navigation}
-    class="mt-12 grid gap-3 border-t border-dashed border-site-line-strong pt-6 sm:grid-cols-2"
+    class="mt-12 grid gap-5"
     data-book-secondary-ui
     data-pagefind-ignore
   >
-    {previous ? (
-      <a
-        class="group grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 rounded-md border border-dashed border-site-line-strong bg-site-panel px-4 py-4 transition-colors hover:bg-site-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
-        href={previous.href}
-      >
-        <DoodleIcon class="text-site-link-hover" name="arrow-left" size={18} />
-        <span class="grid gap-1">
-          <span class="[font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
-            {labels.previous}
-          </span>
-          <strong class="[font-family:var(--notebook-font-book)] leading-5 text-site-ink group-hover:text-site-link-hover">{previous.title}</strong>
-          <span class="[font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) text-site-ink-muted">{previous.context}</span>
-        </span>
-      </a>
-    ) : <span></span>}
+    <NotebookDivider density="loose" tone="strong" />
+    <div class="grid gap-3 sm:grid-cols-2">
+      {previous ? (
+        <NotebookCard
+          cornerFold={false}
+          href={previous.href}
+          icon="arrow-left"
+          kicker={labels.previous}
+          title={previous.title}
+          variant="outlined"
+        >
+          <p>{previous.context}</p>
+        </NotebookCard>
+      ) : <span></span>}
 
-    {next ? (
-      <a
-        class="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-md border border-dashed border-site-line-strong bg-site-panel px-4 py-4 text-right transition-colors hover:bg-site-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
-        href={next.href}
-      >
-        <span class="grid gap-1">
-          <span class="[font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
-            {labels.next}
-          </span>
-          <strong class="[font-family:var(--notebook-font-book)] leading-5 text-site-ink group-hover:text-site-link-hover">{next.title}</strong>
-          <span class="[font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) text-site-ink-muted">{next.context}</span>
-        </span>
-        <DoodleIcon class="text-site-link-hover" name="arrow-right" size={18} />
-      </a>
-    ) : null}
+      {next ? (
+        <NotebookCard
+          cornerFold={false}
+          href={next.href}
+          icon="arrow-right"
+          kicker={labels.next}
+          title={next.title}
+          tone="accent"
+          variant="outlined"
+        >
+          <p>{next.context}</p>
+        </NotebookCard>
+      ) : null}
+    </div>
   </nav>
 ) : null}

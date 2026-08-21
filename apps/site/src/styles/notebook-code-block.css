@@ -1,0 +1,100 @@
+.notebook-code-block {
+  --code-ink: var(--notebook-post-it-blue-ink);
+  --code-bg: color-mix(in srgb, var(--site-surface-strong) 82%, var(--site-bg));
+  position: relative;
+  display: block;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: var(--code-bg);
+  border: 1.5px dashed color-mix(in srgb, var(--code-ink) 32%, transparent);
+  border-radius: 0.7rem 0.9rem 0.7rem 0.85rem;
+  box-shadow: 0 0.55rem 1.1rem rgb(var(--notebook-shadow-rgb) / 0.14);
+}
+
+.notebook-code-block[data-tone='coral'] { --code-ink: var(--notebook-post-it-coral-ink); }
+.notebook-code-block[data-tone='mint'] { --code-ink: var(--notebook-post-it-mint-ink); }
+.notebook-code-block[data-tone='lemon'] { --code-ink: var(--notebook-post-it-lemon-ink); }
+.notebook-code-block[data-tone='pink'] { --code-ink: var(--notebook-post-it-pink-ink); }
+.notebook-code-block[data-tone='violet'] { --code-ink: var(--notebook-sticker-violet-ink); }
+
+.notebook-code-block__ribbon {
+  position: absolute;
+  top: -0.55rem;
+  right: 1.2rem;
+  z-index: 2;
+  display: inline-grid;
+  place-items: center;
+  line-height: 0;
+}
+
+.notebook-code-block__ribbon-text {
+  position: absolute;
+  inset: 0;
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  justify-content: center;
+  color: var(--code-ink);
+  font-family: var(--notebook-font-hand);
+  font-size: var(--notebook-hand-sm);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+  transform: rotate(-1.2deg);
+}
+
+.notebook-code-block__filename {
+  font-family: var(--notebook-font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+figure.notebook-code-block > .notebook-code-block__pre {
+  margin: 0;
+  padding: 1.1rem 1.25rem 1.15rem;
+  overflow-x: auto;
+  color: color-mix(in srgb, var(--site-ink-bright, var(--site-ink)) 92%, transparent);
+  background: transparent !important;
+  font-family: var(--notebook-font-mono);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  tab-size: 2;
+}
+
+figure.notebook-code-block > .notebook-code-block__pre > .notebook-code-block__code {
+  display: grid;
+  gap: 0;
+  color: inherit;
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.notebook-code-block__line {
+  display: block;
+  white-space: pre;
+}
+
+.notebook-code-block__pre[data-line-numbers='on'] .notebook-code-block__line {
+  display: grid;
+  grid-template-columns: 2.4rem 1fr;
+  gap: 0.75rem;
+  align-items: baseline;
+}
+
+.notebook-code-block__ln {
+  color: color-mix(in srgb, var(--site-ink-muted) 78%, transparent);
+  font-size: 0.78rem;
+  text-align: right;
+  user-select: none;
+}
+
+.notebook-code-block__line-text {
+  display: inline;
+  white-space: pre;
+}

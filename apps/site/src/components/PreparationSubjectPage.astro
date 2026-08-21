@@ -3,14 +3,17 @@ import type { CollectionEntry } from 'astro:content'
 import { render } from 'astro:content'
 
 import BookSketchAnnotations from '@/components/BookSketchAnnotations.astro'
-import BookWiredElements from '@/components/BookWiredElements.astro'
 import MermaidDiagrams from '@/components/MermaidDiagrams.astro'
 import PreparationBookShell from '@/components/PreparationBookShell.astro'
 import PreparationChapterPager from '@/components/PreparationChapterPager.astro'
 import PreparationChapterRail from '@/components/PreparationChapterRail.astro'
 import NotebookBookmark from '@/components/ui/notebook/NotebookBookmark.astro'
 import NotebookBreadcrumb from '@/components/ui/notebook/NotebookBreadcrumb.astro'
+import NotebookCard from '@/components/ui/notebook/NotebookCard.astro'
+import NotebookDivider from '@/components/ui/notebook/NotebookDivider.astro'
+import NotebookLink from '@/components/ui/notebook/NotebookLink.astro'
 import NotebookManualProse from '@/components/ui/notebook/NotebookManualProse.astro'
+import NotebookMethodChain from '@/components/ui/notebook/NotebookMethodChain.astro'
 import NotebookSticker from '@/components/ui/notebook/NotebookSticker.astro'
 import { getChallengeHrefFromEntry } from '@/lib/challenge-links'
 import { resolveLocaleHrefMap, resolveLocaleMap } from '@/lib/locale-config'
@@ -211,7 +214,9 @@ const breadcrumbItems = [
           <h1 class="preparation-book-title mb-0 mt-3 text-[clamp(2.35rem,5vw,3.9rem)] font-semibold leading-[1.01] tracking-[-0.04em] text-site-ink">
             {guide.data.title}
           </h1>
-          <wired-divider class="book-chapter-divider mt-5" elevation="1" aria-hidden="true"></wired-divider>
+          <div class="book-chapter-divider mt-5">
+            <NotebookDivider density="dense" tone="accent" />
+          </div>
           <div class="mt-6 grid items-center gap-3 sm:grid-cols-[minmax(0,1fr)_9rem]">
             <p class="m-0 max-w-[65ch] text-[1.05rem] leading-8 text-site-ink-soft">
               {guide.data.description}
@@ -229,11 +234,20 @@ const breadcrumbItems = [
             </div>
           </div>
           {isDraft ? (
-            <p class="mt-4 inline-flex rounded-md border border-dashed border-site-line-strong bg-site-panel px-3 py-1 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold text-site-ink-muted" data-pagefind-ignore>
-              {copy.draft}
-            </p>
+            <div class="mt-4" data-pagefind-ignore>
+              <NotebookSticker icon="note" label={copy.draft} size="small" tone="lemon" />
+            </div>
           ) : null}
         </header>
+
+        {guide.data.method ? (
+          <section aria-label={guide.data.method.ariaLabel} class="mt-9">
+            <NotebookMethodChain
+              direction={guide.data.method.direction}
+              steps={guide.data.method.steps}
+            />
+          </section>
+        ) : null}
 
         <div class="mt-6 lg:hidden" data-book-secondary-ui>
           <PreparationChapterRail
@@ -257,24 +271,31 @@ const breadcrumbItems = [
           />
         </div>
 
-        <section class="mt-12 grid gap-5 border-t border-dashed border-site-line-strong pt-7" data-pagefind-ignore>
+        <section class="mt-12 grid gap-5" data-pagefind-ignore>
+          <NotebookDivider density="loose" tone="strong" />
           <p class="m-0 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-site-ink-muted">
             {copy.sources}
           </p>
-          {sourceGroups.map((group) => (
-            <div class="grid gap-2">
-              <h2 class="m-0 text-base font-semibold text-site-ink">{group.label}</h2>
-              <ul class="m-0 grid gap-2 pl-5 md:grid-cols-2">
-                {group.sources.map((source) => (
-                  <li>
-                    <a class="text-site-link-hover underline underline-offset-4" href={source.url} rel="noreferrer">
-                      {source.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div class="grid gap-4 md:grid-cols-2">
+            {sourceGroups.map((group) => (
+              <NotebookCard
+                cornerFold={false}
+                icon="book"
+                title={group.label}
+                variant="outlined"
+              >
+                <ul class="m-0 grid gap-2 pl-5">
+                  {group.sources.map((source) => (
+                    <li>
+                      <NotebookLink external href={source.url} variant="underline">
+                        {source.label}
+                      </NotebookLink>
+                    </li>
+                  ))}
+                </ul>
+              </NotebookCard>
+            ))}
+          </div>
         </section>
 
         <PreparationChapterPager locale={locale} next={nextChapter} previous={previousChapter} />
@@ -291,7 +312,6 @@ const breadcrumbItems = [
     </div>
   </div>
   <BookSketchAnnotations />
-  <BookWiredElements />
   {hasMermaidDiagrams ? <MermaidDiagrams locale={locale} /> : null}
 </PreparationBookShell>
 
@@ -301,15 +321,7 @@ const breadcrumbItems = [
   }
 
   .book-chapter-divider {
-    display: block;
     width: 3.5rem;
-    min-height: 0.4rem;
-    color: var(--site-accent);
-    border-top: 2px solid var(--site-accent);
-  }
-
-  .book-chapter-divider:defined {
-    border-top-color: transparent;
   }
 
   .book-chapter-lead-actions {

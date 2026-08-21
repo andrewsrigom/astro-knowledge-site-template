@@ -1,5 +1,7 @@
 ---
-import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
+import NotebookCard from '@/components/ui/notebook/NotebookCard.astro'
+import NotebookLink from '@/components/ui/notebook/NotebookLink.astro'
+import NotebookTOC from '@/components/ui/notebook/NotebookTOC.astro'
 
 type RailLink = {
   description?: string
@@ -31,104 +33,81 @@ const labels = locale === 'pt-br'
       practices: 'Related practice',
       sections: 'In this chapter',
     }
+const tocItems = sections.map((section) => ({
+  id: section.href.replace(/^#/, ''),
+  level: 2 as const,
+  title: section.title,
+}))
 ---
 
 <div class="grid gap-4" data-pagefind-ignore>
-  {sections.length > 0 ? (
-    <wired-card class="book-rail-card" elevation="1">
-      <section class="p-4">
-        <p class="book-rail-heading m-0 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-site-ink-muted">
-          <DoodleIcon name="checklist" size={15} />
-          <span>{labels.sections}</span>
-        </p>
-        <wired-divider class="book-rail-divider" elevation="1" aria-hidden="true"></wired-divider>
-        <ul class="mb-0 mt-3 grid list-none gap-2 p-0 text-sm leading-5">
-          {sections.map((section) => (
-            <li>
-              <a class="text-site-link-hover hover:text-site-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover" href={section.href}>
-                {section.title}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </wired-card>
+  {tocItems.length > 0 ? (
+    <NotebookTOC
+      ariaLabel={labels.sections}
+      items={tocItems}
+      selector=".preparation-manual-prose > h2"
+      title={labels.sections}
+    />
   ) : null}
 
   {practices.length > 0 ? (
-    <wired-card class="book-rail-card" elevation="1">
-      <section class="p-4">
-        <p class="book-rail-heading m-0 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-site-ink-muted">
-          <DoodleIcon name="target" size={15} />
-          <span>{labels.practices}</span>
-        </p>
-        <wired-divider class="book-rail-divider" elevation="1" aria-hidden="true"></wired-divider>
-        <ul class="mb-0 mt-3 grid list-none gap-2 p-0">
-          {practices.map((practice) => (
-            <li>
-              <a class="[font-family:var(--notebook-font-book)] text-sm font-semibold leading-5 text-site-link-hover hover:text-site-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover" href={practice.href}>
-                {practice.title}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </wired-card>
+    <NotebookCard
+      class="preparation-rail-card"
+      cornerFold={false}
+      icon="target"
+      title={labels.practices}
+      tone="accent"
+      variant="outlined"
+    >
+      <ul class="preparation-rail-list">
+        {practices.map((practice) => (
+          <li>
+            <NotebookLink href={practice.href} variant="plain">{practice.title}</NotebookLink>
+          </li>
+        ))}
+      </ul>
+    </NotebookCard>
   ) : null}
 
   {glossary.length > 0 ? (
-    <wired-card class="book-rail-card" elevation="1">
-      <section class="p-4">
-        <p class="book-rail-heading m-0 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-site-ink-muted">
-          <DoodleIcon name="brackets" size={15} />
-          <span>{labels.glossary}</span>
-        </p>
-        <wired-divider class="book-rail-divider" elevation="1" aria-hidden="true"></wired-divider>
-        <ul class="mb-0 mt-3 grid list-none gap-2 p-0 text-sm leading-5">
-          {glossary.map((term) => (
-            <li>
-              <a class="text-site-link-hover hover:text-site-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover" href={term.href}>{term.title}</a>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </wired-card>
+    <NotebookCard
+      class="preparation-rail-card"
+      cornerFold={false}
+      icon="brackets"
+      title={labels.glossary}
+      tone="violet"
+      variant="outlined"
+    >
+      <ul class="preparation-rail-list">
+        {glossary.map((term) => (
+          <li>
+            <NotebookLink href={term.href} tone="violet" variant="plain">{term.title}</NotebookLink>
+          </li>
+        ))}
+      </ul>
+    </NotebookCard>
   ) : null}
 </div>
 
 <style>
-  .book-rail-card {
-    display: block;
-    box-sizing: border-box;
+  :global(.preparation-rail-card) {
     min-width: 0;
-    width: 100%;
-    color: color-mix(in srgb, var(--site-accent) 72%, var(--site-line-strong));
+    padding: 1rem 1.05rem 1.1rem;
   }
 
-  .book-rail-card > section {
-    min-width: 0;
-    color: var(--site-ink);
+  .preparation-rail-list {
+    display: grid;
+    gap: 0.55rem;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.35;
+    list-style: none;
   }
 
-  .book-rail-card a {
+  .preparation-rail-list li,
+  .preparation-rail-list :global(a) {
+    min-width: 0;
     overflow-wrap: anywhere;
-  }
-
-  .book-rail-heading {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-  }
-
-  .book-rail-heading :global(.notebook-doodle-icon) {
-    color: var(--book-pencil);
-  }
-
-  .book-rail-divider {
-    display: block;
-    width: 4.5rem;
-    min-height: 0.35rem;
-    margin-top: 0.45rem;
-    color: var(--site-accent);
   }
 </style>

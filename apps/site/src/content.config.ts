@@ -155,6 +155,17 @@ const preparation = defineCollection({
     glossaryIds: z.array(z.string().min(1)).default([]),
     level: z.enum(['beginner', 'intermediate', 'advanced']),
     locale: z.string().min(1),
+    method: z.object({
+      ariaLabel: z.string().min(1),
+      direction: z.enum(['horizontal', 'vertical']).default('horizontal'),
+      steps: z.array(
+        z.object({
+          hint: z.string().min(1).optional(),
+          label: z.string().min(1),
+          tone: z.enum(['blue', 'coral', 'lemon', 'mint', 'pink', 'violet']).default('blue'),
+        }),
+      ).min(2),
+    }).optional(),
     objectives: z.array(z.string().min(1)).min(3),
     order: z.number().int().nonnegative(),
     review: z.object({

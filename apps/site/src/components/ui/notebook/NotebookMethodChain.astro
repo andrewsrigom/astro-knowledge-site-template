@@ -22,54 +22,64 @@ const {
 } = Astro.props
 ---
 
-<ol class:list={['notebook-method-chain', className]} data-direction={direction}>
-  {steps.map((step, index) => (
-    <li class="notebook-method-chain__slot">
-      <article class="notebook-method-chain__step" data-tone={step.tone ?? 'blue'}>
-        <span class="notebook-method-chain__index">{index + 1}</span>
-        <div class="notebook-method-chain__body">
-          <p class="notebook-method-chain__label">
-            {step.icon ? <DoodleIcon name={step.icon} size={16} /> : null}
-            <span>{step.label}</span>
-          </p>
-          {step.hint ? <p class="notebook-method-chain__hint">{step.hint}</p> : null}
-        </div>
-      </article>
-      {index < steps.length - 1 ? (
-        <span aria-hidden="true" class="notebook-method-chain__arrow">
-          <DoodleIcon
-            name={direction === 'vertical' ? 'arrow-right' : 'arrow-right'}
-            size={28}
-          />
-        </span>
-      ) : null}
-    </li>
-  ))}
-</ol>
+<div class="notebook-method-chain-frame">
+  <ol
+    class:list={['notebook-method-chain', className]}
+    data-direction={direction}
+    style={`--notebook-method-step-count: ${steps.length}`}
+  >
+    {steps.map((step, index) => (
+      <li class="notebook-method-chain__slot">
+        <article class="notebook-method-chain__step" data-tone={step.tone ?? 'blue'}>
+          <span class="notebook-method-chain__index">{index + 1}</span>
+          <div class="notebook-method-chain__body">
+            <p class="notebook-method-chain__label">
+              {step.icon ? <DoodleIcon name={step.icon} size={16} /> : null}
+              <span>{step.label}</span>
+            </p>
+            {step.hint ? <p class="notebook-method-chain__hint">{step.hint}</p> : null}
+          </div>
+        </article>
+        {index < steps.length - 1 ? (
+          <span aria-hidden="true" class="notebook-method-chain__arrow">
+            <DoodleIcon name="arrow-right" size={28} />
+          </span>
+        ) : null}
+      </li>
+    ))}
+  </ol>
+</div>
 
 <style>
+  .notebook-method-chain-frame {
+    container-type: inline-size;
+  }
+
   .notebook-method-chain {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(var(--notebook-method-step-count), minmax(0, 1fr));
     align-items: stretch;
-    gap: 0.35rem 0.4rem;
+    gap: 0.4rem;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
   .notebook-method-chain[data-direction='vertical'] {
-    flex-direction: column;
+    grid-template-columns: minmax(0, 1fr);
     align-items: flex-start;
   }
 
   .notebook-method-chain__slot {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: 0.4rem;
+    min-width: 0;
   }
 
   .notebook-method-chain[data-direction='vertical'] .notebook-method-chain__slot {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 0.2rem;
@@ -87,6 +97,8 @@ const {
     background: color-mix(in srgb, var(--step-bg) 46%, var(--site-surface));
     border: 1.5px solid color-mix(in srgb, var(--step-ink) 32%, transparent);
     border-radius: 0.7rem 0.95rem 0.7rem 0.9rem;
+    min-width: 0;
+    height: 100%;
   }
 
   .notebook-method-chain__step[data-tone='coral'] {
@@ -129,6 +141,7 @@ const {
   .notebook-method-chain__body {
     display: grid;
     gap: 0.1rem;
+    min-width: 0;
   }
 
   .notebook-method-chain__label {
@@ -160,5 +173,24 @@ const {
   .notebook-method-chain[data-direction='vertical'] .notebook-method-chain__arrow {
     transform: rotate(88deg);
     padding-inline: 0.6rem;
+  }
+
+  @container (max-width: 42rem) {
+    .notebook-method-chain[data-direction='horizontal'] {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .notebook-method-chain[data-direction='horizontal'] .notebook-method-chain__slot {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.2rem;
+    }
+
+    .notebook-method-chain[data-direction='horizontal'] .notebook-method-chain__arrow {
+      align-self: flex-start;
+      padding-inline: 0.6rem;
+      transform: rotate(88deg);
+    }
   }
 </style>
