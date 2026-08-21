@@ -175,6 +175,42 @@
   --radius: 16px;
   --radius-lg: 20px;
   --site-transition-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Caderno UI bridge: product tokens remain owned by SeniorPath. */
+  --cad-font-ui: var(--notebook-font-ui);
+  --cad-font-book: var(--notebook-font-book);
+  --cad-font-hand: var(--notebook-font-hand);
+  --cad-font-mono: var(--notebook-font-mono);
+  --cad-hand-sm: var(--notebook-hand-sm);
+  --cad-hand-md: var(--notebook-hand-md);
+  --cad-hand-lg: var(--notebook-hand-lg);
+  --cad-hand-weight-regular: var(--notebook-hand-weight-regular);
+  --cad-hand-weight-strong: var(--notebook-hand-weight-strong);
+  --cad-bg: var(--site-bg);
+  --cad-surface: var(--site-surface);
+  --cad-surface-strong: var(--site-surface-strong);
+  --cad-ink: var(--site-ink);
+  --cad-ink-soft: var(--site-ink-soft);
+  --cad-ink-muted: var(--site-ink-muted);
+  --cad-line: var(--site-line);
+  --cad-line-strong: var(--site-line-strong);
+  --cad-link: var(--site-link-hover);
+  --cad-control-hover: var(--site-control-hover);
+  --cad-post-it-lemon-bg: var(--notebook-post-it-lemon-bg);
+  --cad-post-it-lemon-ink: var(--notebook-post-it-lemon-ink);
+  --cad-post-it-pink-bg: var(--notebook-post-it-pink-bg);
+  --cad-post-it-pink-ink: var(--notebook-post-it-pink-ink);
+  --cad-post-it-mint-bg: var(--notebook-post-it-mint-bg);
+  --cad-post-it-mint-ink: var(--notebook-post-it-mint-ink);
+  --cad-post-it-blue-bg: var(--notebook-post-it-blue-bg);
+  --cad-post-it-blue-ink: var(--notebook-post-it-blue-ink);
+  --cad-post-it-coral-bg: var(--notebook-post-it-coral-bg);
+  --cad-post-it-coral-ink: var(--notebook-post-it-coral-ink);
+  --cad-sticker-violet-bg: var(--notebook-sticker-violet-bg);
+  --cad-sticker-violet-ink: var(--notebook-sticker-violet-ink);
+  --cad-tape-paper-bg: var(--notebook-tape-paper-bg);
+  --cad-shadow-rgb: var(--notebook-shadow-rgb);
+  --cad-transition-smooth: var(--site-transition-smooth);
 }
 
 :root[data-theme='light'] {

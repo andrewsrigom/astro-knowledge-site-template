@@ -16,6 +16,15 @@ importers:
       '@astrojs/svelte':
         specifier: ^8.0.2
         version: 8.0.2(@types/node@24.12.0)(astro@6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2))(jiti@2.6.1)(lightningcss@1.32.0)(svelte@5.54.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2)
+      '@caderno-ui/astro':
+        specifier: ^0.1.0
+        version: 0.1.0(astro@6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2))
+      '@caderno-ui/elements':
+        specifier: ^0.1.0
+        version: 0.1.0
+      '@caderno-ui/icons':
+        specifier: ^0.1.0
+        version: 0.1.0
       '@codemirror/commands':
         specifier: ^6.10.3
         version: 6.10.3
@@ -195,6 +204,20 @@ packages:
 
   '@braintree/sanitize-url@7.1.2':
     resolution: {integrity: sha512-jigsZK+sMF/cuiB7sERuo9V7N9jx+dhmHHnQyDSVdpZwVutaBu7WvNYqMDLSgFgfB30n452TP3vjDAvFC973mA==}
+
+  '@caderno-ui/astro@0.1.0':
+    resolution: {integrity: sha512-Ke0bfDAC90Dw37W2ntV0q/Vu3p0OEaIVImcrg6Azq90UIARZGcznFRNgLRfOzrxwurf9Qh2Tqz5pdVHhi4sBMA==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      astro: '>=5 <8'
+
+  '@caderno-ui/elements@0.1.0':
+    resolution: {integrity: sha512-2oZ/jDHSZb4lcDURD0XUHMP1i5yBs92b9b59iEn/0ECiRdpabkyINiaren/Kmc+XOgqpHQ8ce3gqdP6qim3j6A==}
+    engines: {node: '>=20'}
+
+  '@caderno-ui/icons@0.1.0':
+    resolution: {integrity: sha512-84XkSQnyIgV6p7wJi90omMFHHBnvKFPAVDbQHn27983MyJmPvO6SjjxptMVnFMvebhLHD9KlTvr04bbuHESoVg==}
+    engines: {node: '>=20'}
 
   '@capsizecss/unpack@4.0.0':
     resolution: {integrity: sha512-VERIM64vtTP1C4mxQ5thVT9fK0apjPFobqybMtA1UdUujWka24ERHbRHFGmpbbhp73MhV+KSsHQH9C6uOTdEQA==}
@@ -648,6 +671,12 @@ packages:
 
   '@lezer/lr@1.4.8':
     resolution: {integrity: sha512-bPWa0Pgx69ylNlMlPvBPryqeLYQjyJjqPx+Aupm5zydLIF3NE+6MMLT8Yi23Bd9cif9VS00aUebn+6fDIGBcDA==}
+
+  '@lit-labs/ssr-dom-shim@1.6.0':
+    resolution: {integrity: sha512-VHb0ALPMTlgKjM6yIxxoQNnpKyUKLD04VzeQdsiXkMqkvYlAHxq9glGLmgbb889/1GsohSOAjvQYoiBppXFqrQ==}
+
+  '@lit/reactive-element@2.1.2':
+    resolution: {integrity: sha512-pbCDiVMnne1lYUIaYNN5wrwQXDtHaYtg7YEFPeW+hws6U47WeFvISGUWekPGKWOP1ygrs0ef0o1VJMk1exos5A==}
 
   '@lucide/astro@0.577.0':
     resolution: {integrity: sha512-xZcdx+MyYXY74cBzFxr9N49SlofbGjCVD9GxJZcJA40PJvJSLWSeJpD9bgKFcZfFxf1QXkEYaR6BnCS+0lek8Q==}
@@ -2063,6 +2092,15 @@ packages:
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
 
+  lit-element@4.2.2:
+    resolution: {integrity: sha512-aFKhNToWxoyhkNDmWZwEva2SlQia+jfG0fjIWV//YeTaWrVnOxD89dPKfigCUspXFmjzOEUQpOkejH5Ly6sG0w==}
+
+  lit-html@3.3.3:
+    resolution: {integrity: sha512-el8M6jK2o3RXBnrSHX3ZKrsN8zEV63pSExTO1wYJz7QndGYZ8353e2a5PPX+qHe2aGayfnchQmkAojaWAREOIA==}
+
+  lit@3.3.3:
+    resolution: {integrity: sha512-fycuvZg/hkpozL00lm1pEJH5nN/lr9ZXd6mJI2HSN4+Bzc+LDNdEApJ6HFbPkdFNHLvOplIIuJvxkS4XUxqirw==}
+
   locate-character@3.0.0:
     resolution: {integrity: sha512-SW13ws7BjaeJ6p7Q6CO2nchbYEc3X3J6WrmTTDto7yMPqVSZTUyY5Tjbid+Ab8gLnATtygYtiDIJGQRRn2ZOiA==}
 
@@ -3293,6 +3331,19 @@ snapshots:
 
   '@braintree/sanitize-url@7.1.2': {}
 
+  '@caderno-ui/astro@0.1.0(astro@6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2))':
+    dependencies:
+      '@caderno-ui/elements': 0.1.0
+      '@caderno-ui/icons': 0.1.0
+      astro: 6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2)
+
+  '@caderno-ui/elements@0.1.0':
+    dependencies:
+      '@caderno-ui/icons': 0.1.0
+      lit: 3.3.3
+
+  '@caderno-ui/icons@0.1.0': {}
+
   '@capsizecss/unpack@4.0.0':
     dependencies:
       fontkitten: 1.0.3
@@ -3655,6 +3706,12 @@ snapshots:
   '@lezer/lr@1.4.8':
     dependencies:
       '@lezer/common': 1.5.1
+
+  '@lit-labs/ssr-dom-shim@1.6.0': {}
+
+  '@lit/reactive-element@2.1.2':
+    dependencies:
+      '@lit-labs/ssr-dom-shim': 1.6.0
 
   '@lucide/astro@0.577.0(astro@6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2))':
     dependencies:
@@ -5119,6 +5176,22 @@ snapshots:
     optional: true
 
   lines-and-columns@1.2.4: {}
+
+  lit-element@4.2.2:
+    dependencies:
+      '@lit-labs/ssr-dom-shim': 1.6.0
+      '@lit/reactive-element': 2.1.2
+      lit-html: 3.3.3
+
+  lit-html@3.3.3:
+    dependencies:
+      '@types/trusted-types': 2.0.7
+
+  lit@3.3.3:
+    dependencies:
+      '@lit/reactive-element': 2.1.2
+      lit-element: 4.2.2
+      lit-html: 3.3.3
 
   locate-character@3.0.0: {}
 
