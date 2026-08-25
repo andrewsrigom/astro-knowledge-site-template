@@ -24,6 +24,14 @@ const visualStabilityStyles = `
   html::-webkit-scrollbar {
     display: none !important;
   }
+
+  .site-transition-content {
+    view-transition-name: none !important;
+  }
+
+  astro-dev-toolbar {
+    display: none !important;
+  }
 `
 
 test.use({

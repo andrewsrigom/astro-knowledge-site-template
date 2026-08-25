@@ -19,7 +19,7 @@ test.describe("Caderno UI package integration", () => {
       .getAttribute("href");
     expect(volumeHref).toBeTruthy();
 
-    await page.goto(volumeHref!);
+    await page.goto(volumeHref!, { waitUntil: "networkidle" });
     await page.evaluate(() => customElements.whenDefined("cad-breadcrumb"));
     await expect(page.locator("cad-breadcrumb")).toBeVisible();
 
@@ -29,7 +29,7 @@ test.describe("Caderno UI package integration", () => {
       .getAttribute("href");
     expect(chapterHref).toBeTruthy();
 
-    await page.goto(chapterHref!);
+    await page.goto(chapterHref!, { waitUntil: "networkidle" });
     await Promise.all([
       page.evaluate(() => customElements.whenDefined("cad-bookmark")),
       page.evaluate(() => customElements.whenDefined("cad-card")),
