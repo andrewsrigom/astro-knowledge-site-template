@@ -24,3 +24,50 @@ const {
   items={items}
   label={ariaLabel}
 />
+
+<style is:global>
+  .notebook-breadcrumb::part(list) {
+    flex-wrap: nowrap;
+    gap: 0.45rem;
+    overflow: hidden;
+  }
+
+  .notebook-breadcrumb cad-breadcrumb-item {
+    min-width: 0;
+  }
+
+  .notebook-breadcrumb cad-breadcrumb-item:last-child {
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  .notebook-breadcrumb cad-breadcrumb-item::part(base) {
+    font-family: var(--notebook-font-ui);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .notebook-breadcrumb cad-breadcrumb-item::part(link) {
+    text-decoration: none;
+  }
+
+  .notebook-breadcrumb cad-breadcrumb-item::part(current) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background: none;
+    font-weight: 600;
+  }
+
+  .notebook-breadcrumb cad-breadcrumb-item::part(separator) {
+    color: var(--site-line-strong);
+    transform: none;
+  }
+
+  @media (max-width: 639px) {
+    .notebook-breadcrumb cad-breadcrumb-item:last-child {
+      display: none;
+    }
+  }
+</style>

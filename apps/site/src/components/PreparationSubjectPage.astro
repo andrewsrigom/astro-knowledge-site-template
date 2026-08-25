@@ -127,35 +127,9 @@ const localeHrefs = resolveLocaleHrefMap((supportedLocale) => {
     : getPreparationIndexHref(supportedLocale)
 })
 
-function toRomanNumeral(value: number) {
-  const numerals = [
-    [10, 'X'],
-    [9, 'IX'],
-    [5, 'V'],
-    [4, 'IV'],
-    [1, 'I'],
-  ] as const
-  let remaining = value
-  let result = ''
-
-  numerals.forEach(([amount, symbol]) => {
-    while (remaining >= amount) {
-      result += symbol
-      remaining -= amount
-    }
-  })
-
-  return result
-}
-
 const catalogHref = getPreparationIndexHref(locale)
-const catalogLabel = catalog.data.title
-const volumeNumber = toRomanNumeral(chapterContext.volume.order)
+const catalogLabel = locale === 'pt-br' ? 'Guia' : 'Guide'
 const volumeHref = getPreparationVolumeHref(chapterContext.volume.id, locale)
-const chapterNumbers = new Map(
-  book.chapters.map((chapter, index) => [chapter.guideId, index + 1]),
-)
-const currentChapterNumber = chapterNumbers.get(chapterContext.chapter.guideId) ?? 1
 
 function toPagerChapter(chapter: ResolvedPreparationChapter | null) {
   if (!chapter) return null
@@ -169,18 +143,12 @@ function toPagerChapter(chapter: ResolvedPreparationChapter | null) {
 
 const previousChapter = toPagerChapter(chapterContext.previousChapter)
 const nextChapter = toPagerChapter(chapterContext.nextChapter)
-const chapterLabel = locale === 'pt-br' ? 'Capítulo' : 'Chapter'
-const partLabel = locale === 'pt-br' ? 'Parte' : 'Part'
 const breadcrumbLabel = locale === 'pt-br' ? 'Localização no guia' : 'Guide location'
 const bookmarkLabel = locale === 'pt-br' ? 'Salvar capítulo' : 'Save chapter'
 const activeBookmarkLabel = locale === 'pt-br' ? 'Remover marcador' : 'Remove bookmark'
 const breadcrumbItems = [
   { href: catalogHref, label: catalogLabel },
   { href: volumeHref, label: chapterContext.volume.title },
-  {
-    href: `${volumeHref}#volume-${chapterContext.volume.id}-${chapterContext.part.id}`,
-    label: chapterContext.part.title,
-  },
   { label: guide.data.title },
 ]
 ---
@@ -207,11 +175,7 @@ const breadcrumbItems = [
             items={breadcrumbItems}
           />
 
-          <p class="mb-0 mt-7 flex items-center gap-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-site-link-hover" data-book-context>
-            <span>Volume {volumeNumber} · {partLabel} {chapterContext.part.order} · {chapterLabel}</span>
-            <span>{currentChapterNumber}</span>
-          </p>
-          <h1 class="preparation-book-title mb-0 mt-3 text-[clamp(2.35rem,5vw,3.9rem)] font-semibold leading-[1.01] tracking-[-0.04em] text-site-ink">
+          <h1 class="preparation-book-title mb-0 mt-7 text-[clamp(2.35rem,5vw,3.9rem)] font-semibold leading-[1.01] tracking-[-0.04em] text-site-ink">
             {guide.data.title}
           </h1>
           <div class="book-chapter-divider mt-5">
