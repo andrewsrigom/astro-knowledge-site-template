@@ -7,11 +7,11 @@
 :root {
   color-scheme: dark;
 
-  /* Vozes tipográficas — o livro, a anotação e o código */
-  --notebook-font-ui: 'Helvetica Neue', 'SF Pro Display', Arial, Roboto, system-ui, Georgia, serif;
-  --notebook-font-book: Georgia, 'Times New Roman', 'DejaVu Serif', serif;
-  --notebook-font-hand: 'Caveat', 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive;
-  --notebook-font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  /* Compatibility aliases. Caderno UI owns the three font roles. */
+  --notebook-font-ui: var(--cad-font-text, var(--cad-font-book));
+  --notebook-font-book: var(--cad-font-text, var(--cad-font-book));
+  --notebook-font-hand: var(--cad-font-hand);
+  --notebook-font-mono: var(--cad-font-mono);
 
   /* Escala da voz manuscrita (Caveat é maior que fontes normais, então bumpa em ~15%) */
   --notebook-hand-xs: 0.9rem;
@@ -149,14 +149,7 @@
   --site-reading-measure: 62ch;
   --site-reading-shell-measure: 68ch;
   --site-utility-shell-measure: 55rem;
-  --article-font-sans:
-    "Helvetica Neue",
-    "SF Pro Display",
-    Arial,
-    Roboto,
-    system-ui,
-    Georgia,
-    serif;
+  --article-font-sans: var(--cad-font-text, var(--cad-font-book));
   --article-heading-color: var(--site-base-ink-bright);
   --article-copy-color: var(--site-base-ink);
   --article-body-color: rgb(192, 202, 245);
@@ -176,11 +169,7 @@
   --radius-lg: 20px;
   --site-transition-smooth: cubic-bezier(0.22, 1, 0.36, 1);
 
-  /* Caderno UI bridge: product tokens remain owned by SeniorPath. */
-  --cad-font-ui: var(--notebook-font-ui);
-  --cad-font-book: var(--notebook-font-book);
-  --cad-font-hand: var(--notebook-font-hand);
-  --cad-font-mono: var(--notebook-font-mono);
+  /* Product colors extend Caderno UI; typography stays library-owned. */
   --cad-hand-sm: var(--notebook-hand-sm);
   --cad-hand-md: var(--notebook-hand-md);
   --cad-hand-lg: var(--notebook-hand-lg);
