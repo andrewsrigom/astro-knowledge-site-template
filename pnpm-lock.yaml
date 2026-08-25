@@ -17,17 +17,17 @@ importers:
         specifier: ^8.0.2
         version: 8.0.2(@types/node@24.12.0)(astro@6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2))(jiti@2.6.1)(lightningcss@1.32.0)(svelte@5.54.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2)
       '@caderno-ui/astro':
-        specifier: ^0.3.0
-        version: 0.3.0(astro@6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2))
+        specifier: ^0.3.1
+        version: 0.3.1(astro@6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2))
       '@caderno-ui/elements':
-        specifier: ^0.3.0
-        version: 0.3.0
+        specifier: ^0.3.1
+        version: 0.3.1
       '@caderno-ui/icons':
-        specifier: ^0.3.0
-        version: 0.3.0
+        specifier: ^0.3.1
+        version: 0.3.1
       '@caderno-ui/tokens':
-        specifier: ^0.3.0
-        version: 0.3.0
+        specifier: ^0.3.1
+        version: 0.3.1
       '@codemirror/commands':
         specifier: ^6.10.3
         version: 6.10.3
@@ -208,22 +208,22 @@ packages:
   '@braintree/sanitize-url@7.1.2':
     resolution: {integrity: sha512-jigsZK+sMF/cuiB7sERuo9V7N9jx+dhmHHnQyDSVdpZwVutaBu7WvNYqMDLSgFgfB30n452TP3vjDAvFC973mA==}
 
-  '@caderno-ui/astro@0.3.0':
-    resolution: {integrity: sha512-e2P3BY6l6vu2wmcAAyvJCnJgchcC3La71RxOgWYKdhthC8GwOYdvOLeu7/FUEiyvwF4ptyFUYxXl9zHqc5Llyg==}
+  '@caderno-ui/astro@0.3.1':
+    resolution: {integrity: sha512-zTBdlVFb56F4eWUQybaKcGxB3qP6fyy09snoEZWo2RhY/CBNymqEA3oaWEaESzREddn93lQAkuMCSFQllOWI+w==}
     engines: {node: '>=20'}
     peerDependencies:
       astro: '>=5 <8'
 
-  '@caderno-ui/elements@0.3.0':
-    resolution: {integrity: sha512-mZ5ai3eX1PsCW+rg2v4CiRssvDKERsSzIu/l6k08RVrlBGsDq7ZzadoLLb7bO7jt7NUBl51OxN+ndT1C2DbAxQ==}
+  '@caderno-ui/elements@0.3.1':
+    resolution: {integrity: sha512-2JrQD9WYxRBju8g0x/oh+tgGVY8tovJ636iSpD+hZNvkoIw3PRz5PzlXDkl7Mz8I0IuXmw+3NDUozH53aAFAQw==}
     engines: {node: '>=20'}
 
-  '@caderno-ui/icons@0.3.0':
-    resolution: {integrity: sha512-0jf4ClrKn5IQnsGF1BTsg7HY10tpvL2OBkiyhXlfRbTxvomDhr7Pg0Dy9l8AACrzBsztmyVn1veXWD+h38wQ8Q==}
+  '@caderno-ui/icons@0.3.1':
+    resolution: {integrity: sha512-usLm1G7emB7NgGSf6NhgrHv6wnMJ1Z1stWcgrWU41kBT/PDkQontdjaqg8j0361eLJq8C2kPcyNwC0PBXrkDXA==}
     engines: {node: '>=20'}
 
-  '@caderno-ui/tokens@0.3.0':
-    resolution: {integrity: sha512-2u1UCP+RZPX10ji+IDU5hrM8Q84crqKip0PqvQebpkcqDiuPyfpB4gRg3dAPQhtpE0DWjLgr/gA9r9Yl6KZ4UA==}
+  '@caderno-ui/tokens@0.3.1':
+    resolution: {integrity: sha512-x9EaRilgaiHLmmASI2iwAuLk6XtLDE1UzVfV1iUAOaAf6j9LApO/AAQAglO1QdQ76TVO8HoZ5mCWzBbKv46wmQ==}
     engines: {node: '>=20'}
 
   '@capsizecss/unpack@4.0.0':
@@ -932,8 +932,8 @@ packages:
       svelte: ^5.0.0
       vite: ^6.3.0 || ^7.0.0
 
-  '@swc/helpers@0.5.19':
-    resolution: {integrity: sha512-QamiFeIK3txNjgUTNppE6MiG3p7TdninpZu0E0PbqVh1a9FNLT2FRhisaa4NcaX52XVhA5l7Pk58Ft7Sqi/2sA==}
+  '@swc/helpers@0.5.23':
+    resolution: {integrity: sha512-5lSsMOTXURePglDfvuAQUqkGek9Hg2kksOYay2m0+XR++b2NWYL/4sWyuvVBIs8oKnJaxkdi9whaL/sqN13afw==}
 
   '@tailwindcss/node@4.2.1':
     resolution: {integrity: sha512-jlx6sLk4EOwO6hHe1oCGm1Q4AN/s0rSrTTPBGPM0/RQ6Uylwq17FuU8IeJJKEjtc6K6O07zsvP+gDO6MMWo7pg==}
@@ -1228,6 +1228,11 @@ packages:
 
   acorn@8.16.0:
     resolution: {integrity: sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
+
+  acorn@8.18.0:
+    resolution: {integrity: sha512-lGq+9yr1/GuAWaVYIHRjvvySG5/4VfKIvC8EWxStPdcDh/Ka7FG3twP6v4d5BkravUilhIAsG4Qj83t02LWUPQ==}
     engines: {node: '>=0.4.0'}
     hasBin: true
 
@@ -3338,21 +3343,21 @@ snapshots:
 
   '@braintree/sanitize-url@7.1.2': {}
 
-  '@caderno-ui/astro@0.3.0(astro@6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2))':
+  '@caderno-ui/astro@0.3.1(astro@6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2))':
     dependencies:
-      '@caderno-ui/elements': 0.3.0
-      '@caderno-ui/icons': 0.3.0
+      '@caderno-ui/elements': 0.3.1
+      '@caderno-ui/icons': 0.3.1
       astro: 6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2)
 
-  '@caderno-ui/elements@0.3.0':
+  '@caderno-ui/elements@0.3.1':
     dependencies:
-      '@caderno-ui/icons': 0.3.0
+      '@caderno-ui/icons': 0.3.1
       lit: 3.3.3
       roughjs: 4.6.6
 
-  '@caderno-ui/icons@0.3.0': {}
+  '@caderno-ui/icons@0.3.1': {}
 
-  '@caderno-ui/tokens@0.3.0': {}
+  '@caderno-ui/tokens@0.3.1': {}
 
   '@capsizecss/unpack@4.0.0':
     dependencies:
@@ -3674,7 +3679,7 @@ snapshots:
 
   '@internationalized/date@3.12.0':
     dependencies:
-      '@swc/helpers': 0.5.19
+      '@swc/helpers': 0.5.23
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
@@ -3901,7 +3906,7 @@ snapshots:
       vite: 7.3.1(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(yaml@2.8.2)
       vitefu: 1.1.2(vite@7.3.1(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(yaml@2.8.2))
 
-  '@swc/helpers@0.5.19':
+  '@swc/helpers@0.5.23':
     dependencies:
       tslib: 2.8.1
 
@@ -4233,6 +4238,9 @@ snapshots:
   '@vscode/l10n@0.0.18': {}
 
   acorn@8.16.0: {}
+
+  acorn@8.18.0:
+    optional: true
 
   agent-base@7.1.4: {}
 
@@ -6071,7 +6079,7 @@ snapshots:
   terser@5.46.1:
     dependencies:
       '@jridgewell/source-map': 0.3.11
-      acorn: 8.16.0
+      acorn: 8.18.0
       commander: 2.20.3
       source-map-support: 0.5.21
     optional: true
