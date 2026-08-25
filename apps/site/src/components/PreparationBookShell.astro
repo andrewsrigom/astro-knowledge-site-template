@@ -113,9 +113,9 @@ const bookSearchCopy = {
   title: labels.searchTitle,
 }
 const searchTriggerClass =
-  'inline-flex min-h-10 w-full items-center justify-between gap-3 rounded-md border border-dashed border-site-line-strong bg-site-panel px-3 py-2 text-left [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) text-site-ink-muted transition-colors hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover'
+  'inline-flex min-h-10 w-full items-center justify-between gap-3 rounded-md border border-dashed border-site-line-strong bg-site-panel px-3 py-2 text-left [font-family:var(--notebook-font-ui)] text-sm text-site-ink-muted transition-colors hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover'
 const localeTriggerClass =
-  'inline-flex min-h-10 items-center justify-center gap-1 rounded-md border border-dashed border-site-line-strong bg-site-panel px-3 py-2 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.08em] text-site-ink transition-colors hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover [&::-webkit-details-marker]:hidden'
+  'inline-flex min-h-10 items-center justify-center gap-1 rounded-md border border-dashed border-site-line-strong bg-site-panel px-3 py-2 [font-family:var(--notebook-font-ui)] text-xs font-semibold uppercase tracking-[0.08em] text-site-ink transition-colors hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover [&::-webkit-details-marker]:hidden'
 ---
 
 <BaseLayout
@@ -230,7 +230,7 @@ const localeTriggerClass =
               <DesktopLocaleMenu
                 activeClass="bg-site-hover text-site-link-hover"
                 currentLocaleCode={getLocaleShortLabel(locale)}
-                itemClass="block rounded-md px-3 py-2 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) text-site-ink-soft hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
+                itemClass="block rounded-md px-3 py-2 [font-family:var(--notebook-font-ui)] text-sm text-site-ink-soft hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
                 localeLinks={localeSwitchLinks}
                 menuClass="absolute left-0 top-full z-50 mt-2 min-w-44 rounded-md border border-dashed border-site-line-strong bg-site-panel p-2 shadow-(--site-shadow-dropdown)"
                 triggerClass={localeTriggerClass}

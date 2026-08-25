@@ -216,7 +216,7 @@
         <DoodleIcon name="search" size={17} />
         <span>{copy.placeholder}</span>
       </span>
-      <span class="rounded-md border border-dashed border-site-line-strong bg-site-surface px-1.5 py-0.5 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.08em] text-site-ink-muted lg:px-2 lg:py-[0.35rem]">
+      <span class="rounded-md border border-dashed border-site-line-strong bg-site-surface px-1.5 py-0.5 [font-family:var(--notebook-font-ui)] text-xs font-semibold uppercase tracking-[0.08em] text-site-ink-muted lg:px-2 lg:py-[0.35rem]">
         {copy.shortcut}
       </span>
     </button>
@@ -286,7 +286,7 @@
                     value={result.url}
                     {...getDataHookAttributes(searchLauncherDomHooks.resultLink)}
                   >
-                    <span class="[font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">{getGroupLabel(result.url)}</span>
+                    <span class="[font-family:var(--notebook-font-ui)] text-xs font-semibold uppercase tracking-[0.12em] text-site-ink-muted">{getGroupLabel(result.url)}</span>
                     <span class="[font-family:var(--notebook-font-book)] text-base font-semibold leading-[1.3] text-site-ink lg:text-[1.08rem]">{result.meta?.title ?? result.url}</span>
                     {#if result.excerpt}
                       <span class="[font-family:var(--notebook-font-book)] text-sm leading-6 text-site-ink-soft lg:text-[0.98rem] [&_mark]:bg-[linear-gradient(transparent_58%,var(--notebook-highlight-yellow)_59%_92%,transparent_93%)] [&_mark]:font-semibold [&_mark]:text-site-ink">
