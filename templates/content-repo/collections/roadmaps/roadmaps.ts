@@ -54,8 +54,9 @@ export type EditorialRoadmap = {
 
 export type ResolvedRoadmapArticleNode = {
   articleId: string
-  href: string
+  href: string | null
   id: string
+  isAvailableInLocale: boolean
   kind: 'article'
   position: RoadmapPosition
   post: CollectionEntry<'articles'>
@@ -257,6 +258,7 @@ function resolveRoadmap(
         articleId: node.articleId,
         href: getArticleHrefFromEntry(post),
         id: node.id,
+        isAvailableInLocale: true,
         kind: 'article',
         position: node.position,
         post,
