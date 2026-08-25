@@ -243,6 +243,7 @@ const breadcrumbItems = [
         {guide.data.method ? (
           <section aria-label={guide.data.method.ariaLabel} class="mt-9">
             <NotebookMethodChain
+              ariaLabel={guide.data.method.ariaLabel}
               direction={guide.data.method.direction}
               steps={guide.data.method.steps}
             />

@@ -17,14 +17,14 @@ importers:
         specifier: ^8.0.2
         version: 8.0.2(@types/node@24.12.0)(astro@6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2))(jiti@2.6.1)(lightningcss@1.32.0)(svelte@5.54.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2)
       '@caderno-ui/astro':
-        specifier: ^0.1.0
-        version: 0.1.0(astro@6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2))
+        specifier: ^0.2.0
+        version: 0.2.0(astro@6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2))
       '@caderno-ui/elements':
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.2.0
+        version: 0.2.0
       '@caderno-ui/icons':
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.2.0
+        version: 0.2.0
       '@codemirror/commands':
         specifier: ^6.10.3
         version: 6.10.3
@@ -205,18 +205,18 @@ packages:
   '@braintree/sanitize-url@7.1.2':
     resolution: {integrity: sha512-jigsZK+sMF/cuiB7sERuo9V7N9jx+dhmHHnQyDSVdpZwVutaBu7WvNYqMDLSgFgfB30n452TP3vjDAvFC973mA==}
 
-  '@caderno-ui/astro@0.1.0':
-    resolution: {integrity: sha512-Ke0bfDAC90Dw37W2ntV0q/Vu3p0OEaIVImcrg6Azq90UIARZGcznFRNgLRfOzrxwurf9Qh2Tqz5pdVHhi4sBMA==}
+  '@caderno-ui/astro@0.2.0':
+    resolution: {integrity: sha512-Cx1JMwI5YvYUN+8696RmKoFWtc8OwUsuGsw/NAxwBPvxPXyeYmD6vxPphJzBaVjQe3wI6yFCcvJ293WD8jtj5A==}
     engines: {node: '>=20'}
     peerDependencies:
       astro: '>=5 <8'
 
-  '@caderno-ui/elements@0.1.0':
-    resolution: {integrity: sha512-2oZ/jDHSZb4lcDURD0XUHMP1i5yBs92b9b59iEn/0ECiRdpabkyINiaren/Kmc+XOgqpHQ8ce3gqdP6qim3j6A==}
+  '@caderno-ui/elements@0.2.0':
+    resolution: {integrity: sha512-6jjMdc749MwMWp+WKVtNdEeOWid6imucUi4eqjjbOE1JPOffnTyaGvd2AbFZtk51eK5AsNLfTo/nif9a5zFyvw==}
     engines: {node: '>=20'}
 
-  '@caderno-ui/icons@0.1.0':
-    resolution: {integrity: sha512-84XkSQnyIgV6p7wJi90omMFHHBnvKFPAVDbQHn27983MyJmPvO6SjjxptMVnFMvebhLHD9KlTvr04bbuHESoVg==}
+  '@caderno-ui/icons@0.2.0':
+    resolution: {integrity: sha512-RAybM+HWlb1zy3tvH3vBvmoum9D2AgWh53mOsr27OhuAYeJY3i/p598dQoqBnUd/Rs3SKyiEQCQ68jSOvKqYIw==}
     engines: {node: '>=20'}
 
   '@capsizecss/unpack@4.0.0':
@@ -3331,18 +3331,19 @@ snapshots:
 
   '@braintree/sanitize-url@7.1.2': {}
 
-  '@caderno-ui/astro@0.1.0(astro@6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2))':
+  '@caderno-ui/astro@0.2.0(astro@6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2))':
     dependencies:
-      '@caderno-ui/elements': 0.1.0
-      '@caderno-ui/icons': 0.1.0
+      '@caderno-ui/elements': 0.2.0
+      '@caderno-ui/icons': 0.2.0
       astro: 6.0.5(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(yaml@2.8.2)
 
-  '@caderno-ui/elements@0.1.0':
+  '@caderno-ui/elements@0.2.0':
     dependencies:
-      '@caderno-ui/icons': 0.1.0
+      '@caderno-ui/icons': 0.2.0
       lit: 3.3.3
+      roughjs: 4.6.6
 
-  '@caderno-ui/icons@0.1.0': {}
+  '@caderno-ui/icons@0.2.0': {}
 
   '@capsizecss/unpack@4.0.0':
     dependencies:

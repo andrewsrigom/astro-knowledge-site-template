@@ -1,10 +1,13 @@
 ---
+import CadLink from '@caderno-ui/astro/Link.astro'
+
+type Tone = 'accent' | 'coral' | 'lemon' | 'mint' | 'pink' | 'violet'
 type Props = {
   ariaLabel?: string
   class?: string
   external?: boolean
   href: string
-  tone?: 'accent' | 'coral' | 'lemon' | 'mint' | 'pink' | 'violet'
+  tone?: Tone
   variant?: 'highlight' | 'plain' | 'underline'
 }
 
@@ -15,134 +18,17 @@ const {
   href,
   tone = 'accent',
   variant = 'highlight',
-} = Astro.props
+}: Props = Astro.props
+const cadernoTone = tone === 'accent' ? 'blue' : tone
 ---
 
-<a
-  aria-label={ariaLabel}
+<CadLink
   class:list={['notebook-link', className]}
-  data-tone={tone}
-  data-variant={variant}
+  external={external}
   href={href}
-  rel={external ? 'noopener noreferrer' : undefined}
-  target={external ? '_blank' : undefined}
+  label={ariaLabel}
+  tone={cadernoTone}
+  variant={variant}
 >
   <slot />
-  {external ? (
-    <span aria-hidden="true" class="notebook-link__external">↗</span>
-  ) : null}
-</a>
-
-<style>
-  .notebook-link {
-    --link-mark: var(--notebook-post-it-blue-bg);
-    --link-ink: var(--site-ink);
-    --link-underline: color-mix(in srgb, var(--notebook-post-it-blue-ink) 62%, transparent);
-    display: inline;
-    color: var(--link-ink);
-    text-decoration: none;
-    background-repeat: no-repeat;
-    background-position: 0 100%;
-    background-size: 100% 100%;
-    padding: 0 0.12rem;
-    border-radius: 0.15rem;
-    box-decoration-break: clone;
-    -webkit-box-decoration-break: clone;
-    transition: background-image 140ms var(--site-transition-smooth), color 140ms var(--site-transition-smooth);
-  }
-
-  .notebook-link[data-tone='coral'] {
-    --link-mark: var(--notebook-post-it-coral-bg);
-    --link-underline: var(--notebook-post-it-coral-ink);
-  }
-  .notebook-link[data-tone='mint'] {
-    --link-mark: var(--notebook-post-it-mint-bg);
-    --link-underline: var(--notebook-post-it-mint-ink);
-  }
-  .notebook-link[data-tone='lemon'] {
-    --link-mark: var(--notebook-post-it-lemon-bg);
-    --link-underline: var(--notebook-post-it-lemon-ink);
-  }
-  .notebook-link[data-tone='pink'] {
-    --link-mark: var(--notebook-post-it-pink-bg);
-    --link-underline: var(--notebook-post-it-pink-ink);
-  }
-  .notebook-link[data-tone='violet'] {
-    --link-mark: var(--notebook-sticker-violet-bg);
-    --link-underline: var(--notebook-sticker-violet-ink);
-  }
-
-  /* HIGHLIGHT — marca-texto sublinear */
-  .notebook-link[data-variant='highlight'] {
-    background-image: linear-gradient(
-      180deg,
-      transparent 68%,
-      color-mix(in srgb, var(--link-mark) 65%, transparent) 69%,
-      color-mix(in srgb, var(--link-mark) 65%, transparent) 92%,
-      transparent 93%
-    );
-  }
-
-  .notebook-link[data-variant='highlight']:hover {
-    background-image: linear-gradient(
-      180deg,
-      transparent 55%,
-      color-mix(in srgb, var(--link-mark) 82%, transparent) 56%,
-      color-mix(in srgb, var(--link-mark) 82%, transparent) 92%,
-      transparent 93%
-    );
-  }
-
-  /* UNDERLINE — só sublinhado à mão */
-  .notebook-link[data-variant='underline'] {
-    background-image: linear-gradient(
-      180deg,
-      transparent 92%,
-      var(--link-underline) 93%,
-      var(--link-underline) 96%,
-      transparent 97%
-    );
-    padding: 0;
-  }
-
-  .notebook-link[data-variant='underline']:hover {
-    background-image: linear-gradient(
-      180deg,
-      transparent 88%,
-      var(--link-underline) 89%,
-      var(--link-underline) 97%,
-      transparent 98%
-    );
-  }
-
-  /* PLAIN — sem decoração até hover */
-  .notebook-link[data-variant='plain'] {
-    color: var(--link-underline);
-    padding: 0;
-  }
-
-  .notebook-link[data-variant='plain']:hover {
-    background-image: linear-gradient(
-      180deg,
-      transparent 92%,
-      var(--link-underline) 93%,
-      var(--link-underline) 96%,
-      transparent 97%
-    );
-  }
-
-  .notebook-link:focus-visible {
-    outline: 2px dashed var(--link-underline);
-    outline-offset: 2px;
-    border-radius: 0.25rem;
-  }
-
-  .notebook-link__external {
-    display: inline-block;
-    margin-left: 0.15rem;
-    color: var(--link-underline);
-    font-size: 0.85em;
-    line-height: 1;
-    vertical-align: super;
-  }
-</style>
+</CadLink>

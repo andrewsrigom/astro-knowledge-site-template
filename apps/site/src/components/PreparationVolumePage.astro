@@ -113,7 +113,12 @@ const isDraft = catalog.data.status === 'draft'
       </div>
     </header>
 
-    <nav aria-label={`${labels.summary}: ${volume.title}`} class="mt-12 grid gap-12" data-pagefind-ignore>
+    <nav
+      aria-label={`${labels.summary}: ${volume.title}`}
+      class="mt-12 grid gap-12"
+      data-pagefind-ignore
+      data-preparation-chapter-list
+    >
       {volume.parts.map((part, partIndex) => (
         <section aria-labelledby={`volume-${volume.id}-${part.id}`} class="grid gap-4">
           <header class="grid gap-1 border-b border-dashed border-site-line-strong pb-3 sm:grid-cols-[5rem_minmax(0,1fr)] sm:gap-4">

@@ -1,5 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content'
+import CadChart from '@caderno-ui/astro/Chart.astro'
+import CadChartItem from '@caderno-ui/astro/ChartItem.astro'
 
 import PreparationBookShell from '@/components/PreparationBookShell.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
@@ -27,6 +29,7 @@ const copy = getPreparationCopy(locale)
 const labels = locale === 'pt-br'
   ? {
       chapters: 'capítulos',
+      chapterDistribution: 'Capítulos por volume',
       contents: 'Sumário',
       openVolume: 'Abrir volume',
       parts: 'Partes',
@@ -34,6 +37,7 @@ const labels = locale === 'pt-br'
     }
   : {
       chapters: 'chapters',
+      chapterDistribution: 'Chapters by volume',
       contents: 'Contents',
       openVolume: 'Open volume',
       parts: 'Parts',
@@ -57,6 +61,13 @@ const book = catalog ? resolvePreparationBook(catalog.data, preparation, challen
 const title = catalog?.data.title ?? fallbackTitle
 const description = catalog?.data.description ?? fallbackDescription
 const volumes = book?.volumes ?? []
+const volumeMetrics = volumes.map((volume, index) => ({
+  label: `${labels.volume} ${index + 1}`,
+  value: volume.parts.reduce(
+    (total, part) => total + part.chapters.length,
+    0,
+  ),
+}))
 const isDraft = catalog?.data.status === 'draft'
 ---
 
@@ -84,7 +95,26 @@ const isDraft = catalog?.data.status === 'draft'
         {isDraft ? <p class={cn(ui.badge, 'mt-5')}>{copy.draft}</p> : null}
       </header>
 
-      <nav aria-label={title} class="mt-12 grid gap-0" data-pagefind-ignore>
+      <section class="mt-10 max-w-4xl" data-preparation-overview>
+        <CadChart
+          fillStyle="hachure"
+          heading={labels.chapterDistribution}
+          seed={37}
+          type="bar"
+          valueLabel={labels.chapters}
+        >
+          {volumeMetrics.map((metric) => (
+            <CadChartItem label={metric.label} value={metric.value} />
+          ))}
+        </CadChart>
+      </section>
+
+      <nav
+        aria-label={title}
+        class="mt-12 grid gap-0"
+        data-pagefind-ignore
+        data-preparation-volume-list
+      >
         {volumes.map((volume, volumeIndex) => {
           const chapterCount = volume.parts.reduce((total, part) => total + part.chapters.length, 0)
 

@@ -1,3 +1,4 @@
+import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import svelte from '@astrojs/svelte'
@@ -11,6 +12,29 @@ import remarkMermaidDiagrams from './src/lib/remark-mermaid-diagrams.mjs'
 const defaultSiteUrl = 'https://example.com'
 const localPreviewSiteUrl = 'http://127.0.0.1:4321'
 const buildEnv = getBuildEnv()
+const syncedContentDirectory = process.env.SITE_SYNCED_CONTENT_DIR
+  ? resolve(process.env.SITE_SYNCED_CONTENT_DIR)
+  : fileURLToPath(new URL('./.content', import.meta.url))
+
+function syncedContentResolver() {
+  const contentPrefix = '@content/'
+
+  return {
+    enforce: 'pre',
+    name: 'seniorpath-synced-content',
+    async resolveId(source, importer) {
+      if (!source.startsWith(contentPrefix)) {
+        return null
+      }
+
+      return this.resolve(
+        resolve(syncedContentDirectory, source.slice(contentPrefix.length)),
+        importer,
+        { skipSelf: true },
+      )
+    },
+  }
+}
 
 function normalizeSiteUrl(value, { assumeHttps = false } = {}) {
   const normalizedValue = typeof value === 'string' ? value.trim() : ''
@@ -92,10 +116,9 @@ export default defineConfig({
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
-        '@content': fileURLToPath(new URL('./.content', import.meta.url)),
         'bits-ui': fileURLToPath(new URL('./node_modules/bits-ui/dist/index.js', import.meta.url)),
       },
     },
-    plugins: [tailwindcss()],
+    plugins: [syncedContentResolver(), tailwindcss()],
   },
 })
