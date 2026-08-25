@@ -1,7 +1,5 @@
 import { expect, test } from '@playwright/test'
 
-const localePreferenceKey = 'seniorpath.locale-preference.v1'
-
 const legalCases = [
   {
     checklistHeading: 'Operational privacy checklist',
@@ -36,11 +34,6 @@ const legalCases = [
 test.describe('legal pages', () => {
   for (const legalCase of legalCases) {
     test(`renders publication guidance for ${legalCase.path}`, async ({ page }) => {
-      await page.addInitScript(
-        ({ key, value }) => window.localStorage.setItem(key, value),
-        { key: localePreferenceKey, value: legalCase.preferredLocale },
-      )
-
       await page.goto(legalCase.path)
 
       await expect(page.getByRole('heading', { name: legalCase.title })).toBeVisible()

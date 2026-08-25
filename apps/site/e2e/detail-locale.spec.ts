@@ -1,7 +1,10 @@
 import { expect, test, type Page } from '@playwright/test'
-import { getLocaleSwitcherLinkSelector, openLocaleSwitcher, switchLocale } from './support/locale'
-
-const localePreferenceKey = 'seniorpath.locale-preference.v1'
+import {
+  getLocalePreferenceKey,
+  getLocaleSwitcherLinkSelector,
+  openLocaleSwitcher,
+  switchLocale,
+} from './support/locale'
 
 async function switchLocaleToPortuguese(page: Page) {
   await switchLocale(page, 'pt-br')
@@ -10,6 +13,7 @@ async function switchLocaleToPortuguese(page: Page) {
 test.describe('detail locale alternates', () => {
   test('switches an article detail page to the localized route', async ({ page }) => {
     await page.goto('/articles/foundations/customize-the-template-after-the-first-clone')
+    const localePreferenceKey = await getLocalePreferenceKey(page)
 
     await switchLocaleToPortuguese(page)
 
@@ -24,6 +28,7 @@ test.describe('detail locale alternates', () => {
 
   test('switches a concept detail page to the localized route', async ({ page }) => {
     await page.goto('/concepts/content-contract')
+    const localePreferenceKey = await getLocalePreferenceKey(page)
 
     await switchLocaleToPortuguese(page)
 
@@ -36,6 +41,7 @@ test.describe('detail locale alternates', () => {
 
   test('switches a track detail page to the localized route', async ({ page }) => {
     await page.goto('/tracks/first-clone-checklist')
+    const localePreferenceKey = await getLocalePreferenceKey(page)
 
     await switchLocaleToPortuguese(page)
 

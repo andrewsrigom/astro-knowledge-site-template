@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "node ./scripts/sync-content.mjs && node ./scripts/assert-site-url.mjs && node ./scripts/assert-publish-readiness.mjs && astro build && node ./scripts/build-search-index.mjs && node ./scripts/write-static-host-config.mjs",
-    "check": "node ./scripts/sync-content.mjs && astro check",
+    "check": "node ./scripts/check-site.mjs",
     "content:sync": "node ./scripts/sync-content.mjs",
     "dev": "node ./scripts/sync-content.mjs && astro dev",
     "preview": "pnpm build && astro preview",

@@ -3,6 +3,18 @@ import { desktopLocaleMenuDomHooks } from '../../src/lib/dom-hooks'
 
 export type LocaleCode = 'en' | 'pt-br'
 
+export async function getLocalePreferenceKey(page: Page) {
+  const key = await page
+    .locator('script[data-locale-preference-key]')
+    .getAttribute('data-locale-preference-key')
+
+  if (!key) {
+    throw new Error('The rendered shell did not expose its locale preference key')
+  }
+
+  return key
+}
+
 export async function openLocaleSwitcher(page: Page) {
   await page.locator(desktopLocaleMenuDomHooks.trigger.selector).click()
 }

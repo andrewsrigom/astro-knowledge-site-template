@@ -1,15 +1,11 @@
 import { expect, test } from '@playwright/test'
-import { switchLocale } from './support/locale'
-
-const localePreferenceKey = 'seniorpath.locale-preference.v1'
+import { getLocalePreferenceKey, switchLocale } from './support/locale'
 
 test.describe('shell locale flows', () => {
   test.describe('browser locale redirect', () => {
     test.use({ locale: 'pt-BR' })
 
     test('redirects the home page when the browser prefers pt-br and there is no saved preference', async ({ page }) => {
-      await page.addInitScript((key) => window.localStorage.removeItem(key), localePreferenceKey)
-
       await page.goto('/')
 
       await expect(page).toHaveURL(/\/pt-br$/)
@@ -18,8 +14,6 @@ test.describe('shell locale flows', () => {
   })
 
   test('keeps an explicit localized route when there is no saved preference', async ({ page }) => {
-    await page.addInitScript((key) => window.localStorage.removeItem(key), localePreferenceKey)
-
     await page.goto('/pt-br')
 
     await expect(page).toHaveURL(/\/pt-br$/)
@@ -28,6 +22,7 @@ test.describe('shell locale flows', () => {
 
   test('switches locale from the desktop menu and persists the preference', async ({ page }) => {
     await page.goto('/articles')
+    const localePreferenceKey = await getLocalePreferenceKey(page)
 
     await switchLocale(page, 'pt-br')
 

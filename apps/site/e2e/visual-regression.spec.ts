@@ -5,6 +5,7 @@ import { e2eHookSelectors } from './support/hooks'
 const snapshotOptions = {
   animations: 'disabled' as const,
   caret: 'hide' as const,
+  maxDiffPixelRatio: 0.001,
   scale: 'css' as const,
 }
 
