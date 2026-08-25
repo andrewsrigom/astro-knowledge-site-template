@@ -4,7 +4,7 @@ import { cn } from '@/lib/cn'
 import { ui } from '@/lib/ui'
 
 export const navLinkVariants = cva(
-  'inline-flex min-h-8 items-center justify-center rounded-md px-[0.45rem] py-[0.3rem] [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-medium text-site-ink transition-colors duration-150 hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover nav:min-h-9 nav:px-3 nav:py-2 lg:min-h-10 lg:px-3.5',
+  'inline-flex min-h-8 items-center justify-center rounded-md px-[0.45rem] py-[0.3rem] [font-family:var(--cad-font-hand)] text-(--cad-hand-sm) font-medium text-site-ink transition-colors duration-150 hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover nav:min-h-9 nav:px-3 nav:py-2 lg:min-h-10 lg:px-3.5',
   {
     variants: {
       active: {
@@ -19,7 +19,7 @@ export const navLinkVariants = cva(
 )
 
 export const filterChipVariants = cva(
-  'inline-flex min-h-[2.05rem] cursor-pointer items-center justify-center rounded-md border border-dashed border-site-line-strong bg-[color-mix(in_srgb,var(--chip-accent-dark,var(--site-surface-strong))_34%,transparent)] px-3 py-1.5 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold text-site-ink transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover lg:min-h-[2.3rem] lg:px-3.5',
+  'inline-flex min-h-[2.05rem] cursor-pointer items-center justify-center rounded-md border border-dashed border-site-line-strong bg-[color-mix(in_srgb,var(--chip-accent-dark,var(--site-surface-strong))_34%,transparent)] px-3 py-1.5 [font-family:var(--cad-font-hand)] text-(--cad-hand-xs) font-semibold text-site-ink transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover lg:min-h-[2.3rem] lg:px-3.5',
   {
     variants: {
       active: {

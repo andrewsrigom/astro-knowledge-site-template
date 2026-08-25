@@ -350,7 +350,7 @@ const __cases = ${JSON.stringify(cases)};
             EditorView.theme({
               '&': { fontSize: '0.875rem' },
               '.cm-scroller': {
-                fontFamily: 'var(--notebook-font-mono)',
+                fontFamily: 'var(--cad-font-mono)',
               },
               '.cm-content': { padding: '12px 0' },
             }),
@@ -533,11 +533,11 @@ const __cases = ${JSON.stringify(cases)};
   {...getDataHookAttributes(challengePlaygroundDomHooks.noJsFallback)}
 >
   <div class="grid gap-4">
-    <p class="[font-family:var(--notebook-font-book)] text-sm leading-6 text-site-ink-soft">
+    <p class="[font-family:var(--cad-font-book)] text-sm leading-6 text-site-ink-soft">
       {playgroundCopy.noJsDescription}
     </p>
     <div class="grid gap-2">
-      <p class="[font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
+      <p class="[font-family:var(--cad-font-hand)] text-(--cad-hand-sm) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
         {playgroundCopy.noJsCodeLabel}
       </p>
       <pre class="overflow-x-auto rounded-md border border-dashed border-site-line-strong bg-site-bg px-4 py-3 text-sm leading-6 text-site-ink"><code>{starterCode}</code></pre>
@@ -565,7 +565,7 @@ const __cases = ${JSON.stringify(cases)};
           <button
             onclick={reset}
             title={playgroundCopy.resetTitle}
-            class="challenge-playground-toolbar-action inline-flex items-center gap-1.5 rounded-md px-2 py-1 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
+            class="challenge-playground-toolbar-action inline-flex items-center gap-1.5 rounded-md px-2 py-1 [font-family:var(--cad-font-hand)] text-(--cad-hand-xs) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
           >
             <DoodleIcon name="reset" size={14} />
             {playgroundCopy.reset}
@@ -583,7 +583,7 @@ const __cases = ${JSON.stringify(cases)};
           disabled={running || !supportsExecution}
           title={supportsExecution ? playgroundCopy.runTitle : playgroundCopy.interactiveExecutionOnly}
           {...getDataHookAttributes(challengePlaygroundDomHooks.runButton)}
-          class="challenge-playground-primary inline-flex items-center gap-2 rounded-md border border-dashed border-site-line-strong px-4 py-1.5 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-medium transition-opacity hover:opacity-90 active:opacity-75 disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
+          class="challenge-playground-primary inline-flex items-center gap-2 rounded-md border border-dashed border-site-line-strong px-4 py-1.5 [font-family:var(--cad-font-hand)] text-(--cad-hand-sm) font-medium transition-opacity hover:opacity-90 active:opacity-75 disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
         >
           {#if running}
             <DoodleIcon className="animate-spin" name="reset" size={16} />
@@ -638,7 +638,7 @@ const __cases = ${JSON.stringify(cases)};
           {#if unlockedHints < hints.length}
             <button
               onclick={unlockHint}
-              class="challenge-playground-toolbar-action challenge-playground-outline-action inline-flex items-center gap-1.5 rounded-md border border-dashed border-site-line-strong px-2.5 py-1 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
+              class="challenge-playground-toolbar-action challenge-playground-outline-action inline-flex items-center gap-1.5 rounded-md border border-dashed border-site-line-strong px-2.5 py-1 [font-family:var(--cad-font-hand)] text-(--cad-hand-xs) font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
             >
               <DoodleIcon name="lightbulb" size={14} />
               {unlockedHints === 0 ? playgroundCopy.showHint : playgroundCopy.nextHint}
@@ -682,7 +682,7 @@ const __cases = ${JSON.stringify(cases)};
             </span>
             {#if allPass}
               <span
-                class="badge-allpass challenge-playground-success-badge inline-flex items-center gap-1 rounded-md border border-dashed border-site-line-strong px-2 py-0.5 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-medium"
+                class="badge-allpass challenge-playground-success-badge inline-flex items-center gap-1 rounded-md border border-dashed border-site-line-strong px-2 py-0.5 [font-family:var(--cad-font-hand)] text-(--cad-hand-xs) font-medium"
                 {...getDataHookAttributes(challengePlaygroundDomHooks.allPassingBadge)}
               >
                 <DoodleIcon name="check" size={14} />
@@ -704,7 +704,7 @@ const __cases = ${JSON.stringify(cases)};
                 <button
                   onclick={shareCode}
                   title={playgroundCopy.shareTitle}
-                  class="challenge-playground-share inline-flex items-center gap-1.5 rounded-md border border-dashed px-2.5 py-1 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
+                  class="challenge-playground-share inline-flex items-center gap-1.5 rounded-md border border-dashed px-2.5 py-1 [font-family:var(--cad-font-hand)] text-(--cad-hand-xs) font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
                 >
                   {#if shareCopied}
                     <DoodleIcon name="check" size={14} />

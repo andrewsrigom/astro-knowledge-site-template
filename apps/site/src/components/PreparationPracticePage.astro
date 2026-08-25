@@ -203,7 +203,7 @@ const structuredData = [
           <div class="mt-5 w-14">
             <NotebookDivider density="dense" tone="accent" variant="wavy" />
           </div>
-          <p class="mb-0 mt-6 max-w-[65ch] [font-family:var(--notebook-font-book)] text-[1.05rem] leading-8 text-site-ink-soft">
+          <p class="mb-0 mt-6 max-w-[65ch] [font-family:var(--cad-font-book)] text-[1.05rem] leading-8 text-site-ink-soft">
             {challenge.data.description}
           </p>
           <p class={cn(ui.metaQuiet, 'mt-4 flex flex-wrap items-center gap-x-2 gap-y-1')}>
@@ -218,7 +218,7 @@ const structuredData = [
             ) : null}
           </p>
           {isDraft ? (
-            <p class="mt-4 inline-flex rounded-md border border-dashed border-site-line-strong bg-site-panel px-3 py-1 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold text-site-ink-muted" data-pagefind-ignore>
+            <p class="mt-4 inline-flex rounded-md border border-dashed border-site-line-strong bg-site-panel px-3 py-1 [font-family:var(--cad-font-hand)] text-(--cad-hand-xs) font-semibold text-site-ink-muted" data-pagefind-ignore>
               {labels.draft}
             </p>
           ) : null}
@@ -238,7 +238,7 @@ const structuredData = [
 
         <div class="mt-12 border-t border-dashed border-site-line-strong pt-7" data-book-secondary-ui data-pagefind-ignore>
           <a
-            class="inline-flex items-center gap-2 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-semibold text-site-link-hover hover:text-site-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
+            class="inline-flex items-center gap-2 [font-family:var(--cad-font-hand)] text-(--cad-hand-sm) font-semibold text-site-link-hover hover:text-site-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
             href={partHref}
           >
             <DoodleIcon name="arrow-left" size={17} />
@@ -261,6 +261,6 @@ const structuredData = [
 
 <style>
   .preparation-practice-title {
-    font-family: var(--notebook-font-book);
+    font-family: var(--cad-font-book);
   }
 </style>

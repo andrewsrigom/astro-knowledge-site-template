@@ -7,7 +7,7 @@
     font-size: 1.06rem;
     letter-spacing: 0.004em;
     line-height: 1.78;
-    font-family: var(--notebook-font-book);
+    font-family: var(--cad-font-book);
   }
 
   .article-prose > :first-child {
@@ -20,7 +20,7 @@
     margin-bottom: 0.9rem;
     padding-top: 0.65rem;
     color: var(--site-ink);
-    font-family: var(--notebook-font-book);
+    font-family: var(--cad-font-book);
     font-size: 1.65rem;
     font-weight: 600;
     line-height: 1.28;
@@ -35,7 +35,7 @@
     left: 0;
     width: 3.6rem;
     height: 0.28rem;
-    background: color-mix(in srgb, var(--notebook-post-it-blue-bg) 72%, var(--site-link-hover));
+    background: color-mix(in srgb, var(--cad-post-it-blue-bg) 72%, var(--site-link-hover));
     border-radius: 999px;
     clip-path: polygon(0 28%, 100% 0, 96% 100%, 4% 76%);
   }
@@ -44,7 +44,7 @@
     margin-top: 2.4rem;
     margin-bottom: 0.8rem;
     color: var(--site-ink);
-    font-family: var(--notebook-font-book);
+    font-family: var(--cad-font-book);
     font-size: 1.3rem;
     font-weight: 600;
     line-height: 1.35;
@@ -96,7 +96,7 @@
     margin-block: 1.75rem;
     padding: 1.2rem 1.3rem 1.2rem 3.1rem;
     border-left: 0.28rem solid var(--site-link-hover);
-    background: color-mix(in srgb, var(--notebook-post-it-blue-bg) 20%, var(--site-surface));
+    background: color-mix(in srgb, var(--cad-post-it-blue-bg) 20%, var(--site-surface));
     color: var(--article-heading-color);
     font-style: normal;
   }
@@ -107,9 +107,9 @@
     top: 0.5rem;
     left: 0.8rem;
     color: var(--site-link-hover);
-    font-family: var(--notebook-font-hand);
-    font-size: var(--notebook-hand-xl);
-    font-weight: var(--notebook-hand-weight-strong);
+    font-family: var(--cad-font-hand);
+    font-size: var(--cad-hand-xl);
+    font-weight: var(--cad-hand-weight-strong);
     line-height: 1;
   }
 
@@ -125,7 +125,7 @@
     border-radius: 0.55rem;
     background: var(--article-surface);
     color: var(--article-heading-color);
-    font-family: var(--notebook-font-mono);
+    font-family: var(--cad-font-mono);
   }
 
   .article-prose code {
@@ -177,9 +177,9 @@
   .article-prose table th {
     background: color-mix(in srgb, var(--article-surface) 70%, var(--site-surface-strong));
     color: var(--article-heading-color);
-    font-family: var(--notebook-font-hand);
-    font-size: var(--notebook-hand-sm);
-    font-weight: var(--notebook-hand-weight-strong);
+    font-family: var(--cad-font-hand);
+    font-size: var(--cad-hand-sm);
+    font-weight: var(--cad-hand-weight-strong);
     line-height: 1.4;
     white-space: nowrap;
   }
@@ -201,7 +201,7 @@
     color: inherit;
     background: linear-gradient(
       transparent 45%,
-      var(--notebook-highlight-yellow) 46% 88%,
+      var(--cad-post-it-lemon-bg) 46% 88%,
       transparent 89%
     );
   }

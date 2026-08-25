@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { getPaginatedPathNumbers, getPaginationSlots, getPaginationWindow, paginateItems } from '@/lib/directory'
+import { getPaginatedPathNumbers, paginateItems } from '@/lib/directory'
 
 describe('directory pagination helpers', () => {
   it('paginates items with bounds protection', () => {
@@ -21,38 +21,6 @@ describe('directory pagination helpers', () => {
 
     expect(paginateItems(items, -5, 2).currentPage).toBe(1)
     expect(paginateItems(items, 99, 2).currentPage).toBe(2)
-  })
-
-  it('builds a compact page window around the current page', () => {
-    expect(getPaginationWindow(1, 10)).toEqual([1, 2, 3])
-    expect(getPaginationWindow(5, 10)).toEqual([3, 4, 5, 6, 7])
-    expect(getPaginationWindow(10, 10)).toEqual([8, 9, 10])
-  })
-
-  it('builds pagination slots with first and last page anchors', () => {
-    expect(getPaginationSlots(1, 10)).toEqual([
-      { type: 'page', value: 1 },
-      { type: 'page', value: 2 },
-      { type: 'ellipsis', key: '2-10' },
-      { type: 'page', value: 10 },
-    ])
-
-    expect(getPaginationSlots(5, 10)).toEqual([
-      { type: 'page', value: 1 },
-      { type: 'ellipsis', key: '1-4' },
-      { type: 'page', value: 4 },
-      { type: 'page', value: 5 },
-      { type: 'page', value: 6 },
-      { type: 'ellipsis', key: '6-10' },
-      { type: 'page', value: 10 },
-    ])
-
-    expect(getPaginationSlots(10, 10)).toEqual([
-      { type: 'page', value: 1 },
-      { type: 'ellipsis', key: '1-9' },
-      { type: 'page', value: 9 },
-      { type: 'page', value: 10 },
-    ])
   })
 
   it('returns only the extra page numbers for generated archive paths', () => {

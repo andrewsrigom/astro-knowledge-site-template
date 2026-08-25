@@ -1,6 +1,8 @@
 import { expect, test, type Page } from '@playwright/test'
 import { getLocaleSwitcherLinkSelector, openLocaleSwitcher, switchLocale } from './support/locale'
 
+const localePreferenceKey = 'seniorpath.locale-preference.v1'
+
 async function switchLocaleToPortuguese(page: Page) {
   await switchLocale(page, 'pt-br')
 }
@@ -16,7 +18,7 @@ test.describe('detail locale alternates', () => {
     )
     await expect(page.locator('h1').first()).toBeVisible()
     await expect
-      .poll(() => page.evaluate(() => window.localStorage.getItem('site-template.locale-preference.v1')))
+      .poll(() => page.evaluate((key) => window.localStorage.getItem(key), localePreferenceKey))
       .toBe('pt-br')
   })
 
@@ -28,7 +30,7 @@ test.describe('detail locale alternates', () => {
     await expect(page).toHaveURL(/\/pt-br\/conceitos\/contrato-de-conteudo$/)
     await expect(page.locator('h1').first()).toBeVisible()
     await expect
-      .poll(() => page.evaluate(() => window.localStorage.getItem('site-template.locale-preference.v1')))
+      .poll(() => page.evaluate((key) => window.localStorage.getItem(key), localePreferenceKey))
       .toBe('pt-br')
   })
 
@@ -40,7 +42,7 @@ test.describe('detail locale alternates', () => {
     await expect(page).toHaveURL(/\/pt-br\/trilhas\/checklist-do-primeiro-clone$/)
     await expect(page.locator('h1').first()).toBeVisible()
     await expect
-      .poll(() => page.evaluate(() => window.localStorage.getItem('site-template.locale-preference.v1')))
+      .poll(() => page.evaluate((key) => window.localStorage.getItem(key), localePreferenceKey))
       .toBe('pt-br')
   })
 

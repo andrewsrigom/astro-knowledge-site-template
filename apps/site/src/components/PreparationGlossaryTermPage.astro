@@ -166,7 +166,7 @@ const railHeadings = headings
 
           {chapterReferenceLinks.length > 0 ? (
             <section class="mt-6 grid gap-3 rounded-md border border-dashed border-site-line-strong bg-site-panel-muted px-4 py-4" data-pagefind-ignore>
-              <p class="m-0 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
+              <p class="m-0 [font-family:var(--cad-font-hand)] text-(--cad-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
                 {labels.referencedInBook}
               </p>
               <ul class="m-0 grid list-none gap-3 p-0">
@@ -214,7 +214,7 @@ const railHeadings = headings
       <aside class="hidden max-h-[calc(100vh-4rem)] overflow-y-auto lg:sticky lg:top-8 lg:grid lg:gap-4" data-book-secondary-ui data-pagefind-ignore>
         {railHeadings.length > 0 ? (
           <section class="rounded-md border border-dashed border-site-line-strong bg-site-panel p-4">
-            <p class="m-0 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
+            <p class="m-0 [font-family:var(--cad-font-hand)] text-(--cad-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
               {labels.contents}
             </p>
             <ul class="mb-0 mt-3 grid list-none gap-2 p-0 text-sm leading-5">
@@ -231,7 +231,7 @@ const railHeadings = headings
 
         {chapterReferenceLinks.length > 0 ? (
           <section class="rounded-md border border-dashed border-site-line-strong bg-site-panel p-4">
-            <p class="m-0 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
+            <p class="m-0 [font-family:var(--cad-font-hand)] text-(--cad-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
               {chapterReferenceLinks.length > 1 ? labels.usedInChapters : labels.usedInChapter}
             </p>
             <ul class="mb-0 mt-3 grid list-none gap-3 p-0 text-sm leading-5">
@@ -253,7 +253,7 @@ const railHeadings = headings
 
 <style>
   .preparation-glossary-title {
-    font-family: var(--notebook-font-book);
+    font-family: var(--cad-font-book);
   }
 
   .preparation-glossary-prose {

@@ -3,20 +3,10 @@ import { expect, test } from "@playwright/test";
 const guidePath = "/pt-br/guia";
 
 test.describe("Caderno UI package integration", () => {
-  test("renders an accessible chart in the real guide overview", async ({
-    page,
-  }) => {
+  test("keeps aggregate charts out of the guide overview", async ({ page }) => {
     await page.goto(guidePath);
-
-    const chart = page.locator("cad-chart");
-    await chart.waitFor();
-    await page.evaluate(() => customElements.whenDefined("cad-chart"));
-
-    await expect(
-      chart.getByRole("table", { name: "Capítulos por volume" }),
-    ).toBeAttached();
-    await expect(chart.locator("svg")).toBeVisible();
-    await expect(chart.locator("cad-chart-item")).not.toHaveCount(0);
+    await expect(page.locator("cad-chart")).toHaveCount(0);
+    await expect(page.getByText("Capítulos por volume")).toHaveCount(0);
   });
 
   test("uses Caderno primitives through real volume and chapter screens", async ({
@@ -102,14 +92,12 @@ test.describe("Caderno UI package integration", () => {
 test.describe("Caderno UI progressive enhancement", () => {
   test.use({ javaScriptEnabled: false });
 
-  test("keeps chart data and navigation readable without JavaScript", async ({
+  test("keeps guide navigation readable without JavaScript", async ({
     page,
   }) => {
     await page.goto(guidePath);
 
-    const chartItems = page.locator("cad-chart cad-chart-item");
-    await expect(chartItems).not.toHaveCount(0);
-    await expect(chartItems.first()).toContainText("Volume");
+    await expect(page.locator("cad-chart")).toHaveCount(0);
     await expect(
       page.locator("[data-preparation-volume-list] a").first(),
     ).toBeVisible();

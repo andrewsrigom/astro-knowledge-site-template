@@ -38,7 +38,7 @@ const brandLinkClass =
 const brandIconWrapClass = 'inline-flex size-7 shrink-0 items-center justify-center nav:size-8 lg:size-[2.1rem]'
 const brandIconClass = 'size-[1.1rem] nav:size-[1.2rem] lg:size-[1.35rem]'
 const brandLabelClass =
-  'block [font-family:var(--notebook-font-book)] text-[1.05rem] font-semibold leading-none tracking-[-0.025em] nav:text-[clamp(1.18rem,2.2vw,1.48rem)] lg:text-[clamp(1.28rem,1.7vw,1.72rem)]'
+  'block [font-family:var(--cad-font-book)] text-[1.05rem] font-semibold leading-none tracking-[-0.025em] nav:text-[clamp(1.18rem,2.2vw,1.48rem)] lg:text-[clamp(1.28rem,1.7vw,1.72rem)]'
 ---
 
 <footer class="site-notebook-footer overflow-hidden border-t border-dashed border-site-line-strong bg-site-surface">
@@ -51,7 +51,7 @@ const brandLabelClass =
           </span>
           <span class={brandLabelClass}>{copy.header.brand}</span>
         </a>
-        <p class="m-0 max-w-120 [font-family:var(--notebook-font-book)] leading-7 text-site-ink-soft">{copy.footer.description}</p>
+        <p class="m-0 max-w-120 [font-family:var(--cad-font-book)] leading-7 text-site-ink-soft">{copy.footer.description}</p>
         <span aria-hidden="true" class="site-notebook-footer__note">
           <DoodleIcon name="note" size={30} />
         </span>
@@ -74,7 +74,7 @@ const brandLabelClass =
   </div>
   <div class="border-t border-dashed border-site-line-strong bg-site-surface text-center">
     <div class={cn(ui.frame, 'py-4')}>
-      <p class="m-0 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) leading-[1.3] text-site-ink">© {currentYear} {copy.footer.title}. {copy.footer.rights}</p>
+      <p class="m-0 [font-family:var(--cad-font-hand)] text-(--cad-hand-sm) leading-[1.3] text-site-ink">© {currentYear} {copy.footer.title}. {copy.footer.rights}</p>
     </div>
   </div>
 </footer>

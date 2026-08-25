@@ -56,13 +56,6 @@ export const mobileNavMenuDomHooks = {
   trigger: createDataHook('data-mobile-nav-trigger'),
 } as const
 
-export const directoryPaginationDomHooks = {
-  nextLink: createDataHook('data-directory-pagination-next'),
-  pageLink: createDataHook('data-directory-pagination-page'),
-  previousLink: createDataHook('data-directory-pagination-previous'),
-  root: createDataHook('data-directory-pagination'),
-} as const
-
 export const directoryFilterDomHooks = {
   noJsNote: createDataHook('data-directory-filter-no-js'),
 } as const

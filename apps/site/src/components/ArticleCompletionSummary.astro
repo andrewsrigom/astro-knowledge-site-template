@@ -32,19 +32,19 @@ const {
 const copy = getSiteCopy(locale)
 const isCompact = variant === 'compact'
 const completionHeadingClass = isCompact
-  ? 'm-0 flex items-center gap-2 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-semibold leading-6 text-site-ink'
-  : 'm-0 flex items-center gap-2 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-md) font-semibold leading-6 text-site-ink'
+  ? 'm-0 flex items-center gap-2 [font-family:var(--cad-font-hand)] text-(--cad-hand-sm) font-semibold leading-6 text-site-ink'
+  : 'm-0 flex items-center gap-2 [font-family:var(--cad-font-hand)] text-(--cad-hand-md) font-semibold leading-6 text-site-ink'
 const trackMetaClass = isCompact
   ? 'm-0 text-[0.78rem] leading-6 text-site-ink-soft lg:text-[0.86rem]'
   : 'm-0 text-[0.8rem] leading-6 text-site-ink-soft lg:text-[0.88rem]'
 const nextStepTitleClass = isCompact
-  ? '[font-family:var(--notebook-font-book)] text-[0.88rem] font-semibold leading-6 text-site-ink transition-colors duration-150 group-hover:text-site-link-hover group-focus-visible:text-site-link-hover lg:text-[0.96rem]'
-  : '[font-family:var(--notebook-font-book)] text-[0.9rem] font-semibold leading-6 text-site-ink transition-colors duration-150 group-hover:text-site-link-hover group-focus-visible:text-site-link-hover lg:text-[0.98rem]'
+  ? '[font-family:var(--cad-font-book)] text-[0.88rem] font-semibold leading-6 text-site-ink transition-colors duration-150 group-hover:text-site-link-hover group-focus-visible:text-site-link-hover lg:text-[0.96rem]'
+  : '[font-family:var(--cad-font-book)] text-[0.9rem] font-semibold leading-6 text-site-ink transition-colors duration-150 group-hover:text-site-link-hover group-focus-visible:text-site-link-hover lg:text-[0.98rem]'
 const nextStepMetaClass = isCompact
   ? 'text-[0.76rem] font-medium text-site-ink-soft lg:text-[0.84rem]'
   : 'text-[0.78rem] font-medium text-site-ink-soft lg:text-[0.86rem]'
 const quietActionClass = isCompact
-  ? 'w-fit [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-medium text-site-ink-muted transition-colors duration-150 hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover'
+  ? 'w-fit [font-family:var(--cad-font-hand)] text-(--cad-hand-xs) font-medium text-site-ink-muted transition-colors duration-150 hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover'
   : ui.quietAction
 ---
 

@@ -1,14 +1,14 @@
 import { expect, test } from '@playwright/test'
 import { switchLocale } from './support/locale'
 
+const localePreferenceKey = 'seniorpath.locale-preference.v1'
+
 test.describe('shell locale flows', () => {
   test.describe('browser locale redirect', () => {
     test.use({ locale: 'pt-BR' })
 
     test('redirects the home page when the browser prefers pt-br and there is no saved preference', async ({ page }) => {
-      await page.addInitScript(() => {
-        window.localStorage.removeItem('site-template.locale-preference.v1')
-      })
+      await page.addInitScript((key) => window.localStorage.removeItem(key), localePreferenceKey)
 
       await page.goto('/')
 
@@ -18,9 +18,7 @@ test.describe('shell locale flows', () => {
   })
 
   test('keeps an explicit localized route when there is no saved preference', async ({ page }) => {
-    await page.addInitScript(() => {
-      window.localStorage.removeItem('site-template.locale-preference.v1')
-    })
+    await page.addInitScript((key) => window.localStorage.removeItem(key), localePreferenceKey)
 
     await page.goto('/pt-br')
 
@@ -36,7 +34,7 @@ test.describe('shell locale flows', () => {
     await expect(page).toHaveURL(/\/pt-br\/artigos$/)
     await expect(page.locator('h1').first()).toBeVisible()
     await expect
-      .poll(() => page.evaluate(() => window.localStorage.getItem('site-template.locale-preference.v1')))
+      .poll(() => page.evaluate((key) => window.localStorage.getItem(key), localePreferenceKey))
       .toBe('pt-br')
   })
 })

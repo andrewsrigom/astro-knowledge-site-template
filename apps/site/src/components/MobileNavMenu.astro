@@ -66,7 +66,7 @@ function getLocaleChoiceHandler(code: string) {
   <summary
     aria-controls="mobile-site-nav"
     aria-label={menuLabel}
-    class="inline-flex min-h-10 items-center justify-center rounded-md border border-dashed border-site-line-strong bg-site-panel px-3 py-2 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-semibold text-site-ink transition-colors duration-150 hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover list-none [&::-webkit-details-marker]:hidden"
+    class="inline-flex min-h-10 items-center justify-center rounded-md border border-dashed border-site-line-strong bg-site-panel px-3 py-2 [font-family:var(--cad-font-hand)] text-(--cad-hand-sm) font-semibold text-site-ink transition-colors duration-150 hover:bg-site-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover list-none [&::-webkit-details-marker]:hidden"
     {...getDataHookAttributes(mobileNavMenuDomHooks.trigger)}
   >
     <DoodleIcon class="group-open:hidden" name="brackets" size={17} />
@@ -96,7 +96,7 @@ function getLocaleChoiceHandler(code: string) {
 
       {showLocaleSwitcher ? (
         <div class="grid gap-2 border-t border-dashed border-site-line-strong pt-3">
-          <p class="m-0 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-bold uppercase tracking-[0.12em] text-site-line-strong">
+          <p class="m-0 [font-family:var(--cad-font-hand)] text-(--cad-hand-xs) font-bold uppercase tracking-[0.12em] text-site-line-strong">
             {localeSwitcherLabel}
           </p>
           <div class={`${localeSwitchClass} w-fit flex-wrap`}>

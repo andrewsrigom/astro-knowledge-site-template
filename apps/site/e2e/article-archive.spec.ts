@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test'
 import { e2eHookSelectors } from './support/hooks'
 
+const localePreferenceKey = 'seniorpath.locale-preference.v1'
+
 test.describe('article archive pagination', () => {
   test('navigates to the second english archive page', async ({ page }) => {
     await page.goto('/articles')
@@ -14,9 +16,10 @@ test.describe('article archive pagination', () => {
   })
 
   test('navigates to the second portuguese archive page', async ({ page }) => {
-    await page.addInitScript(() => {
-      window.localStorage.setItem('site-template.locale-preference.v1', 'pt-br')
-    })
+    await page.addInitScript(
+      ({ key, value }) => window.localStorage.setItem(key, value),
+      { key: localePreferenceKey, value: 'pt-br' },
+    )
 
     await page.goto('/pt-br/artigos')
 

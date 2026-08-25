@@ -1,8 +1,5 @@
 ---
-import DoodleIcon from '@/components/ui/notebook/DoodleIcon.astro'
-import { getPaginationSlots } from '@/lib/directory'
-import { directoryPaginationDomHooks, getDataHookAttributes } from '@/lib/dom-hooks'
-import { cn } from '@/lib/cn'
+import CadPagination from '@caderno-ui/astro/Pagination.astro'
 
 type Props = {
   currentPage: number
@@ -13,104 +10,26 @@ type Props = {
   previousLabel: string
 }
 
-const { currentPage, getHref, nextLabel, pageCount, pageLabel, previousLabel } = Astro.props
-const slots = getPaginationSlots(currentPage, pageCount)
+const {
+  currentPage,
+  getHref,
+  nextLabel,
+  pageCount,
+  pageLabel,
+  previousLabel,
+}: Props = Astro.props
 ---
 
 {pageCount > 1 ? (
-  <nav
-    aria-label={`${pageLabel} navigation`}
-    class="notebook-directory-pagination mt-7 flex flex-wrap items-center justify-center gap-2"
-    {...getDataHookAttributes(directoryPaginationDomHooks.root)}
-  >
-    {currentPage > 1 ? (
-      <a
-        aria-label={previousLabel}
-        class="notebook-directory-pagination__direction"
-        href={getHref(currentPage - 1)}
-        {...getDataHookAttributes(directoryPaginationDomHooks.previousLink)}
-      >
-        <span class="sr-only">{previousLabel}</span>
-        <DoodleIcon name="arrow-left" size={18} />
-      </a>
-    ) : null}
-    {slots.map((slot) =>
-      slot.type === 'ellipsis' ? (
-        <span
-          aria-hidden="true"
-          class="notebook-directory-pagination__ellipsis"
-        >
-          ...
-        </span>
-      ) : (
-        <a
-          aria-current={slot.value === currentPage ? 'page' : undefined}
-          class={cn(
-            'notebook-directory-pagination__page',
-            slot.value === currentPage && 'is-current',
-          )}
-          href={getHref(slot.value)}
-          {...getDataHookAttributes(directoryPaginationDomHooks.pageLink, String(slot.value))}
-        >
-          <span class="sr-only">{pageLabel} </span>
-          {slot.value}
-        </a>
-      ),
-    )}
-    {currentPage < pageCount ? (
-      <a
-        aria-label={nextLabel}
-        class="notebook-directory-pagination__direction"
-        href={getHref(currentPage + 1)}
-        {...getDataHookAttributes(directoryPaginationDomHooks.nextLink)}
-      >
-        <span class="sr-only">{nextLabel}</span>
-        <DoodleIcon name="arrow-right" size={18} />
-      </a>
-    ) : null}
-  </nav>
+  <CadPagination
+    baseHref={getHref(1)}
+    class="mt-7"
+    getHref={getHref}
+    label={`${pageLabel} navigation`}
+    nextLabel={nextLabel}
+    page={currentPage}
+    pageLabel={pageLabel}
+    previousLabel={previousLabel}
+    total={pageCount}
+  />
 ) : null}
-
-<style>
-  .notebook-directory-pagination__direction,
-  .notebook-directory-pagination__page,
-  .notebook-directory-pagination__ellipsis {
-    display: inline-grid;
-    place-items: center;
-    min-width: 2.35rem;
-    min-height: 2.35rem;
-    padding: 0 0.4rem;
-    color: var(--site-ink-muted);
-    font-family: var(--notebook-font-hand);
-    font-size: var(--notebook-hand-md);
-    font-weight: var(--notebook-hand-weight-strong);
-  }
-
-  .notebook-directory-pagination__direction {
-    border: 1px dashed var(--site-line-strong);
-    border-radius: 0.45rem 0.65rem 0.5rem 0.6rem;
-  }
-
-  .notebook-directory-pagination__page {
-    border-radius: 50% 47% 53% 48%;
-  }
-
-  .notebook-directory-pagination__page.is-current {
-    color: var(--notebook-post-it-blue-ink);
-    background: var(--notebook-post-it-blue-bg);
-    border: 1.5px solid color-mix(in srgb, var(--notebook-post-it-blue-ink) 44%, transparent);
-    transform: rotate(-1deg);
-  }
-
-  .notebook-directory-pagination__direction:hover,
-  .notebook-directory-pagination__page:hover {
-    color: var(--site-link-hover);
-    background: var(--site-control-hover);
-  }
-
-  .notebook-directory-pagination__direction:focus-visible,
-  .notebook-directory-pagination__page:focus-visible {
-    outline: 2px dashed var(--site-link-hover);
-    outline-offset: 3px;
-  }
-</style>

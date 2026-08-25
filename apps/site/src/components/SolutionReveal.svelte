@@ -93,16 +93,16 @@
             <DoodleIcon className="text-site-ink-muted" name={solved ? 'check' : 'exclamation'} size={21} />
           </div>
           <div class="grid gap-1">
-            <p class="[font-family:var(--notebook-font-hand)] text-(--notebook-hand-md) font-semibold text-site-ink">
+            <p class="[font-family:var(--cad-font-hand)] text-(--cad-hand-md) font-semibold text-site-ink">
               {solved ? copy.solvedTitle : copy.unsolvedTitle}
             </p>
-            <p class="[font-family:var(--notebook-font-book)] text-sm leading-6 text-site-ink-soft">
+            <p class="[font-family:var(--cad-font-book)] text-sm leading-6 text-site-ink-soft">
               {solved ? copy.solvedMessage : copy.unsolvedMessage}
             </p>
           </div>
           <Dialog.Trigger
             aria-haspopup="dialog"
-            class="inline-flex items-center gap-2 rounded-md border border-dashed border-site-line-strong bg-site-surface px-4 py-2 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-medium text-site-ink-soft transition-colors duration-150 hover:border-site-link-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
+            class="inline-flex items-center gap-2 rounded-md border border-dashed border-site-line-strong bg-site-surface px-4 py-2 [font-family:var(--cad-font-hand)] text-(--cad-hand-sm) font-medium text-site-ink-soft transition-colors duration-150 hover:border-site-link-hover hover:text-site-link-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
             {...getDataHookAttributes(solutionRevealDomHooks.triggerButton)}
           >
             <DoodleIcon name="search" size={16} />
@@ -111,7 +111,7 @@
         </div>
       {:else}
         <div class="border-t border-dashed border-site-line-strong pt-10" {...getDataHookAttributes(solutionRevealDomHooks.content)}>
-          <p bind:this={solutionHeadingEl} class="mb-6 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-semibold uppercase tracking-[0.12em] text-site-ink-muted" tabindex="-1">
+          <p bind:this={solutionHeadingEl} class="mb-6 [font-family:var(--cad-font-hand)] text-(--cad-hand-sm) font-semibold uppercase tracking-[0.12em] text-site-ink-muted" tabindex="-1">
             {copy.solutionLabel}
           </p>
           {@render children?.()}
@@ -138,17 +138,17 @@
             size={21}
           />
         </div>
-        <Dialog.Title class="mb-2 [font-family:var(--notebook-font-book)] text-[1.08rem] font-semibold leading-snug text-site-ink">
+        <Dialog.Title class="mb-2 [font-family:var(--cad-font-book)] text-[1.08rem] font-semibold leading-snug text-site-ink">
           {solved ? copy.solvedTitle : copy.unsolvedTitle}
         </Dialog.Title>
-        <Dialog.Description class="mb-6 [font-family:var(--notebook-font-book)] text-sm leading-6 text-site-ink-soft">
+        <Dialog.Description class="mb-6 [font-family:var(--cad-font-book)] text-sm leading-6 text-site-ink-soft">
           {solved ? copy.solvedMessage : copy.unsolvedMessage}
         </Dialog.Description>
 
         <div class="flex flex-col gap-2">
           {#if !solved}
             <button
-              class="solution-reveal-primary inline-flex items-center justify-center gap-2 rounded-md border border-dashed border-site-line-strong px-4 py-2.5 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-medium transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
+              class="solution-reveal-primary inline-flex items-center justify-center gap-2 rounded-md border border-dashed border-site-line-strong px-4 py-2.5 [font-family:var(--cad-font-hand)] text-(--cad-hand-sm) font-medium transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
               onclick={() => setOpen(false)}
               type="button"
             >
@@ -156,7 +156,7 @@
             </button>
           {/if}
           <button
-            class="inline-flex items-center justify-center rounded-md border border-dashed border-site-line-strong px-4 py-2.5 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-medium text-site-ink-soft transition-colors duration-150 hover:border-site-link-hover hover:text-site-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
+            class="inline-flex items-center justify-center rounded-md border border-dashed border-site-line-strong px-4 py-2.5 [font-family:var(--cad-font-hand)] text-(--cad-hand-sm) font-medium text-site-ink-soft transition-colors duration-150 hover:border-site-link-hover hover:text-site-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover"
             onclick={() => void confirm()}
             {...getDataHookAttributes(solutionRevealDomHooks.confirmButton)}
             type="button"
@@ -175,13 +175,13 @@
   data-pagefind-ignore
   {...getDataHookAttributes(solutionRevealDomHooks.noJsDetails)}
 >
-  <summary class="cursor-pointer list-none px-6 py-4 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-md) font-semibold text-site-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover">
+  <summary class="cursor-pointer list-none px-6 py-4 [font-family:var(--cad-font-hand)] text-(--cad-hand-md) font-semibold text-site-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-dashed focus-visible:outline-site-link-hover">
     {copy.noJsDetailsLabel}
   </summary>
   <div class="border-t border-dashed border-site-line-strong px-6 py-5">
-    <p class="mb-6 [font-family:var(--notebook-font-book)] text-sm leading-6 text-site-ink-soft">{copy.noJsMessage}</p>
+    <p class="mb-6 [font-family:var(--cad-font-book)] text-sm leading-6 text-site-ink-soft">{copy.noJsMessage}</p>
     <div class="border-t border-dashed border-site-line-strong pt-6">
-      <p class="mb-6 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-sm) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
+      <p class="mb-6 [font-family:var(--cad-font-hand)] text-(--cad-hand-sm) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
         {copy.solutionLabel}
       </p>
       {@render children?.()}

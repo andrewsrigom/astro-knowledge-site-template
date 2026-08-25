@@ -30,7 +30,7 @@ const {
   title,
 } = Astro.props
 const pageHeaderTitleClass =
-  'm-0 [font-family:var(--notebook-font-book)] text-[clamp(2.2rem,6vw,4.2rem)] font-semibold leading-[0.98] tracking-[-0.045em] text-site-ink'
+  'm-0 [font-family:var(--cad-font-book)] text-[clamp(2.2rem,6vw,4.2rem)] font-semibold leading-[0.98] tracking-[-0.045em] text-site-ink'
 const pageHeaderDescriptionClass = cn(ui.bodyCopy, 'mt-0')
 ---
 
@@ -88,7 +88,7 @@ const pageHeaderDescriptionClass = cn(ui.bodyCopy, 'mt-0')
   .site-notebook-page-header__icon {
     border: 1px dashed var(--site-line-strong);
     border-radius: 48% 52% 46% 54%;
-    background: color-mix(in srgb, var(--notebook-post-it-blue-bg) 28%, var(--site-surface));
+    background: color-mix(in srgb, var(--cad-post-it-blue-bg) 28%, var(--site-surface));
   }
 
   .site-notebook-page-header__doodle {

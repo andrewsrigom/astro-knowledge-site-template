@@ -56,16 +56,6 @@ export type PaginatedItems<T> = {
   totalItems: number
 }
 
-export type PaginationSlot =
-  | {
-      type: 'page'
-      value: number
-    }
-  | {
-      key: string
-      type: 'ellipsis'
-    }
-
 export function paginateItems<T>(items: T[], page: number, pageSize: number): PaginatedItems<T> {
   const normalizedPage = Number.isFinite(page) ? Math.max(1, Math.floor(page)) : 1
   const totalItems = items.length
@@ -83,46 +73,6 @@ export function paginateItems<T>(items: T[], page: number, pageSize: number): Pa
     previousPage: currentPage > 1 ? currentPage - 1 : null,
     totalItems,
   }
-}
-
-export function getPaginationWindow(currentPage: number, pageCount: number, radius = 2) {
-  const start = Math.max(1, currentPage - radius)
-  const end = Math.min(pageCount, currentPage + radius)
-
-  return Array.from({ length: end - start + 1 }, (_, index) => start + index)
-}
-
-export function getPaginationSlots(currentPage: number, pageCount: number, radius = 1): PaginationSlot[] {
-  if (pageCount <= 0) {
-    return []
-  }
-
-  const normalizedCurrentPage = Math.min(Math.max(1, Math.floor(currentPage)), pageCount)
-  const corePages = new Set<number>([
-    1,
-    pageCount,
-    ...getPaginationWindow(normalizedCurrentPage, pageCount, radius),
-  ])
-  const sortedPages = [...corePages].sort((left, right) => left - right)
-  const slots: PaginationSlot[] = []
-
-  sortedPages.forEach((page, index) => {
-    const previousPage = sortedPages[index - 1]
-
-    if (typeof previousPage === 'number' && page - previousPage > 1) {
-      slots.push({
-        key: `${previousPage}-${page}`,
-        type: 'ellipsis',
-      })
-    }
-
-    slots.push({
-      type: 'page',
-      value: page,
-    })
-  })
-
-  return slots
 }
 
 export function getPaginatedPathNumbers(totalItems: number, pageSize: number) {

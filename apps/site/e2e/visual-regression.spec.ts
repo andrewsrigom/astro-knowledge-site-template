@@ -89,7 +89,8 @@ test.describe('visual regression coverage', () => {
 
   test('captures the preparation guide with Caderno UI', async ({ page }) => {
     await prepareVisualPage(page, '/pt-br/guia')
-    await expect(page.locator('cad-chart')).toBeVisible()
+    await expect(page.locator('[data-preparation-volume-list]')).toBeVisible()
+    await expect(page.locator('cad-chart')).toHaveCount(0)
 
     await expect(page).toHaveScreenshot('preparation-guide-page.png', snapshotOptions)
   })

@@ -28,7 +28,7 @@ const labels = locale === 'pt-br'
 <div class="grid gap-4" data-pagefind-ignore>
   {sections.length > 0 ? (
     <nav aria-label={labels.sections} class="rounded-md border border-dashed border-site-line-strong bg-site-panel p-4">
-      <p class="m-0 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
+      <p class="m-0 [font-family:var(--cad-font-hand)] text-(--cad-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
         {labels.sections}
       </p>
       <ul class="mb-0 mt-3 grid list-none gap-2 p-0 text-sm leading-5">
@@ -44,16 +44,16 @@ const labels = locale === 'pt-br'
   ) : null}
 
   <section class="rounded-md border border-dashed border-site-line-strong bg-site-panel p-4">
-    <p class="m-0 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
+    <p class="m-0 [font-family:var(--cad-font-hand)] text-(--cad-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
       {labels.owner}
     </p>
-    <a class="mt-3 block [font-family:var(--notebook-font-book)] text-sm font-semibold leading-5 text-site-link-hover hover:text-site-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover" href={owner.href}>
+    <a class="mt-3 block [font-family:var(--cad-font-book)] text-sm font-semibold leading-5 text-site-link-hover hover:text-site-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover" href={owner.href}>
       {owner.title}
     </a>
 
     {chapters.length > 0 ? (
       <div class="mt-4 border-t border-dashed border-site-line-strong pt-4">
-        <p class="m-0 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
+        <p class="m-0 [font-family:var(--cad-font-hand)] text-(--cad-hand-xs) font-semibold uppercase tracking-[0.12em] text-site-ink-muted">
           {labels.chapters}
         </p>
         <ul class="mb-0 mt-3 grid list-none gap-2 p-0 text-sm leading-5">

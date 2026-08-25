@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 
 import { describe, expect, it } from "vitest";
 
@@ -9,6 +10,7 @@ const notebookSource = (name: string) => componentSource(`ui/notebook/${name}`);
 
 const siteSource = (name: string) =>
   readFileSync(new URL(`../../${name}`, import.meta.url), "utf8");
+const require = createRequire(import.meta.url);
 
 describe("guide composition with Caderno UI", () => {
   it("uses the canonical method, local index, cards, links and dividers", () => {
@@ -29,21 +31,13 @@ describe("guide composition with Caderno UI", () => {
 
   it("renders Markdown through shared editorial contracts", () => {
     const prose = notebookSource("NotebookManualProse.astro");
-    const contracts = [
-      "notebook-accordion.css",
-      "notebook-blockquote.css",
-      "notebook-code-block.css",
-      "notebook-highlight.css",
-      "notebook-post-it.css",
-      "notebook-table.css",
-    ];
 
-    contracts.forEach((contract) => expect(prose).toContain(contract));
-    expect(prose).toContain(
-      "question.classList.add('notebook-accordion-item')",
-    );
-    expect(prose).toContain("figure.className = 'notebook-code-block'");
-    expect(prose).toContain("table.classList.add('notebook-table')");
+    expect(prose).toContain("@caderno-ui/elements/prose.css");
+    expect(prose).toContain("@caderno-ui/elements/prose");
+    expect(prose).toContain("installCadernoProse()");
+    expect(prose).not.toContain("@/styles/notebook-");
+    expect(prose).not.toContain("classList.add");
+    expect(prose).not.toContain("<style>");
   });
 
   it("keeps product-facing names as thin Caderno UI facades", () => {
@@ -83,18 +77,20 @@ describe("guide composition with Caderno UI", () => {
     expect(`${astroIcon}\n${svelteIcon}`).not.toContain("<svg");
   });
 
-  it("uses the Caderno chart on the real guide index", () => {
+  it("keeps decorative charts out of the guide index", () => {
     const page = componentSource("PreparationIndexPage.astro");
 
-    expect(page).toContain("@caderno-ui/astro/Chart.astro");
-    expect(page).toContain("@caderno-ui/astro/ChartItem.astro");
-    expect(page).toContain("data-preparation-overview");
-    expect(page).toContain("<CadChartItem");
+    expect(page).not.toContain("@caderno-ui/astro/Chart.astro");
+    expect(page).not.toContain("@caderno-ui/astro/ChartItem.astro");
+    expect(page).not.toContain("data-preparation-overview");
   });
 
   it("uses matching syntax colors for the light and dark notebook themes", () => {
     const astroConfig = siteSource("astro.config.mjs");
-    const codeStyles = siteSource("src/styles/notebook-code-block.css");
+    const codeStyles = readFileSync(
+      require.resolve("@caderno-ui/elements/prose.css"),
+      "utf8",
+    );
 
     expect(astroConfig).toContain("light: 'github-light'");
     expect(astroConfig).toContain("dark: 'github-dark'");

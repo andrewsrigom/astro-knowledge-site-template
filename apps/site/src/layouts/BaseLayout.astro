@@ -1,5 +1,6 @@
 ---
 import '@caderno-ui/tokens/notebook.css'
+import '@caderno-ui/elements/fallback.css'
 import '@/styles/global.css'
 
 import LayoutClientScripts from '@/components/layout/LayoutClientScripts.astro'
@@ -183,7 +184,7 @@ const robotsContent = getSiteRobotsMetaContent(noindex)
   </head>
   <body data-ui="notebook">
     <a
-      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:border focus:border-dashed focus:border-site-line-strong focus:bg-site-panel focus:px-4 focus:py-3 focus:[font-family:var(--notebook-font-hand)] focus:text-(--notebook-hand-sm) focus:font-semibold focus:text-site-link-hover focus:outline-2 focus:outline-offset-3 focus:outline-dashed focus:outline-site-link-hover"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:border focus:border-dashed focus:border-site-line-strong focus:bg-site-panel focus:px-4 focus:py-3 focus:[font-family:var(--cad-font-hand)] focus:text-(--cad-hand-sm) focus:font-semibold focus:text-site-link-hover focus:outline-2 focus:outline-offset-3 focus:outline-dashed focus:outline-site-link-hover"
       data-skip-link
       href="#main-content"
     >
