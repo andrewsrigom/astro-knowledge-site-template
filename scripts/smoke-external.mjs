@@ -30,6 +30,7 @@ function run(command, args, options = {}) {
 
 const tempRoot = await mkdtemp(path.join(os.tmpdir(), 'astro-knowledge-content-'))
 const scaffoldedContentRoot = path.join(tempRoot, 'sample-content')
+const syncedContentRoot = path.join(tempRoot, 'synced-content')
 
 try {
   await run('node', ['./scripts/init-content-repo.mjs', scaffoldedContentRoot])
@@ -38,6 +39,7 @@ try {
     env: {
       ...process.env,
       SITE_CONTENT_DIR: scaffoldedContentRoot,
+      SITE_SYNCED_CONTENT_DIR: syncedContentRoot,
     },
   })
 } finally {
