@@ -67,6 +67,7 @@ function toRomanNumeral(value: number) {
     {book.volumes.map((volume) => {
       const isCurrentVolume = currentVolumeId === volume.id
       const partsWithChapters = volume.parts.filter((part) => part.chapters.length > 0)
+      const volumeChapters = partsWithChapters.flatMap((part) => part.chapters)
 
       return (
         <li>
@@ -82,47 +83,39 @@ function toRomanNumeral(value: number) {
               ]}
               href={getPreparationVolumeHref(volume.id, book.catalog.locale)}
             >
-              <span class="pt-0.5 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold tracking-[0.08em] text-site-ink-muted">
+              <span class="pt-0.5 text-xs font-semibold tracking-[0.08em] text-site-ink-muted">
                 {toRomanNumeral(volume.order)}
               </span>
-              <span class="leading-5">{volume.title}</span>
+              <span class="min-w-0 truncate leading-5" title={volume.title}>{volume.title}</span>
             </a>
 
             <div class="mb-2 ml-[1.3rem] mt-1 border-l border-dashed border-site-line-strong pl-3">
-              {partsWithChapters.map((part) => (
-                <section class="py-2" aria-label={part.title}>
-                  {partsWithChapters.length > 1 ? (
-                    <p class="mb-1.5 mt-0 px-2 [font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) font-semibold uppercase tracking-widest text-site-ink-muted">
-                      {part.title}
-                    </p>
-                  ) : null}
-                  <ol class="m-0 grid list-none gap-0.5 p-0">
-                    {part.chapters.map((chapter) => {
-                      const isCurrentChapter = currentGuideId === chapter.guideId
+              <ol class="m-0 grid list-none gap-0.5 py-1 p-0">
+                {volumeChapters.map((chapter) => {
+                  const isCurrentChapter = currentGuideId === chapter.guideId
 
-                      return (
-                        <li>
-                          <a
-                            aria-current={isCurrentChapter ? 'page' : undefined}
-                            class:list={[
-                              'book-navigation-link grid grid-cols-[1.7rem_minmax(0,1fr)] gap-2 rounded-md px-2 py-2 [font-family:var(--notebook-font-book)] text-[0.8rem] leading-5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover',
-                              isCurrentChapter
-                                ? 'bg-site-hover font-semibold text-site-link-hover'
-                                : 'text-site-ink-soft hover:bg-site-hover hover:text-site-link-hover',
-                            ]}
-                            href={chapter.href}
-                          >
-                            <span class="[font-family:var(--notebook-font-hand)] text-(--notebook-hand-xs) text-site-ink-muted">
-                              {chapterNumberByGuideId.get(chapter.guideId)}
-                            </span>
-                            <span>{chapter.guide.data.title}</span>
-                          </a>
-                        </li>
-                      )
-                    })}
-                  </ol>
-                </section>
-              ))}
+                  return (
+                    <li>
+                      <a
+                        aria-current={isCurrentChapter ? 'page' : undefined}
+                        class:list={[
+                          'book-navigation-link grid grid-cols-[1.45rem_minmax(0,1fr)] items-center gap-1.5 rounded-md px-2 py-2 [font-family:var(--notebook-font-book)] text-[0.8rem] leading-5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed focus-visible:outline-site-link-hover',
+                          isCurrentChapter
+                            ? 'bg-site-hover font-semibold text-site-link-hover'
+                            : 'text-site-ink-soft hover:bg-site-hover hover:text-site-link-hover',
+                        ]}
+                        href={chapter.href}
+                        title={chapter.guide.data.title}
+                      >
+                        <span class="text-xs tabular-nums text-site-ink-muted">
+                          {chapterNumberByGuideId.get(chapter.guideId)}
+                        </span>
+                        <span class="min-w-0 truncate">{chapter.guide.data.title}</span>
+                      </a>
+                    </li>
+                  )
+                })}
+              </ol>
             </div>
           </section>
         </li>
