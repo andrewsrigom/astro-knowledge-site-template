@@ -23,9 +23,10 @@ function writeCompletedArticleIds(ids: string[]) {
 }
 
 test('persists article completion and allows resetting it', async ({ page }) => {
-  const markUnreadButton = page.getByRole('complementary').locator(e2eHookSelectors.markUnreadButton)
+  const markUnreadButton = page.getByRole('button', { name: 'Mark as unread', exact: true }).first()
 
   await page.goto('/articles/foundations/customize-the-template-after-the-first-clone')
+  await expect(page.getByRole('heading', { name: 'Customize the template after the first clone' })).toBeVisible()
 
   await page.evaluate(() => {
     window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'auto' })
@@ -50,9 +51,8 @@ test('persists article completion and allows resetting it', async ({ page }) => 
 test('reorders next step based on local article progress', async ({ page }) => {
   await page.goto('/articles/foundations/next-step-root')
 
-  const aside = page.getByRole('complementary').last()
-  const nextStepTitle = aside.locator(e2eHookSelectors.articleCompletionNextStepTitle).first()
-  const nextStepLink = aside.locator(e2eHookSelectors.articleCompletionNextStepLink).first()
+  const nextStepTitle = page.locator(e2eHookSelectors.articleCompletionNextStepTitle).first()
+  const nextStepLink = page.locator(e2eHookSelectors.articleCompletionNextStepLink).first()
 
   await page.evaluate(() => {
     window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'auto' })

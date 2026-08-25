@@ -83,6 +83,7 @@ test.describe('accessibility flows', () => {
 
   test('keeps modal focus flow when opening and closing solution reveal', async ({ page }) => {
     await page.goto('/challenges/build-a-localized-section-url')
+    await page.locator('#challenge-playground').scrollIntoViewIfNeeded()
     await page.locator('.cm-content').waitFor()
     await waitForIdleHydration(page, 750)
 

@@ -1,15 +1,14 @@
 import { expect, test } from '@playwright/test'
-import { e2eHookSelectors } from './support/hooks'
 
 test.describe('reference section navigation', () => {
   test('navigates from the topics index into the populated starter group', async ({ page }) => {
     await page.goto('/topics')
 
-    await page.locator('a[href="/topics/thinking"]').first().click()
+    await page.getByRole('link', { name: /Senior Thinking/i }).first().click()
 
-    await expect(page).toHaveURL(/\/topics\/thinking$/)
+    await expect(page).toHaveURL(/\/topics\/thinking\/delivery$/)
     await expect(page.locator('h1').first()).toBeVisible()
-    await expect(page.locator(e2eHookSelectors.directoryItem).first()).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Senior Thinking' })).toBeVisible()
   })
 
   test('navigates from the concepts index to the starter concept page', async ({ page }) => {

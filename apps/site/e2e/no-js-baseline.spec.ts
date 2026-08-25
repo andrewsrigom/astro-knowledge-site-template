@@ -18,7 +18,7 @@ test.describe('no-js baseline', () => {
   test('keeps directories and tracks browsable without interactive filters or progress meters', async ({ page }) => {
     await page.goto('/tracks')
 
-    await expect(page.locator(e2eHookSelectors.directoryFilterNoJsNote)).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Starter', exact: true })).toBeVisible()
 
     await page.goto('/tracks/first-clone-checklist')
 

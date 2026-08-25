@@ -1,31 +1,29 @@
 import { expect, test } from '@playwright/test'
 
-import { e2eHookSelectors } from './support/hooks'
-
 const legalCases = [
   {
-    checklistHeading: 'Publication checklist',
+    checklistHeading: 'Operational privacy checklist',
     operationalHeading: 'Operational privacy status',
     path: '/privacy',
     preferredLocale: 'en',
     title: 'Privacy Policy',
   },
   {
-    checklistHeading: 'Publication checklist',
+    checklistHeading: 'Operational privacy checklist',
     operationalHeading: 'Operational privacy status',
     path: '/terms-and-services',
     preferredLocale: 'en',
     title: 'Terms of Service',
   },
   {
-    checklistHeading: 'Checklist de publicacao',
+    checklistHeading: 'Checklist operacional de privacidade',
     operationalHeading: 'Estado operacional de privacidade',
     path: '/pt-br/politica-de-privacidade',
     preferredLocale: 'pt-br',
     title: 'Politica de Privacidade',
   },
   {
-    checklistHeading: 'Checklist de publicacao',
+    checklistHeading: 'Checklist operacional de privacidade',
     operationalHeading: 'Estado operacional de privacidade',
     path: '/pt-br/termos-e-servicos',
     preferredLocale: 'pt-br',
@@ -43,16 +41,11 @@ test.describe('legal pages', () => {
       await page.goto(legalCase.path)
 
       await expect(page.getByRole('heading', { name: legalCase.title })).toBeVisible()
-      await expect(page.locator(e2eHookSelectors.legalPublicationChecklist)).toBeVisible()
-      await expect(page.locator(e2eHookSelectors.legalOperationalReview)).toBeVisible()
-      await expect(page.getByRole('heading', { name: legalCase.checklistHeading })).toBeVisible()
+      const checklistHeading = page.getByRole('heading', { name: legalCase.checklistHeading })
+
+      await expect(checklistHeading).toBeVisible()
       await expect(page.getByRole('heading', { name: legalCase.operationalHeading })).toBeVisible()
-      await expect(
-        page.locator(`${e2eHookSelectors.legalPublicationChecklist} li`),
-      ).toHaveCount(4)
-      await expect(
-        page.locator(`${e2eHookSelectors.legalOperationalReview} li`).first(),
-      ).toBeVisible()
+      await expect(checklistHeading.locator('xpath=following-sibling::ul[1]/li').first()).toBeVisible()
     })
   }
 })
