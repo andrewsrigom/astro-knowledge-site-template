@@ -2,11 +2,14 @@
 
 O `Caderno UI` é o design system compartilhado que sustenta a linguagem de caderno do SeniorPath. A biblioteca mantém componentes, tokens, acessibilidade, documentação e o laboratório canônico. O SeniorPath consome os pacotes publicados e valida a integração nas páginas reais do guia.
 
+Os quatro pacotes usados pelo site estão alinhados em `0.4.1`, instalados do npm e registrados no lockfile. O desenvolvimento normal não depende de um link para a biblioteca local.
+
 ## Fronteira de responsabilidade
 
 - `@caderno-ui/elements` implementa os custom elements e o comportamento acessível;
 - `@caderno-ui/astro` fornece as fachadas Astro usadas pelo site;
 - `@caderno-ui/icons` mantém os ícones compartilhados;
+- `@caderno-ui/tokens` define cores, tipografia e tema branco por padrão;
 - o SeniorPath mantém apenas composição editorial, conteúdo, rotas e adaptações específicas do produto.
 
 Não existe uma segunda galeria de componentes dentro do SeniorPath. A inspeção isolada acontece no laboratório do repositório do Caderno UI; aqui a cobertura é feita no índice, nos volumes e nos capítulos do próprio guia.
@@ -51,6 +54,13 @@ Os contratos CSS importados por `NotebookManualProse` não são uma biblioteca p
 3. Não copie estilos, scripts ou marcação interna de um componente do Caderno UI.
 4. Teste a integração em uma rota real, inclusive com JavaScript desativado quando o conteúdo precisar permanecer legível.
 5. Preserve o texto como fonte do significado; doodles e tratamentos manuscritos são sinais de apoio.
+6. Tokens `--site-*` podem apontar para `--cad-*`, nunca o contrário. Use também o `scrollbar.css` publicado, sem uma cópia local.
+
+## Testes e conteúdo local
+
+E2E usa conteúdo temporário e uma porta própria. Tanto o Astro quanto o Vitest devem respeitar `SITE_SYNCED_CONTENT_DIR`; o alias estático de TypeScript não pode fazer o teste ler a pasta `.content` usada no desenvolvimento. Os testes do guia verificam os caminhos exclusivos das fixtures para detectar essa mistura.
+
+Para validar o acervo real sem substituir o conteúdo servido, execute os comandos em uma cópia isolada e use `scripts/run-with-content-root.mjs`. Não execute sincronização de fixtures na aplicação aberta pelo usuário.
 
 ## Doodles editoriais
 

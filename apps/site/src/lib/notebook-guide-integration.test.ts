@@ -13,6 +13,39 @@ const siteSource = (name: string) =>
 const require = createRequire(import.meta.url);
 
 describe("guide composition with Caderno UI", () => {
+  it("resolves isolated content before the default TypeScript path alias", () => {
+    const config = siteSource("astro.config.mjs");
+    const tests = siteSource("vitest.config.ts");
+
+    expect(config).toContain("find: '@content', replacement: syncedContentDirectory");
+    expect(config).toContain("enforce: 'post'");
+    expect(config).toContain("process.env.SITE_SYNCED_CONTENT_DIR");
+    expect(tests).toContain("process.env.SITE_SYNCED_CONTENT_DIR");
+  });
+
+  it("consumes the library theme and scrollbar without redefining them", () => {
+    const layout = siteSource("src/layouts/BaseLayout.astro");
+    const styles = siteSource("src/styles/global.css");
+
+    expect(layout).toContain("@caderno-ui/tokens/notebook.css");
+    expect(layout).toContain("@caderno-ui/elements/scrollbar.css");
+    expect(styles).toContain("--site-base-bg: var(--cad-bg)");
+    expect(styles).toContain("--site-base-link: var(--cad-link)");
+    expect(styles).not.toMatch(/--cad-[\w-]+\s*:/);
+    expect(styles).not.toContain("::-webkit-scrollbar");
+    expect(styles).not.toContain("--site-scrollbar-");
+  });
+
+  it("adopts flat cards and does not turn decorative step colors into progress", () => {
+    const card = notebookSource("NotebookCard.astro");
+    const method = notebookSource("NotebookMethodChain.astro");
+
+    expect(card).toContain("cornerFold = false");
+    expect(method).not.toMatch(/<CadStep\s[^>]*tone=/);
+    expect(method).not.toContain('status="complete"');
+    expect(method).not.toContain('status="current"');
+  });
+
   it("uses the canonical method, local index, cards, links and dividers", () => {
     const page = componentSource("PreparationSubjectPage.astro");
     const rail = componentSource("PreparationChapterRail.astro");

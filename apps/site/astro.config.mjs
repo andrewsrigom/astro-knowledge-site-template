@@ -16,22 +16,18 @@ const syncedContentDirectory = process.env.SITE_SYNCED_CONTENT_DIR
   ? resolve(process.env.SITE_SYNCED_CONTENT_DIR)
   : fileURLToPath(new URL('./.content', import.meta.url))
 
-function syncedContentResolver() {
-  const contentPrefix = '@content/'
-
+function syncedContentAliases() {
   return {
-    enforce: 'pre',
-    name: 'seniorpath-synced-content',
-    async resolveId(source, importer) {
-      if (!source.startsWith(contentPrefix)) {
-        return null
+    name: 'site:synced-content-alias',
+    enforce: 'post',
+    // Astro adds tsconfig aliases during config resolution. Register this last
+    // so isolated content cannot silently fall back to the user's .content.
+    config() {
+      return {
+        resolve: {
+          alias: [{ find: '@content', replacement: syncedContentDirectory }],
+        },
       }
-
-      return this.resolve(
-        resolve(syncedContentDirectory, source.slice(contentPrefix.length)),
-        importer,
-        { skipSelf: true },
-      )
     },
   }
 }
@@ -119,6 +115,6 @@ export default defineConfig({
         'bits-ui': fileURLToPath(new URL('./node_modules/bits-ui/dist/index.js', import.meta.url)),
       },
     },
-    plugins: [syncedContentResolver(), tailwindcss()],
+    plugins: [tailwindcss(), syncedContentAliases()],
   },
 })

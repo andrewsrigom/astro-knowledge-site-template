@@ -29,7 +29,7 @@ const {
 
 <CadSteps class={className} label={ariaLabel} orientation={direction}>
   {steps.map((step) => (
-    <CadStep tone={step.tone ?? 'blue'}>
+    <CadStep>
       <Fragment slot="title">
         {step.icon ? <CadIcon name={step.icon} size={16} /> : null}
         <span>{step.label}</span>

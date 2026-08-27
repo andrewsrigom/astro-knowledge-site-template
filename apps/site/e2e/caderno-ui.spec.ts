@@ -3,6 +3,32 @@ import { expect, test } from "@playwright/test";
 const guidePath = "/pt-br/guia";
 
 test.describe("Caderno UI package integration", () => {
+  test("uses the published white theme even when the system prefers dark", async ({ page }) => {
+    await page.emulateMedia({ colorScheme: "dark" });
+    const response = await page.goto(guidePath);
+    expect(response?.status()).toBe(200);
+
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+    await expect(page.locator("body")).toHaveCSS("background-color", "rgb(255, 255, 255)");
+    const tokens = await page.locator("html").evaluate((root) => {
+      const style = getComputedStyle(root);
+      const read = (name: string) => style.getPropertyValue(name).trim();
+      return {
+        background: read("--cad-bg"),
+        siteBackground: read("--site-bg"),
+        link: read("--cad-link"),
+        siteLink: read("--site-link-hover"),
+        scrollbarSize: read("--cad-scrollbar-size"),
+      };
+    });
+
+    expect(tokens.background).toBe("#fff");
+    expect(tokens.siteBackground).toBe(tokens.background);
+    expect(tokens.link).toBe("#005bac");
+    expect(tokens.siteLink).toBe(tokens.link);
+    expect(tokens.scrollbarSize).toBe("10px");
+  });
+
   test("keeps aggregate charts out of the guide overview", async ({ page }) => {
     await page.goto(guidePath);
     await expect(page.locator("cad-chart")).toHaveCount(0);
@@ -18,6 +44,7 @@ test.describe("Caderno UI package integration", () => {
       .first()
       .getAttribute("href");
     expect(volumeHref).toBeTruthy();
+    expect(volumeHref).toContain("/volumes/caderno-ui");
 
     await page.goto(volumeHref!, { waitUntil: "networkidle" });
     await page.evaluate(() => customElements.whenDefined("cad-breadcrumb"));
@@ -28,6 +55,7 @@ test.describe("Caderno UI package integration", () => {
       .first()
       .getAttribute("href");
     expect(chapterHref).toBeTruthy();
+    expect(chapterHref).toContain("/guia/caderno-fundamentos");
 
     await page.goto(chapterHref!, { waitUntil: "networkidle" });
     await Promise.all([
@@ -42,6 +70,16 @@ test.describe("Caderno UI package integration", () => {
     await expect(page.locator("cad-divider").first()).toBeVisible();
     await expect(page.locator("cad-sticker").first()).toBeVisible();
     await expect(page.locator("cad-card").first()).toBeVisible();
+    await expect(page.locator("cad-card").first()).not.toHaveAttribute("folded");
+    await expect(page.locator("cad-step[tone]")).toHaveCount(0);
+    await expect(page.locator('cad-step [slot="title"]').first()).toHaveText("Contrato");
+    const method = page.locator("cad-steps").first();
+    await expect.poll(() => method.evaluate((element) => {
+      const edge = element.getBoundingClientRect().right;
+      return [...element.querySelectorAll("cad-step")].every(
+        (step) => step.getBoundingClientRect().right <= edge + 1,
+      );
+    })).toBe(true);
   });
 
   test("persists a chapter bookmark with the SeniorPath storage namespace", async ({
@@ -101,5 +139,6 @@ test.describe("Caderno UI progressive enhancement", () => {
     await expect(
       page.locator("[data-preparation-volume-list] a").first(),
     ).toBeVisible();
+    await expect(page.locator("body")).toHaveCSS("background-color", "rgb(255, 255, 255)");
   });
 });

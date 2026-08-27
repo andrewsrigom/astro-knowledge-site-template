@@ -5,21 +5,19 @@
 @import "@fontsource/caveat/700.css";
 
 :root {
-  color-scheme: dark;
-
-  /* Primitive palette and motion */
-  --site-base-bg: #1a1b26;
-  --site-base-surface: #1f2335;
-  --site-base-surface-strong: #24283b;
-  --site-base-ink: #e0e0ff;
-  --site-base-ink-bright: #f5f7ff;
-  --site-base-ink-soft: rgba(224, 224, 255, 0.76);
-  --site-base-ink-muted: rgba(224, 224, 255, 0.64);
-  --site-base-line: rgba(124, 124, 255, 0.14);
-  --site-base-line-strong: rgba(124, 124, 255, 0.28);
-  --site-base-accent: #7c7cff;
-  --site-base-link: #a8b8ff;
-  --site-base-success: #52b788;
+  /* Product aliases consume the library's active theme, never redefine it. */
+  --site-base-bg: var(--cad-bg);
+  --site-base-surface: var(--cad-surface);
+  --site-base-surface-strong: var(--cad-surface-strong);
+  --site-base-ink: var(--cad-ink);
+  --site-base-ink-bright: var(--cad-ink);
+  --site-base-ink-soft: var(--cad-ink-soft);
+  --site-base-ink-muted: var(--cad-ink-muted);
+  --site-base-line: var(--cad-line);
+  --site-base-line-strong: var(--cad-line-strong);
+  --site-base-accent: var(--cad-link);
+  --site-base-link: var(--cad-link);
+  --site-base-success: var(--cad-success-ink);
   --site-base-highlight-bg: #000;
   --site-base-highlight-ink: #fde047;
   --site-shadow-dropdown: 0 18px 60px rgba(5, 10, 20, 0.2);
@@ -56,7 +54,7 @@
   --book-tab-blue: #7694ef;
   --site-link-hover: var(--site-base-link);
   --site-hover-surface: color-mix(in srgb, var(--site-surface-strong) 82%, var(--site-surface));
-  --site-control-hover: color-mix(in srgb, var(--site-surface-strong) 90%, var(--site-link-hover) 10%);
+  --site-control-hover: var(--cad-control-hover);
   --site-success: var(--site-base-success);
   --site-progress-track: color-mix(in srgb, var(--site-line) 70%, transparent);
   --site-progress-track-strong: color-mix(in srgb, var(--site-bg) 72%, transparent);
@@ -78,9 +76,6 @@
   --site-highlight-badge: var(--site-base-highlight-bg);
   --site-highlight-badge-border: transparent;
   --site-highlight-badge-ink: var(--site-base-highlight-ink);
-  --site-scrollbar-track: color-mix(in srgb, var(--site-bg) 82%, black 18%);
-  --site-scrollbar-thumb: color-mix(in srgb, var(--site-line-strong) 38%, rgba(245, 247, 255, 0.48));
-  --site-scrollbar-thumb-hover: color-mix(in srgb, var(--site-link-hover) 44%, rgba(245, 247, 255, 0.58));
   --site-filter-tone-1-dark: #24364f;
   --site-filter-tone-1-light: #dbeafe;
   --site-filter-tone-2-dark: #2d3358;
@@ -116,41 +111,14 @@
   --article-inline-code-shadow: inset 0 1px 0 rgba(245, 247, 255, 0.08);
   --article-link: color-mix(in srgb, var(--site-link-hover) 76%, var(--site-surface-strong));
   --article-link-hover: var(--site-base-ink-bright);
-  --radius-xs: 8px;
-  --radius-sm: 14px;
-  --radius: 16px;
-  --radius-lg: 20px;
-  --site-transition-smooth: cubic-bezier(0.22, 1, 0.36, 1);
-
-  /* Product colors extend Caderno UI; typography stays library-owned. */
-  --cad-bg: var(--site-bg);
-  --cad-surface: var(--site-surface);
-  --cad-surface-strong: var(--site-surface-strong);
-  --cad-ink: var(--site-ink);
-  --cad-ink-soft: var(--site-ink-soft);
-  --cad-ink-muted: var(--site-ink-muted);
-  --cad-line: var(--site-line);
-  --cad-line-strong: var(--site-line-strong);
-  --cad-link: var(--site-link-hover);
-  --cad-control-hover: var(--site-control-hover);
-  --cad-transition-smooth: var(--site-transition-smooth);
+  --radius-xs: var(--cad-radius-sm);
+  --radius-sm: var(--cad-radius-sm);
+  --radius: var(--cad-radius-md);
+  --radius-lg: var(--cad-radius-lg);
+  --site-transition-smooth: var(--cad-transition-smooth);
 }
 
 :root[data-theme='light'] {
-  color-scheme: light;
-
-  --site-base-bg: #f6f7fb;
-  --site-base-surface: #ffffff;
-  --site-base-surface-strong: #eef2ff;
-  --site-base-ink: #162033;
-  --site-base-ink-bright: #0f172a;
-  --site-base-ink-soft: rgba(22, 32, 51, 0.8);
-  --site-base-ink-muted: rgba(22, 32, 51, 0.62);
-  --site-base-line: rgba(55, 76, 119, 0.14);
-  --site-base-line-strong: rgba(55, 76, 119, 0.24);
-  --site-base-accent: #2854d7;
-  --site-base-link: #2450c5;
-  --site-base-success: #1e8a5f;
   --site-base-highlight-bg: #111827;
   --site-base-highlight-ink: #fde68a;
   --site-shadow-dropdown: 0 18px 48px rgba(15, 23, 42, 0.08);
@@ -175,15 +143,11 @@
   --book-tab-green: #5bbd90;
   --book-tab-blue: #5f82e8;
   --site-hover-surface: color-mix(in srgb, var(--site-surface-strong) 68%, white 32%);
-  --site-control-hover: color-mix(in srgb, var(--site-surface-strong) 82%, var(--site-link-hover) 18%);
   --site-progress-track: color-mix(in srgb, var(--site-line) 76%, white 24%);
   --site-progress-track-strong: color-mix(in srgb, var(--site-surface-strong) 76%, white 24%);
   --site-progress-fill: color-mix(in srgb, var(--site-link-hover) 76%, white 24%);
   --site-completion-badge-bg: color-mix(in srgb, var(--site-success) 14%, white 86%);
   --site-completion-badge-ink: color-mix(in srgb, var(--site-success) 84%, black 16%);
-  --site-scrollbar-track: color-mix(in srgb, var(--site-bg) 82%, white 18%);
-  --site-scrollbar-thumb: color-mix(in srgb, var(--site-line-strong) 34%, rgba(22, 32, 51, 0.36));
-  --site-scrollbar-thumb-hover: color-mix(in srgb, var(--site-link-hover) 42%, rgba(22, 32, 51, 0.42));
   --article-heading-color: var(--site-base-ink-bright);
   --article-copy-color: var(--site-base-ink);
   --article-body-color: #334155;
@@ -262,8 +226,6 @@ html[data-js="true"] [data-no-js-only="true"] {
 
   html {
     scroll-behavior: smooth;
-    scrollbar-color: var(--site-scrollbar-thumb) var(--site-scrollbar-track);
-    scrollbar-width: thin;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -337,37 +299,6 @@ html[data-js="true"] [data-no-js-only="true"] {
 
   img {
     @apply block max-w-full;
-  }
-
-  ::-webkit-scrollbar {
-    width: 11px;
-    height: 11px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: var(--site-scrollbar-track);
-  }
-
-  ::-webkit-scrollbar-thumb {
-    border: 3px solid var(--site-scrollbar-track);
-    border-radius: 999px;
-    background: linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--site-scrollbar-thumb) 68%, white 32%) 0%,
-      var(--site-scrollbar-thumb) 100%
-    );
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--site-scrollbar-thumb-hover) 72%, white 28%) 0%,
-      var(--site-scrollbar-thumb-hover) 100%
-    );
-  }
-
-  ::-webkit-scrollbar-corner {
-    background: var(--site-scrollbar-track);
   }
 }
 
