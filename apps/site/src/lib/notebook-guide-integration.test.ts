@@ -34,6 +34,8 @@ describe("guide composition with Caderno UI", () => {
     expect(styles).not.toMatch(/--cad-[\w-]+\s*:/);
     expect(styles).not.toContain("::-webkit-scrollbar");
     expect(styles).not.toContain("--site-scrollbar-");
+    expect(styles).not.toContain("--book-tab-");
+    expect(styles).toContain("--site-surface: var(--cad-surface)");
   });
 
   it("adopts flat cards and does not turn decorative step colors into progress", () => {

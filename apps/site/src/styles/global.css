@@ -7,55 +7,40 @@
 :root {
   /* Product aliases consume the library's active theme, never redefine it. */
   --site-base-bg: var(--cad-bg);
-  --site-base-surface: var(--cad-surface);
-  --site-base-surface-strong: var(--cad-surface-strong);
-  --site-base-ink: var(--cad-ink);
   --site-base-ink-bright: var(--cad-ink);
-  --site-base-ink-soft: var(--cad-ink-soft);
-  --site-base-ink-muted: var(--cad-ink-muted);
-  --site-base-line: var(--cad-line);
-  --site-base-line-strong: var(--cad-line-strong);
-  --site-base-accent: var(--cad-link);
   --site-base-link: var(--cad-link);
-  --site-base-success: var(--cad-success-ink);
   --site-base-highlight-bg: #000;
   --site-base-highlight-ink: #fde047;
   --site-shadow-dropdown: 0 18px 60px rgba(5, 10, 20, 0.2);
-  --site-shadow-header: 0 18px 56px rgba(4, 6, 16, 0.24);
   --site-shadow-mobile-progress: 0 -12px 30px color-mix(in srgb, var(--site-bg) 35%, transparent);
   --site-shadow-overlay: 0 24px 80px rgba(0, 0, 0, 0.28);
   --site-overlay-backdrop: color-mix(in srgb, var(--site-base-bg) 58%, transparent);
 
   /* Semantic site tokens */
   --site-bg: var(--site-base-bg);
-  --site-surface: var(--site-base-surface);
-  --site-surface-strong: var(--site-base-surface-strong);
+  --site-surface: var(--cad-surface);
+  --site-surface-strong: var(--cad-surface-strong);
   --site-panel: color-mix(in srgb, var(--site-surface) 86%, var(--site-surface-strong));
   --site-card: color-mix(in srgb, var(--site-surface) 72%, var(--site-surface-strong));
   --site-panel-muted: color-mix(in srgb, var(--site-surface) 74%, var(--site-bg));
   --site-panel-spotlight: color-mix(in srgb, var(--site-surface-strong) 68%, var(--site-bg));
   --site-panel-border: color-mix(in srgb, var(--site-line) 55%, transparent);
-  --site-line: var(--site-base-line);
-  --site-line-strong: var(--site-base-line-strong);
-  --site-ink: var(--site-base-ink);
-  --site-ink-soft: var(--site-base-ink-soft);
-  --site-ink-muted: var(--site-base-ink-muted);
+  --site-line: var(--cad-line);
+  --site-line-strong: var(--cad-line-strong);
+  --site-ink: var(--cad-ink);
+  --site-ink-soft: var(--cad-ink-soft);
+  --site-ink-muted: var(--cad-ink-muted);
   --site-ink-subtle: color-mix(in srgb, var(--site-line-strong) 52%, var(--site-link-hover));
-  --site-accent: var(--site-base-accent);
-  --site-accent-soft: var(--site-base-surface-strong);
+  --site-accent: var(--cad-link);
+  --site-accent-soft: var(--cad-surface-strong);
   --book-marker: rgba(250, 204, 21, 0.42);
-  --book-note-bg: #3a3424;
-  --book-note-ink: #fff4c2;
   --book-note-line: #e9bd4f;
   --book-pencil: #a8b8ff;
   --book-tape: rgba(255, 255, 255, 0.2);
-  --book-tab-pink: #d96b9d;
-  --book-tab-green: #4fa883;
-  --book-tab-blue: #7694ef;
   --site-link-hover: var(--site-base-link);
   --site-hover-surface: color-mix(in srgb, var(--site-surface-strong) 82%, var(--site-surface));
   --site-control-hover: var(--cad-control-hover);
-  --site-success: var(--site-base-success);
+  --site-success: var(--cad-success-ink);
   --site-progress-track: color-mix(in srgb, var(--site-line) 70%, transparent);
   --site-progress-track-strong: color-mix(in srgb, var(--site-bg) 72%, transparent);
   --site-progress-fill: color-mix(in srgb, var(--site-link-hover) 72%, transparent);
@@ -88,7 +73,6 @@
   --site-filter-tone-5-light: #ede9fe;
   --site-filter-tone-6-dark: #274737;
   --site-filter-tone-6-light: #e2f2ea;
-  --site-content-width: 58rem;
   --site-article-rail-width: 270px;
   --site-article-detail-gap: 1.75rem;
   --site-article-detail-shell-measure: calc(
@@ -99,7 +83,7 @@
   --site-utility-shell-measure: 55rem;
   --article-font-sans: var(--cad-font-text, var(--cad-font-book));
   --article-heading-color: var(--site-base-ink-bright);
-  --article-copy-color: var(--site-base-ink);
+  --article-copy-color: var(--site-ink);
   --article-body-color: rgb(192, 202, 245);
   --article-excerpt-color: #a9b1d6;
   --article-tag-tone-color: #565f89;
@@ -122,7 +106,6 @@
   --site-base-highlight-bg: #111827;
   --site-base-highlight-ink: #fde68a;
   --site-shadow-dropdown: 0 18px 48px rgba(15, 23, 42, 0.08);
-  --site-shadow-header: 0 18px 48px rgba(15, 23, 42, 0.1);
   --site-shadow-mobile-progress: 0 -12px 30px color-mix(in srgb, var(--site-bg) 72%, transparent);
   --site-shadow-overlay: 0 24px 80px rgba(15, 23, 42, 0.16);
   --site-overlay-backdrop: color-mix(in srgb, var(--site-base-bg) 82%, transparent);
@@ -134,14 +117,9 @@
   --site-panel-border: color-mix(in srgb, var(--site-line) 62%, transparent);
   --site-accent-soft: #dfe7ff;
   --book-marker: rgba(255, 209, 51, 0.58);
-  --book-note-bg: #fff4bd;
-  --book-note-ink: #47370f;
   --book-note-line: #b78014;
   --book-pencil: #2854d7;
   --book-tape: rgba(211, 205, 184, 0.62);
-  --book-tab-pink: #ef78ac;
-  --book-tab-green: #5bbd90;
-  --book-tab-blue: #5f82e8;
   --site-hover-surface: color-mix(in srgb, var(--site-surface-strong) 68%, white 32%);
   --site-progress-track: color-mix(in srgb, var(--site-line) 76%, white 24%);
   --site-progress-track-strong: color-mix(in srgb, var(--site-surface-strong) 76%, white 24%);
@@ -149,7 +127,7 @@
   --site-completion-badge-bg: color-mix(in srgb, var(--site-success) 14%, white 86%);
   --site-completion-badge-ink: color-mix(in srgb, var(--site-success) 84%, black 16%);
   --article-heading-color: var(--site-base-ink-bright);
-  --article-copy-color: var(--site-base-ink);
+  --article-copy-color: var(--site-ink);
   --article-body-color: #334155;
   --article-excerpt-color: #526179;
   --article-tag-tone-color: #6b7280;
